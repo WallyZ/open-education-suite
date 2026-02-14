@@ -1,0 +1,100 @@
+# -----------------------------
+# OS Files
+# -----------------------------
+.DS_Store
+Thumbs.db
+
+# -----------------------------
+# Python
+# -----------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.egg-info/
+.eggs/
+dist/
+build/
+pip-wheel-metadata/
+*.egg
+*.whl
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# -----------------------------
+# Node / JavaScript
+# -----------------------------
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# -----------------------------
+# PowerShell
+# -----------------------------
+*.ps1.tmp
+*.ps1~*
+
+# -----------------------------
+# Logs
+# -----------------------------
+*.log
+logs/
+debug.log
+
+# -----------------------------
+# IDE / Editor Files
+# -----------------------------
+.vscode/
+.vscode-test/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# -----------------------------
+# Temporary Files
+# -----------------------------
+*.tmp
+*.temp
+*.bak
+
+# -----------------------------
+# Tool-Specific
+# -----------------------------
+# Anki deck outputs
+*.apkg
+
+# PDF ingestion outputs
+tools/pdf-to-anki/output/
+tools/pdf-to-anki/cache/
+
+# Summaries / generated notes
+tools/summarizers/output/
+
+# Quiz generators
+tools/quiz-generators/output/
+
+# Resource scrapers
+tools/resource-scrapers/output/
+
+# -----------------------------
+# Documentation Build Artifacts
+# -----------------------------
+docs/_build/
+site/
+
+# -----------------------------
+# Environemnt Specific Files
+# -----------------------------
+.env
