@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "items": [
+    {
+      "itemId": "debugging-mcq-001",
+      "objectiveId": "software-development:objectives/debugging",
+      "type": "multiple-choice",
+      "prompt": "Which debugger command enters the called function?",
+      "acceptedAnswers": [ "step into", "b" ],
+      "scaffolds": [
+        { "level": "nudge", "text": "Compare commands that move over a call with commands that enter it." },
+        { "level": "concept-reminder", "text": "Step over runs the call; step into opens the call." },
+        { "level": "worked-example", "text": "When a line calls Calculate(), step into moves execution inside Calculate()." }
+      ],
+      "feedbackTemplates": {
+        "correct": "Correct. This is evidence for debugger navigation mastery.",
+        "partial": "Partially correct. Review the distinction before moving on.",
+        "incorrect": "Not yet. Review step over, step into, and step out.",
+        "uncertain": "This answer needs review before mastery is updated."
+      },
+      "masteryEvidence": {
+        "evidenceType": "quiz",
+        "confidenceDelta": 0.08
+      }
+    },
+    {
+      "itemId": "unreal-project-checkpoint-001",
+      "objectiveId": "game-development:objectives/blueprint-to-cpp",
+      "type": "project-checkpoint",
+      "prompt": "Submit a checkpoint showing one Blueprint mechanic converted to C++ with the same behavior.",
+      "acceptedAnswers": [],
+      "scaffolds": [
+        { "level": "nudge", "text": "Start with the smallest mechanic that has clear input and output." },
+        { "level": "concept-reminder", "text": "Preserve behavior first, then improve structure." }
+      ],
+      "feedbackTemplates": {
+        "correct": "Checkpoint accepted. The project demonstrates objective-level evidence.",
+        "partial": "The checkpoint has useful evidence, but one requirement is incomplete.",
+        "incorrect": "The checkpoint does not yet demonstrate the target objective.",
+        "uncertain": "This checkpoint needs reviewer or AI-assisted evaluation."
+      },
+      "masteryEvidence": {
+        "evidenceType": "project-checkpoint",
+        "confidenceDelta": 0.15
+      }
+    },
+    {
+      "itemId": "networking-interactive-001",
+      "objectiveId": "cybersecurity:objectives/network-fundamentals",
+      "type": "interactive",
+      "prompt": "Complete the packet-routing interaction.",
+      "acceptedAnswers": [],
+      "scaffolds": [
+        { "level": "nudge", "text": "Trace source, gateway, and destination before answering." }
+      ],
+      "feedbackTemplates": {
+        "correct": "The interaction event shows the routing concept is understood.",
+        "partial": "The interaction shows partial understanding; review the failed step.",
+        "incorrect": "The interaction result does not yet support mastery.",
+        "uncertain": "The interaction did not produce enough evidence."
+      },
+      "masteryEvidence": {
+        "evidenceType": "interactive",
+        "confidenceDelta": 0.10
+      },
+      "interactive": {
+        "interactionType": "routing-simulation",
+        "launchRef": "content://cybersecurity/interactives/routing-simulation",
+        "expectedEvidenceEvent": "interactive_completed",
+        "fallbackPrompt": "Explain how a packet moves from a client to a remote server."
+      }
+    }
+  ]
+}

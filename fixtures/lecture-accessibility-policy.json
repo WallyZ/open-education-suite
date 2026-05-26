@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "policyId": "lecture-accessibility-policy-v1",
+  "requiredAssets": [
+    "captions",
+    "transcript",
+    "chapters",
+    "slides",
+    "slideAltText"
+  ],
+  "captionRequirements": {
+    "format": "webvtt",
+    "mustStartWith": "WEBVTT",
+    "mustIncludeTimestamps": true,
+    "languageRequired": true
+  },
+  "transcriptRequirements": {
+    "format": "plain-text",
+    "languageRequired": true,
+    "mustBeReadableWithoutVideo": true
+  },
+  "chapterRequirements": {
+    "minimumCount": 2,
+    "firstChapterStartSecond": 0,
+    "mustStayWithinDuration": true
+  },
+  "slideRequirements": {
+    "altTextRequired": true,
+    "attributionRequired": true,
+    "minimumAltTextCharacters": 20
+  },
+  "handoffRequirement": "Every lecture package must include enough transcript, chapter, slide, and checkpoint metadata for transcript-first, audio-first, and video-first learners.",
+  "notes": [
+    "Captions and transcripts are required package assets, not optional publish extras.",
+    "Slides must be understandable from alt text and narration.",
+    "Chapters should identify meaningful lesson segments for adaptive selection and review."
+  ]
+}

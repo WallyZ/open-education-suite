@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Open Education Learner Workspace</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#workspace">Skip to workspace</a>
+  <div class="app-shell">
+    <aside class="side-rail" aria-label="Learner context">
+      <div class="brand-block">
+        <span class="brand-mark" aria-hidden="true">OE</span>
+        <div>
+          <p class="eyebrow">Open Education</p>
+          <h1 data-l10n="labels.workspaceTitle">Learner Workspace</h1>
+        </div>
+      </div>
+
+      <nav class="rail-nav" aria-label="Workspace sections">
+        <button class="nav-item is-active" type="button" data-view="lesson">
+          <span aria-hidden="true">01</span>
+          Lesson
+        </button>
+        <button class="nav-item" type="button" data-view="lecture">
+          <span aria-hidden="true">02</span>
+          Lecture
+        </button>
+        <button class="nav-item" type="button" data-view="progress">
+          <span aria-hidden="true">03</span>
+          Progress
+        </button>
+        <button class="nav-item" type="button" data-view="assessment">
+          <span aria-hidden="true">04</span>
+          Assessment
+        </button>
+        <button class="nav-item" type="button" data-view="handoff">
+          <span aria-hidden="true">05</span>
+          Handoff
+        </button>
+        <button class="nav-item" type="button" data-view="evidence">
+          <span aria-hidden="true">06</span>
+          Evidence
+        </button>
+      </nav>
+
+      <section class="rail-panel" aria-labelledby="learner-title">
+        <p class="eyebrow">Learner</p>
+        <h2 id="learner-title">gdev-101-live-smoke-learner</h2>
+        <dl class="compact-list">
+          <div>
+            <dt>Preference</dt>
+            <dd id="preferenceValue">Worked example</dd>
+          </div>
+          <div>
+            <dt>Practice</dt>
+            <dd id="practiceValue">Scaffolded</dd>
+          </div>
+          <div>
+            <dt>Access</dt>
+            <dd id="accessValue">Low distraction</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="rail-panel course-browser" aria-labelledby="course-browser-title">
+        <p class="eyebrow">Course navigation</p>
+        <h2 id="course-browser-title" data-l10n="labels.catalogTitle">Catalog</h2>
+        <label for="sourceSelect">Source</label>
+        <select id="sourceSelect"></select>
+        <label for="courseSelect">Course</label>
+        <select id="courseSelect"></select>
+        <div class="objective-list" id="objectiveList" aria-label="Objectives"></div>
+        <p class="rail-note" id="courseNavigationLog" aria-live="polite"></p>
+      </section>
+    </aside>
+
+    <div class="workspace-frame">
+      <header class="top-bar">
+        <div>
+          <p class="eyebrow">Current objective</p>
+          <p class="objective-id" id="objectiveId">game-development:objectives/course/gdev-101/design-vocabulary</p>
+        </div>
+        <div class="top-actions" aria-label="Workspace controls">
+          <button class="ghost-button" type="button" id="runSessionButton">Run session</button>
+          <button class="ghost-button" type="button" id="liveTeacherButton">Live teacher</button>
+          <button class="ghost-button" type="button" id="focusToggle" aria-pressed="false">Focus</button>
+          <button class="ghost-button" type="button" id="contrastToggle" aria-pressed="false">Contrast</button>
+        </div>
+      </header>
+
+      <main id="workspace" class="workspace-grid" tabindex="-1">
+        <section class="hero-panel" aria-labelledby="next-action-title">
+          <div class="hero-copy">
+            <p class="eyebrow">Next action</p>
+            <h2 id="next-action-title">Start GDEV-101 design vocabulary</h2>
+            <p id="actionReason">Selected because there is no mastery evidence yet. Begin with a short Socratic check before examples.</p>
+          </div>
+          <div class="status-stack" aria-label="Session status">
+            <div>
+              <span class="metric-value" id="masteryValue">0%</span>
+              <span class="metric-label">mastery confidence</span>
+            </div>
+            <div>
+              <span class="metric-value" id="reviewValue">0</span>
+              <span class="metric-label">due reviews</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="lesson-surface view-panel is-visible" data-panel="lesson" aria-labelledby="teacher-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Teacher</p>
+              <h2 id="teacher-title">Design vocabulary warm-up</h2>
+            </div>
+            <span class="source-pill" id="sourcePill">GDEV-101</span>
+          </div>
+
+          <div class="teacher-thread" id="teacherThread" aria-live="polite"></div>
+          <div class="journal-log" id="sessionBridgeLog" aria-live="polite"></div>
+          <div class="journal-log" id="liveTeacherLog" aria-live="polite"></div>
+
+          <form class="response-form" id="responseForm">
+            <label for="learnerResponse">Response</label>
+            <textarea id="learnerResponse" rows="4" placeholder="Name player verbs, goals, feedback, constraints, or other design vocabulary you already know."></textarea>
+            <div class="form-actions">
+              <button class="primary-button" type="submit">Submit</button>
+              <button class="secondary-button" type="button" id="hintButton">Hint</button>
+              <button class="secondary-button" type="button" id="completeButton">Mark complete</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="lecture-surface view-panel" data-panel="lecture" aria-labelledby="lecture-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Generated lecture</p>
+              <h2 id="lecture-title">Design Vocabulary: Verbs, Goals, and Feedback</h2>
+            </div>
+            <span class="source-pill" id="lectureStatusPill">Scripted fixture</span>
+          </div>
+
+          <div class="lecture-layout">
+            <div class="lecture-player" aria-label="Lecture playback">
+              <div class="lecture-frame" id="lectureFrame" role="img" aria-label="Generated instructor beside a paper prototype labeled verb, goal, and feedback.">
+                <div>
+                  <p class="eyebrow">Instructor video</p>
+                  <strong id="lectureFrameTitle">Synthetic instructor preview</strong>
+                  <p id="lectureDisclosure">Original generated instructor. No real person cloned.</p>
+                </div>
+              </div>
+              <div class="playback-controls">
+                <button class="primary-button" type="button" id="lecturePlayButton" aria-pressed="false">Play lecture</button>
+                <div class="timeline-control">
+                  <label for="lectureProgress">Position</label>
+                  <input id="lectureProgress" type="range" min="0" max="180" step="5" value="0">
+                  <span id="lecturePosition">0:00 / 3:00</span>
+                </div>
+              </div>
+              <div class="chapter-list" id="chapterList" aria-label="Lecture chapters"></div>
+            </div>
+
+            <div class="transcript-panel">
+              <h3>Transcript</h3>
+              <p id="lectureTranscript"></p>
+              <h3>Citations</h3>
+              <div class="citation-block" id="lectureCitations"></div>
+            </div>
+          </div>
+
+          <section class="checkpoint-panel" aria-labelledby="checkpoint-title">
+            <div>
+              <p class="eyebrow">Checkpoint evidence</p>
+              <h3 id="checkpoint-title">Active recall</h3>
+              <p>Checkpoint answers can become evidence proposals. Passive video completion is not mastery.</p>
+            </div>
+            <div class="checkpoint-list" id="lectureCheckpoints"></div>
+            <div class="journal-log" id="checkpointLog" aria-live="polite"></div>
+          </section>
+        </section>
+
+        <section class="progress-surface view-panel" data-panel="progress" aria-labelledby="progress-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Progress</p>
+              <h2 id="progress-title">Mastery map</h2>
+            </div>
+            <span class="source-pill">Local state</span>
+          </div>
+          <div class="mastery-list" id="masteryList"></div>
+          <div class="review-panel">
+            <h3>Review queue</h3>
+            <ul id="reviewQueue"></ul>
+          </div>
+          <section class="analytics-panel" aria-labelledby="analytics-title">
+            <div>
+              <p class="eyebrow">Learner analytics</p>
+              <h3 id="analytics-title" data-l10n="labels.analyticsTitle">Evidence view</h3>
+            </div>
+            <div class="analytics-grid" id="analyticsSummary"></div>
+            <ul class="analytics-evidence-list" id="analyticsEvidenceList"></ul>
+            <p class="analytics-note" id="analyticsLog">Evidence only. No clickstream or time-spent tracking.</p>
+          </section>
+        </section>
+
+        <section class="assessment-surface view-panel" data-panel="assessment" aria-labelledby="assessment-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Assessment</p>
+              <h2 id="assessment-title" data-l10n="labels.assessmentTitle">Assessment Studio</h2>
+            </div>
+            <span class="source-pill">Evidence proposal</span>
+          </div>
+          <div class="assessment-mode-controls" id="assessmentModeControls" aria-label="Assessment modes"></div>
+          <div class="assessment-render-surface" id="assessmentRenderSurface"></div>
+          <div class="form-actions">
+            <button class="primary-button" type="button" id="saveAssessmentButton" data-l10n="labels.saveAssessment">Save assessment</button>
+          </div>
+          <div class="journal-log" id="assessmentLog" aria-live="polite"></div>
+        </section>
+
+        <section class="handoff-surface view-panel" data-panel="handoff" aria-labelledby="handoff-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Instructor/operator</p>
+              <h2 id="handoff-title" data-l10n="labels.handoffTitle">Operator handoff</h2>
+            </div>
+            <span class="source-pill">Review only</span>
+          </div>
+          <div class="handoff-grid">
+            <section class="handoff-column" aria-labelledby="handoff-blockers-title">
+              <h3 id="handoff-blockers-title">Blockers</h3>
+              <ul id="handoffBlockers"></ul>
+            </section>
+            <section class="handoff-column" aria-labelledby="handoff-interventions-title">
+              <h3 id="handoff-interventions-title">Interventions</h3>
+              <ul id="handoffInterventions"></ul>
+            </section>
+            <section class="handoff-column" aria-labelledby="handoff-health-title">
+              <h3 id="handoff-health-title">Content health</h3>
+              <ul id="contentHealthList"></ul>
+            </section>
+          </div>
+          <p class="analytics-note" id="handoffLog" aria-live="polite">Operator review only. No learner-state mutation.</p>
+        </section>
+
+        <section class="evidence-surface view-panel" data-panel="evidence" aria-labelledby="evidence-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Evidence</p>
+              <h2 id="evidence-title" data-l10n="labels.evidenceTitle">Citations and journal</h2>
+            </div>
+            <span class="source-pill">Provenance</span>
+          </div>
+          <div class="citation-block" id="citationBlock"></div>
+          <label for="journalEntry">Journal</label>
+          <textarea id="journalEntry" rows="5" placeholder="Record what changed in your understanding, what confused you, and what to practice next."></textarea>
+          <button class="secondary-button journal-button" type="button" id="saveJournalButton">Save journal</button>
+          <div class="journal-log" id="journalLog" aria-live="polite"></div>
+          <section class="state-panel" aria-labelledby="state-title">
+            <h3 id="state-title" data-l10n="labels.learnerStateTitle">Learner state</h3>
+            <div class="form-actions">
+              <button class="secondary-button" type="button" id="saveStateButton">Save state</button>
+              <button class="secondary-button" type="button" id="exportStateButton">Export state</button>
+              <button class="secondary-button" type="button" id="importStateButton">Import state</button>
+              <button class="secondary-button" type="button" id="syncPreviewButton">Preview sync</button>
+            </div>
+            <label for="stateExchange">State exchange</label>
+            <textarea id="stateExchange" rows="7" spellcheck="false"></textarea>
+            <div class="journal-log" id="stateSyncLog" aria-live="polite"></div>
+          </section>
+        </section>
+
+        <aside class="right-column" aria-label="Course and readiness details">
+          <section class="info-panel" aria-labelledby="course-title">
+            <p class="eyebrow">Course</p>
+            <h2 id="course-title">GDEV-101 Game Design Foundations</h2>
+            <p>Mechanics, dynamics, aesthetics, goals, constraints, feedback, skill, chance, and playtesting through small prototypes.</p>
+          </section>
+
+          <section class="info-panel" aria-labelledby="plan-title">
+            <p class="eyebrow">Today</p>
+            <h2 id="plan-title">Short session</h2>
+            <ol class="session-steps">
+              <li>Answer the warm-up.</li>
+              <li>Watch or read the lecture.</li>
+              <li>Answer checkpoint prompts.</li>
+              <li>Save a journal note.</li>
+              <li>Mark the action complete.</li>
+            </ol>
+          </section>
+
+          <section class="info-panel" aria-labelledby="privacy-title">
+            <p class="eyebrow">Data</p>
+            <h2 id="privacy-title">Local only</h2>
+            <p>Session changes stay in this browser until a durable learner-state bridge is connected.</p>
+          </section>
+        </aside>
+      </main>
+    </div>
+  </div>
+
+  <script src="locales/en.js"></script>
+  <script src="session-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,41 +1,20 @@
 # Contribution Guide
 
-Thank you for contributing to the Open Education Suite!
+## Where Changes Belong
 
----
+- Core teaching behavior, ingestion contracts, learner modeling, platform docs, and verification belong in `open-education-suite`.
+- Domain curricula, resource libraries, exercises, and subject-specific examples belong in the matching `open-education-*` content repo.
 
-## How to Contribute
+## Adding a New Content Repo
 
-### 1. Add Tools
-Place new tools under `tools/` with:
-- README  
-- Usage examples  
-- Dependencies  
-
-### 2. Add Study Plans
-Place new plans under `study-plans/` with:
-- Clear structure  
-- Resource links  
-- Milestones  
-
-### 3. Add Resources
-Place curated resources under `resources/` with:
-- Title  
-- Link  
-- Description  
-
-### 4. Improve Documentation
-Update:
-- README.md  
-- WORKFLOW.md  
-- USAGE.md  
-- Architecture docs  
-
----
+1. Create a sibling repo under `F:\dev`.
+2. Add `content-repo.json`, `study-plans/`, and `resources/`.
+3. Register it in `content-sources.json`.
+4. Run `.\scripts\codex-verify.ps1`.
 
 ## Pull Request Guidelines
 
-- Keep PRs focused  
-- Include documentation updates  
-- Follow folder conventions  
-- Use clear commit messages  
+- Keep platform and content changes separate unless the contract changes require both.
+- Preserve public paths and manifest fields unless the change is intentional.
+- Include verification results in the PR description.
+- Keep generated artifacts out of source folders.

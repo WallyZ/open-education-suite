@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "learnerId": "fixture-learner",
+  "profile": {
+    "learnerId": "fixture-learner",
+    "goals": [ "software-development:objectives/debugging" ],
+    "constraints": [ "short-evening-sessions" ],
+    "preferences": {
+      "explanationStyle": "worked-example",
+      "practiceMode": "scaffolded"
+    },
+    "accommodations": [ "low-distraction-output" ],
+    "priorExperience": [ "basic-csharp" ]
+  },
+  "mastery": [
+    {
+      "objectiveId": "software-development:objectives/debugging",
+      "confidence": 0.42,
+      "lastEvidenceAt": "2026-05-24T15:00:00Z",
+      "evidenceCount": 2,
+      "evidenceSources": [ "quiz" ]
+    }
+  ],
+  "misconceptions": [],
+  "reviewQueue": [
+    {
+      "objectiveId": "software-development:objectives/debugging",
+      "dueAt": "2026-05-25T15:00:00Z",
+      "reason": "low-confidence"
+    }
+  ],
+  "learningEvents": [
+    {
+      "eventId": "evt-fixture-001",
+      "learnerId": "fixture-learner",
+      "verb": "quiz_answered",
+      "objectId": "software-development:objectives/debugging",
+      "occurredAt": "2026-05-24T15:00:00Z",
+      "result": {
+        "success": false,
+        "score": 0.4
+      },
+      "xapiCandidate": {
+        "actor": "fixture-learner",
+        "verb": "answered",
+        "object": "software-development:objectives/debugging",
+        "result": {
+          "success": false,
+          "score": 0.4
+        }
+      }
+    }
+  ],
+  "auditLog": [
+    {
+      "at": "2026-05-24T15:00:00Z",
+      "objectiveId": "software-development:objectives/debugging",
+      "oldConfidence": 0.35,
+      "newConfidence": 0.42,
+      "evidenceSource": "quiz",
+      "reason": "fixture baseline"
+    }
+  ],
+  "privacy": {
+    "piiPolicy": "fixtures-use-non-identifying-ids",
+    "redactionFields": [ "profile.accommodations", "profile.constraints" ],
+    "localOnly": true
+  },
+  "sync": {
+    "mode": "local",
+    "lastSyncedAt": null,
+    "conflictPolicy": "append-events-and-recompute-mastery"
+  }
+}

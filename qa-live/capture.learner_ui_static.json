@@ -1,0 +1,184 @@
+{
+  "base_url": "http://127.0.0.1:8786",
+  "capture_id": "open-education-learner-ui-static",
+  "endpoints": [
+    {
+      "expect_status": 200,
+      "expect_text": [
+        "data-view=\"lecture\"",
+        "id=\"runSessionButton\"",
+        "id=\"liveTeacherButton\"",
+        "id=\"liveTeacherLog\"",
+        "src=\"locales/en.js\"",
+        "data-l10n=\"labels.workspaceTitle\"",
+        "src=\"session-data.js\"",
+        "id=\"sourceSelect\"",
+        "id=\"courseSelect\"",
+        "id=\"objectiveList\"",
+        "Course navigation",
+        "id=\"analyticsSummary\"",
+        "id=\"analyticsEvidenceList\"",
+        "No clickstream or time-spent tracking",
+        "data-view=\"handoff\"",
+        "id=\"handoffBlockers\"",
+        "id=\"handoffInterventions\"",
+        "id=\"contentHealthList\"",
+        "Operator review only. No learner-state mutation.",
+        "id=\"lectureProgress\"",
+        "id=\"lectureCheckpoints\"",
+        "data-view=\"assessment\"",
+        "id=\"assessmentModeControls\"",
+        "id=\"assessmentRenderSurface\"",
+        "id=\"saveAssessmentButton\"",
+        "id=\"saveStateButton\"",
+        "id=\"stateExchange\"",
+        "id=\"syncPreviewButton\"",
+        "GDEV-101 Game Design Foundations"
+      ],
+      "id": "learner-html",
+      "path": "/ui/learner/index.html"
+    },
+    {
+      "expect_status": 200,
+      "expect_text": [
+        "openEducationSessionOutput",
+        "openEducationLocale",
+        "localeConfig",
+        "applyLocalizedLabels",
+        "formatLocaleDate",
+        "feedbackText",
+        "openEducationContentCatalog",
+        "currentContentCatalog",
+        "buildSessionFromStartSession",
+        "renderCourseNavigation",
+        "renderLearnerAnalytics",
+        "renderOperatorHandoff",
+        "runDeterministicSessionTurn",
+        "refreshLiveTeacherStatus",
+        "invokeLiveTeacher",
+        "openEducationLearnerState",
+        "saveLearnerState",
+        "exportLearnerState",
+        "importLearnerState",
+        "previewLearnerStateSync",
+        "assessmentModes",
+        "renderAssessment",
+        "saveAssessmentEvidence",
+        "openEducationAssessmentEvidence",
+        "multiple-choice",
+        "short-answer",
+        "project-rubric",
+        "oral-explained-answer",
+        "append-events-and-recompute-mastery",
+        "Session bridge request sent.",
+        "/api/session/start",
+        "/api/teacher/live",
+        "Live AI teacher disabled by operator setting.",
+        "normalizeLecture",
+        "openEducationLectureResume",
+        "openEducationLectureCheckpoints",
+        "Checkpoint answer is empty.",
+        "Checkpoint saved to learner state as an evidence proposal.",
+        "function saveCheckpoint"
+      ],
+      "id": "learner-js",
+      "path": "/ui/learner/app.js"
+    },
+    {
+      "expect_status": 200,
+      "expect_text": [
+        "window.openEducationLocale",
+        "locale: \"en-US\"",
+        "objectiveNames",
+        "dateStyle: \"medium\"",
+        "feedback",
+        "Assessment response saved locally as an evidence proposal."
+      ],
+      "id": "learner-locale-en",
+      "path": "/ui/learner/locales/en.js"
+    },
+    {
+      "expect_status": 200,
+      "expect_text": [
+        "window.openEducationSessionOutput",
+        "window.openEducationLecturePackage",
+        "window.openEducationContentCatalog",
+        "learnerProfile",
+        "sourceProvenance",
+        "game-development:objectives/course/gdev-102/programming-fundamentals",
+        "lecture-video:gdev-101-design-vocabulary-short"
+      ],
+      "id": "learner-session-data",
+      "path": "/ui/learner/session-data.js"
+    },
+    {
+      "expect_status": 200,
+      "expect_text": [
+        "\"session\"",
+        "\"lecturePackage\"",
+        "\"contentCatalog\"",
+        "scripts/teaching/start-session.ps1",
+        "game-development:objectives/course/gdev-101/design-vocabulary",
+        "game-development:objectives/course/gdev-102/programming-fundamentals"
+      ],
+      "id": "learner-session-api",
+      "path": "/api/session/start"
+    },
+    {
+      "expect_status": 200,
+      "expect_text": [
+        "\"generatedFrom\": \"scripts/ingestion/scan-content-sources.ps1\"",
+        "\"sourceId\": \"game-development\"",
+        "\"sourceId\": \"software-development\"",
+        "game-development:objectives/course/gdev-102/programming-fundamentals",
+        "software-development:objectives/debugging"
+      ],
+      "id": "learner-content-catalog-api",
+      "path": "/api/content/catalog"
+    },
+    {
+      "expect_status": 200,
+      "expect_text": [
+        "\"enabled\": false",
+        "\"setting\": \"--enable-live-ai\"",
+        "scripts/ai/invoke-openai-teacher.ps1"
+      ],
+      "id": "learner-live-ai-status",
+      "path": "/api/teacher/live/status"
+    },
+    {
+      "expect_status": 200,
+      "expect_text": [
+        ".lecture-layout",
+        ".course-browser",
+        ".objective-chip",
+        ".analytics-panel",
+        ".analytics-card",
+        ".handoff-grid",
+        ".handoff-column",
+        ".lecture-frame",
+        ".checkpoint-card",
+        ".assessment-mode-controls",
+        ".assessment-card",
+        ".assessment-option",
+        ".state-panel"
+      ],
+      "id": "learner-css",
+      "path": "/ui/learner/styles.css"
+    }
+  ],
+  "health_path": "/ui/learner/index.html",
+  "poll_interval_seconds": 0.25,
+  "repo_root": ".",
+  "startup_command": [
+    "{python}",
+    ".\\scripts\\teaching\\learner_ui_bridge_server.py",
+    "--repo-root",
+    ".",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "8786"
+  ],
+  "timeout_seconds": 20
+}

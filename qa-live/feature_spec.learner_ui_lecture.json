@@ -1,0 +1,402 @@
+{
+  "browser_diagnostics": {
+    "fail_on_console_errors": true,
+    "fail_on_network_failures": true
+  },
+  "feature_id": "open-education-learner-ui-lecture",
+  "name": "Open Education learner UI lecture flow",
+  "objective": "Open the learner workspace like a human, navigate to the generated lecture, verify transcript and provenance, use playback controls, answer a checkpoint, and confirm the checkpoint is saved locally as an evidence proposal.",
+  "safety": {
+    "credentials": false,
+    "destructive": false,
+    "network": "local-only"
+  },
+  "scenarios": [
+    {
+      "actions": [
+        {
+          "description": "Open the learner workspace",
+          "kind": "navigate",
+          "target": "/ui/learner/index.html"
+        },
+        {
+          "description": "Confirm the learner workspace is visible",
+          "kind": "assert_visible_text",
+          "target": "Learner Workspace"
+        },
+        {
+          "description": "Confirm course navigation catalog is visible",
+          "kind": "assert_visible_text",
+          "target": "Course navigation"
+        },
+        {
+          "description": "Browse to the software-development content source",
+          "kind": "select_option",
+          "target": "#sourceSelect",
+          "value": "software-development"
+        },
+        {
+          "description": "Confirm source-level objectives are visible when no course catalog exists",
+          "kind": "assert_visible_text",
+          "target": "Debugging"
+        },
+        {
+          "description": "Return to the game-development content source",
+          "kind": "select_option",
+          "target": "#sourceSelect",
+          "value": "game-development"
+        },
+        {
+          "description": "Browse to another GDEV course",
+          "kind": "select_option",
+          "target": "#courseSelect",
+          "value": "game-development:study-plans/courses/GDEV-102-programming-for-games.md"
+        },
+        {
+          "description": "Confirm course objectives are rendered",
+          "kind": "assert_visible_text",
+          "target": "Programming Fundamentals"
+        },
+        {
+          "description": "Inspect a course objective without mutating the learner session",
+          "kind": "click",
+          "target": "[data-objective-id=\"game-development:objectives/course/gdev-102/programming-fundamentals\"]"
+        },
+        {
+          "description": "Confirm objective selection is navigation-only",
+          "kind": "assert_visible_text",
+          "target": "Objective selected for inspection: Programming Fundamentals"
+        },
+        {
+          "description": "Run the deterministic teaching turn through the local bridge",
+          "kind": "click",
+          "target": "#runSessionButton"
+        },
+        {
+          "description": "Confirm the UI started the local bridge request",
+          "kind": "assert_visible_text",
+          "target": "Session bridge request sent."
+        },
+        {
+          "description": "Confirm the local bridge returns the deterministic teaching turn",
+          "kind": "api_call",
+          "target": "POST /api/session/start",
+          "value": "{\"expect_status\":200,\"expect_json\":{\"source\":\"scripts/teaching/start-session.ps1\"},\"expect_text\":[\"\\\"session\\\"\",\"\\\"lecturePackage\\\"\",\"\\\"contentCatalog\\\"\",\"game-development:objectives/course/gdev-101/design-vocabulary\",\"game-development:objectives/course/gdev-102/programming-fundamentals\"]}"
+        },
+        {
+          "description": "Confirm live teacher calls are disabled unless the operator enables them",
+          "kind": "api_call",
+          "target": "POST /api/teacher/live",
+          "value": "{\"expect_status\":403,\"expect_json\":{\"error\":\"live-ai-disabled\",\"requiredSetting\":\"--enable-live-ai\"},\"expect_text\":[\"Live AI teacher invocation is disabled by operator setting.\"]}"
+        },
+        {
+          "description": "Open the lecture tab",
+          "kind": "click",
+          "target": "text=Lecture"
+        },
+        {
+          "description": "Confirm the generated lecture title is visible",
+          "kind": "assert_visible_text",
+          "target": "Design Vocabulary: Verbs, Goals, and Feedback"
+        },
+        {
+          "description": "Confirm generated instructor disclosure is visible",
+          "kind": "assert_visible_text",
+          "target": "This lecture uses an original generated instructor"
+        },
+        {
+          "description": "Confirm the transcript contains the core vocabulary explanation",
+          "kind": "assert_text",
+          "target": "A verb is what the player can do."
+        },
+        {
+          "description": "Confirm the lecture carries source provenance",
+          "kind": "assert_text",
+          "target": "open-education-game-development / study-plans\\courses\\GDEV-101-game-design-foundations.md"
+        },
+        {
+          "description": "Start lecture playback",
+          "kind": "click",
+          "target": "text=Play lecture"
+        },
+        {
+          "description": "Confirm playback can pause",
+          "kind": "assert_text",
+          "target": "Pause lecture"
+        },
+        {
+          "description": "Pause lecture playback",
+          "kind": "click",
+          "target": "text=Pause lecture"
+        },
+        {
+          "description": "Confirm playback returns to play state",
+          "kind": "assert_text",
+          "target": "Play lecture"
+        },
+        {
+          "description": "Open the progress tab",
+          "kind": "click",
+          "target": "text=Progress"
+        },
+        {
+          "description": "Confirm learner analytics use evidence framing",
+          "kind": "assert_visible_text",
+          "target": "Evidence view"
+        },
+        {
+          "description": "Confirm analytics avoid surveillance-style tracking",
+          "kind": "assert_visible_text",
+          "target": "No clickstream or time-spent tracking"
+        },
+        {
+          "description": "Return to the lecture tab",
+          "kind": "click",
+          "target": "text=Lecture"
+        },
+        {
+          "description": "Open the operator handoff tab",
+          "kind": "click",
+          "target": "[data-view=\"handoff\"]"
+        },
+        {
+          "description": "Confirm operator handoff view is visible",
+          "kind": "assert_visible_text",
+          "target": "Operator handoff"
+        },
+        {
+          "description": "Confirm handoff includes blockers",
+          "kind": "assert_visible_text",
+          "target": "Blockers"
+        },
+        {
+          "description": "Confirm handoff includes intervention suggestions",
+          "kind": "assert_visible_text",
+          "target": "Interventions"
+        },
+        {
+          "description": "Confirm handoff includes content health",
+          "kind": "assert_visible_text",
+          "target": "Content health"
+        },
+        {
+          "description": "Confirm handoff is review-only",
+          "kind": "assert_visible_text",
+          "target": "Operator review only. No learner-state mutation."
+        },
+        {
+          "description": "Return to the lecture tab",
+          "kind": "click",
+          "target": "[data-view=\"lecture\"]"
+        },
+        {
+          "description": "Jump to the practice handoff chapter",
+          "kind": "click",
+          "target": "text=Practice Handoff"
+        },
+        {
+          "description": "Confirm chapter seeking updates the resume position",
+          "kind": "assert_visible_text",
+          "target": "2:15 / 3:00"
+        },
+        {
+          "description": "Try to save an empty checkpoint answer",
+          "kind": "click",
+          "target": "[data-checkpoint-save=\"identify-vgf\"]"
+        },
+        {
+          "description": "Confirm empty checkpoint answers are rejected",
+          "kind": "assert_visible_text",
+          "target": "Checkpoint answer is empty."
+        },
+        {
+          "description": "Answer the first checkpoint",
+          "kind": "fill",
+          "target": "#checkpoint-identify-vgf",
+          "value": "Jump, reach the flag, and hear a success sound."
+        },
+        {
+          "description": "Save the checkpoint evidence proposal",
+          "kind": "click",
+          "target": "[data-checkpoint-save=\"identify-vgf\"]"
+        },
+        {
+          "description": "Confirm checkpoint save feedback",
+          "kind": "assert_visible_text",
+          "target": "Checkpoint saved to learner state as an evidence proposal."
+        },
+        {
+          "description": "Open the assessment tab",
+          "kind": "click",
+          "target": "text=Assessment"
+        },
+        {
+          "description": "Confirm assessment studio is visible",
+          "kind": "assert_visible_text",
+          "target": "Assessment Studio"
+        },
+        {
+          "description": "Select a multiple choice answer",
+          "kind": "click",
+          "target": "#mcq-1"
+        },
+        {
+          "description": "Save the multiple choice evidence proposal",
+          "kind": "click",
+          "target": "#saveAssessmentButton"
+        },
+        {
+          "description": "Confirm multiple choice assessment save feedback",
+          "kind": "assert_visible_text",
+          "target": "Assessment response saved locally as an evidence proposal."
+        },
+        {
+          "description": "Open short answer assessment mode",
+          "kind": "click",
+          "target": "[data-assessment-mode=\"short-answer\"]"
+        },
+        {
+          "description": "Answer the short answer assessment",
+          "kind": "fill",
+          "target": "#assessmentShortAnswer",
+          "value": "Feedback changes the next decision by making the result of a player action visible."
+        },
+        {
+          "description": "Save the short answer evidence proposal",
+          "kind": "click",
+          "target": "#saveAssessmentButton"
+        },
+        {
+          "description": "Open project rubric assessment mode",
+          "kind": "click",
+          "target": "[data-assessment-mode=\"project-rubric\"]"
+        },
+        {
+          "description": "Check one project rubric criterion",
+          "kind": "click",
+          "target": "#rubric-0"
+        },
+        {
+          "description": "Save the project rubric evidence proposal",
+          "kind": "click",
+          "target": "#saveAssessmentButton"
+        },
+        {
+          "description": "Open oral explained-answer assessment mode",
+          "kind": "click",
+          "target": "[data-assessment-mode=\"oral-explained-answer\"]"
+        },
+        {
+          "description": "Enter an oral explanation transcript",
+          "kind": "fill",
+          "target": "#oralExplanation",
+          "value": "I chose a short jump because it gives the player a low-risk way to test timing and feedback."
+        },
+        {
+          "description": "Save the oral explained-answer evidence proposal",
+          "kind": "click",
+          "target": "#saveAssessmentButton"
+        },
+        {
+          "description": "Confirm oral assessment save feedback",
+          "kind": "assert_visible_text",
+          "target": "Assessment response saved locally as an evidence proposal."
+        },
+        {
+          "description": "Open the evidence tab",
+          "kind": "click",
+          "target": "text=Evidence"
+        },
+        {
+          "description": "Save learner state locally",
+          "kind": "click",
+          "target": "#saveStateButton"
+        },
+        {
+          "description": "Confirm local learner-state save feedback",
+          "kind": "assert_visible_text",
+          "target": "Learner state saved locally."
+        },
+        {
+          "description": "Export learner state",
+          "kind": "click",
+          "target": "#exportStateButton"
+        },
+        {
+          "description": "Confirm learner-state export feedback",
+          "kind": "assert_visible_text",
+          "target": "Learner state export ready."
+        },
+        {
+          "description": "Preview sync for the exported learner state",
+          "kind": "click",
+          "target": "#syncPreviewButton"
+        },
+        {
+          "description": "Confirm sync preview is non-mutating",
+          "kind": "assert_visible_text",
+          "target": "No state was changed."
+        },
+        {
+          "description": "Prepare imported learner state",
+          "kind": "fill",
+          "target": "#stateExchange",
+          "value": "{\"schemaVersion\":1,\"learnerId\":\"imported-learner\",\"profile\":{\"learnerId\":\"imported-learner\",\"goals\":[\"game-development:objectives/course/gdev-101/design-vocabulary\"],\"constraints\":[],\"preferences\":{\"explanationStyle\":\"direct\",\"practiceMode\":\"guided\"},\"accommodations\":[],\"priorExperience\":[]},\"mastery\":[{\"objectiveId\":\"game-development:objectives/course/gdev-101/design-vocabulary\",\"confidence\":0.25,\"lastEvidenceAt\":\"2026-05-25T12:00:00Z\",\"evidenceCount\":1,\"evidenceSources\":[\"checkpoint\"]}],\"misconceptions\":[],\"reviewQueue\":[],\"learningEvents\":[{\"eventId\":\"evt-imported-001\",\"learnerId\":\"imported-learner\",\"verb\":\"answered\",\"objectId\":\"game-development:objectives/course/gdev-101/design-vocabulary\",\"occurredAt\":\"2026-05-25T12:00:00Z\",\"result\":{\"success\":true,\"score\":1},\"xapiCandidate\":{\"actor\":\"imported-learner\",\"verb\":\"answered\",\"object\":\"game-development:objectives/course/gdev-101/design-vocabulary\",\"result\":{\"success\":true,\"score\":1}}}],\"auditLog\":[],\"privacy\":{\"piiPolicy\":\"fixtures-use-non-identifying-ids\",\"redactionFields\":[],\"localOnly\":true},\"sync\":{\"mode\":\"local\",\"lastSyncedAt\":null,\"conflictPolicy\":\"append-events-and-recompute-mastery\"}}"
+        },
+        {
+          "description": "Preview conflict-safe sync for imported state",
+          "kind": "click",
+          "target": "#syncPreviewButton"
+        },
+        {
+          "description": "Confirm sync preview reports incoming events and mastery conflicts",
+          "kind": "assert_visible_text",
+          "target": "Sync preview: 1 new events, 1 mastery conflicts"
+        },
+        {
+          "description": "Import learner state locally",
+          "kind": "click",
+          "target": "#importStateButton"
+        },
+        {
+          "description": "Confirm learner-state import feedback",
+          "kind": "assert_visible_text",
+          "target": "Learner state imported locally."
+        },
+        {
+          "description": "Reload the page to verify lecture resume persistence",
+          "kind": "probe_refresh",
+          "target": "/ui/learner/index.html"
+        },
+        {
+          "description": "Return to the lecture tab after reload",
+          "kind": "click",
+          "target": "text=Lecture"
+        },
+        {
+          "description": "Confirm saved chapter position is restored",
+          "kind": "assert_visible_text",
+          "target": "2:15 / 3:00"
+        }
+      ],
+      "evidence": [
+        "screenshot",
+        "trace",
+        "console_log",
+        "network_summary"
+      ],
+      "expected_visible_text": [
+        "Design Vocabulary: Verbs, Goals, and Feedback",
+        "This lecture uses an original generated instructor",
+        "2:15 / 3:00"
+      ],
+      "id": "learner-generated-lecture-checkpoint",
+      "name": "Use generated lecture and save checkpoint",
+      "route": "/ui/learner/index.html"
+    }
+  ],
+  "target": {
+    "base_url": "http://127.0.0.1:8786",
+    "health_path": "/ui/learner/index.html"
+  }
+}

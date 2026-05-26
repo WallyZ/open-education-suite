@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "checks": [
+    {
+      "objectiveId": "software-development:objectives/debugging",
+      "predictedConfidence": 0.48,
+      "laterEvidenceScore": 0.55,
+      "tolerance": 0.20
+    },
+    {
+      "objectiveId": "game-development:objectives/blueprint-to-cpp",
+      "predictedConfidence": 0.90,
+      "laterEvidenceScore": 0.86,
+      "tolerance": 0.15
+    },
+    {
+      "objectiveId": "cybersecurity:objectives/network-fundamentals",
+      "predictedConfidence": 0.62,
+      "laterEvidenceScore": 0.58,
+      "tolerance": 0.20
+    }
+  ]
+}

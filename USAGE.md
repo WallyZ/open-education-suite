@@ -1,56 +1,50 @@
 # Usage Guide
 
-This guide explains how to use the tools, templates, and resources in the Open Education Suite.
+This repo is the teaching platform, not the curriculum library. Use it to ingest subject content from sibling repos and adapt instruction to each learner.
 
----
+## 1. Register Content Sources
 
-## 1. Generating Flashcards
+Content sources are listed in `content-sources.json`. Each source points to a sibling repo that contains a `content-repo.json` manifest plus `study-plans/` and `resources/` folders.
 
-### PDF → Anki Pipeline
-1. Place your PDF in `tools/pdf-to-anki/input/`
-2. Run the flashcard generation script (see tool README)
-3. Import the generated `.apkg` file into Anki
+Default local layout:
 
-Use this for:
-- Textbooks  
-- Lecture notes  
-- Research papers  
+```text
+F:\dev\
+  open-education-suite\
+  open-education-cybersecurity\
+  open-education-data-science\
+  open-education-game-development\
+  open-education-software-development\
+```
 
----
+## 2. Add or Update Subject Content
 
-## 2. Creating a Study Plan
+Make domain-specific changes in the matching content repo:
 
-1. Copy the template from `study-plans/templates/study-plan-template.md`
-2. Fill in:
-   - Goals  
-   - Resources  
-   - Milestones  
-   - Review schedule  
-3. Save it under the appropriate discipline folder
+- Study plans and course paths go in that repo's `study-plans/`.
+- Resource libraries, videos, references, and exercises go in that repo's `resources/`.
+- Platform-neutral metadata goes in that repo's `content-repo.json`.
 
----
+## 3. Ingest Content
 
-## 3. Adding Resources
+The core suite should ingest from the registered manifests, normalize content into internal learning objects, and keep source attribution back to the content repo.
 
-Place new resources under:
-- `resources/textbooks/`  
-- `resources/courses/`  
-- `resources/youtube/`  
-- `resources/practice-sites/`  
+The first implementation target is a read-only local ingestion pass:
 
-Each resource should include:
-- Title  
-- Link  
-- Description  
-- Recommended audience  
+1. Read `content-sources.json`.
+2. Resolve each content repo.
+3. Read each `content-repo.json`.
+4. Index study plans, resources, assessments, and metadata.
+5. Report missing or malformed sources without mutating the content repos.
 
----
+## 4. Teach Adaptively
 
-## 4. Running Automation Scripts
+The teaching loop should combine:
 
-Scripts live under `scripts/` and may include:
-- Setup helpers  
-- Ingestion pipelines  
-- Automation workflows  
+- learner profile and goals
+- current mastery estimates
+- content graph prerequisites
+- practice history and review timing
+- feedback from quizzes, projects, and conversations
 
-Refer to each script’s README for usage details.
+The teacher should adapt sequence, explanation style, review cadence, and remediation while keeping content provenance visible.

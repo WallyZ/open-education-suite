@@ -1,0 +1,81 @@
+{
+  "base_url": "http://127.0.0.1:8786",
+  "browser_specs": [
+    "feature_spec.learner_ui_lecture.json"
+  ],
+  "health_path": "/ui/learner/index.html",
+  "host_execution_opt_out_reason": "Open Education learner UI live smoke uses a local-only static HTTP server and non-destructive browser actions until VM handoff is provisioned.",
+  "http_captures": [
+    "capture.learner_ui_static.json"
+  ],
+  "isolation": "host",
+  "poll_interval_seconds": 0.25,
+  "preflight_commands": [
+    {
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        ".\\scripts\\testing\\check-learner-ui.ps1"
+      ],
+      "expect_exit_code": 0,
+      "id": "learner-ui-static-check",
+      "timeout_seconds": 30
+    },
+    {
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        ".\\scripts\\quality\\check-lecture-video.ps1"
+      ],
+      "expect_exit_code": 0,
+      "id": "lecture-video-check",
+      "timeout_seconds": 30
+    }
+  ],
+  "preflight_requirements": [
+    {
+      "id": "learner-ui-html",
+      "path": "ui\\learner\\index.html"
+    },
+    {
+      "id": "learner-ui-script",
+      "path": "ui\\learner\\app.js"
+    },
+    {
+      "id": "learner-ui-session-bridge",
+      "path": "scripts\\teaching\\learner_ui_bridge_server.py"
+    },
+    {
+      "id": "learner-ui-styles",
+      "path": "ui\\learner\\styles.css"
+    },
+    {
+      "id": "lecture-fixture",
+      "path": "fixtures\\lecture-video.gdev-101-design-vocabulary.json"
+    },
+    {
+      "id": "node-playwright-package",
+      "path": "node_modules\\@playwright\\test\\package.json"
+    }
+  ],
+  "repo_root": ".",
+  "startup_command": [
+    "{python}",
+    ".\\scripts\\teaching\\learner_ui_bridge_server.py",
+    "--repo-root",
+    ".",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "8786"
+  ],
+  "teardown_policy": "always",
+  "timeout_seconds": 20,
+  "workflow_id": "open-education-learner-ui-live"
+}

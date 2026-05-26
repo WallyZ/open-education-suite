@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "now": "2026-05-25T12:00:00Z",
+  "expectations": [
+    {
+      "learnerId": "new",
+      "actionType": "lesson",
+      "reason": "no-mastery-evidence"
+    },
+    {
+      "learnerId": "struggling",
+      "actionType": "remediation",
+      "reason": "unresolved-misconception"
+    },
+    {
+      "learnerId": "advancing",
+      "actionType": "project",
+      "reason": "ready-to-advance"
+    },
+    {
+      "learnerId": "reviewing",
+      "actionType": "review",
+      "reason": "spaced-review-due"
+    },
+    {
+      "learnerId": "returning-after-gap",
+      "actionType": "review",
+      "reason": "spaced-review-due"
+    }
+  ]
+}

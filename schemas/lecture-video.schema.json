@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "lecturePackage": {
+    "required": [
+      "schemaVersion",
+      "packageId",
+      "title",
+      "contentSource",
+      "objectiveIds",
+      "durationSeconds",
+      "lessonMode",
+      "renderStatus",
+      "generatedInstructor",
+      "sourceReview",
+      "citations",
+      "script",
+      "storyboard",
+      "transcript",
+      "captions",
+      "chapters",
+      "slides",
+      "media",
+      "licenseAudit",
+      "qaStatus",
+      "operatorReview",
+      "adaptiveHooks"
+    ]
+  },
+  "definitions": {
+    "contentSource": {
+      "required": [
+        "sourceId",
+        "sourceRepo",
+        "sourcePath",
+        "title"
+      ]
+    },
+    "generatedInstructor": {
+      "required": [
+        "personaId",
+        "disclosure",
+        "voiceConsent",
+        "likenessConsent",
+        "realPersonClone",
+        "tone"
+      ]
+    },
+    "sourceReview": {
+      "required": [
+        "sourceType",
+        "title",
+        "usedFor",
+        "copyingAllowed"
+      ]
+    },
+    "citation": {
+      "required": [
+        "citationId",
+        "sourceId",
+        "sourceRepo",
+        "sourcePath",
+        "claim"
+      ]
+    },
+    "storyboardScene": {
+      "required": [
+        "sceneId",
+        "startSecond",
+        "endSecond",
+        "visual",
+        "narrationCue",
+        "citationIds"
+      ]
+    },
+    "captionTrack": {
+      "required": [
+        "format",
+        "language",
+        "text"
+      ]
+    },
+    "slideAsset": {
+      "required": [
+        "slideId",
+        "title",
+        "path",
+        "altText",
+        "attribution"
+      ]
+    },
+    "mediaAsset": {
+      "required": [
+        "assetId",
+        "type",
+        "path",
+        "sha256",
+        "status",
+        "requiredForPublish"
+      ],
+      "statusValues": [
+        "planned",
+        "rendered",
+        "archived"
+      ]
+    },
+    "licenseAudit": {
+      "required": [
+        "status",
+        "externalHostDependency",
+        "requiredInstructionArchive",
+        "blockedMaterials"
+      ]
+    },
+    "qaStatus": {
+      "required": [
+        "status",
+        "checks"
+      ],
+      "requiredChecks": [
+        "source-grounding",
+        "license-safety",
+        "accessibility",
+        "active-recall",
+        "assessment-handoff"
+      ]
+    },
+    "operatorReview": {
+      "required": [
+        "workflowId",
+        "publishStatus",
+        "stages",
+        "finalApproval"
+      ],
+      "requiredStages": [
+        "script",
+        "visuals",
+        "media",
+        "accessibility",
+        "license-persona",
+        "final-package"
+      ],
+      "allowedStatuses": [
+        "pending",
+        "approved",
+        "changes-requested",
+        "rejected"
+      ],
+      "allowedPublishStatuses": [
+        "not-ready",
+        "approved-for-publish",
+        "changes-requested",
+        "rejected"
+      ]
+    },
+    "adaptiveHooks": {
+      "required": [
+        "availableModes",
+        "checkpointPolicy",
+        "checkpoints",
+        "followUpAction"
+      ]
+    }
+  }
+}

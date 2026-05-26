@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "benchmarks": [
+    {
+      "learnerId": "bored",
+      "risk": "low-challenge",
+      "expectedTeacherMove": "increase-difficulty-with-transfer-task"
+    },
+    {
+      "learnerId": "anxious",
+      "risk": "confidence-drop",
+      "expectedTeacherMove": "small-step-scaffold-with-clear-success-criteria"
+    },
+    {
+      "learnerId": "overconfident",
+      "risk": "false-mastery",
+      "expectedTeacherMove": "ask-transfer-question-before-advancing"
+    },
+    {
+      "learnerId": "confused",
+      "risk": "misconception",
+      "expectedTeacherMove": "diagnose-with-socratic-question"
+    },
+    {
+      "learnerId": "advanced",
+      "risk": "underchallenge",
+      "expectedTeacherMove": "project-or-transfer-task"
+    },
+    {
+      "learnerId": "returning",
+      "risk": "forgetting",
+      "expectedTeacherMove": "recap-and-spaced-review"
+    },
+    {
+      "learnerId": "time-constrained",
+      "risk": "overload",
+      "expectedTeacherMove": "short-focused-practice"
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "providerSetId": "lecture-production-providers-v1",
+  "defaultProviderId": "local-comfyui",
+  "credentialPolicy": "No provider credentials, tokens, endpoints, or account ids may be committed. Cloud adapters must read secrets from environment variables or a local-only secret store.",
+  "artifactPolicy": "Every required production artifact must be downloaded or copied into var\\lecture-media, recorded in lecture-video.json, and verified with a SHA-256 checksum before publish.",
+  "providers": [
+    {
+      "providerId": "local-comfyui",
+      "type": "local",
+      "label": "Local ComfyUI Automation",
+      "integrationRepo": "ComfyUI-automation",
+      "localPath": "..\\ComfyUI-automation",
+      "capabilities": [
+        "visual-render",
+        "avatar-render",
+        "video-assembly"
+      ],
+      "workflowRoot": "workflows",
+      "workflowMappings": [
+        {
+          "stage": "visuals",
+          "workflowPath": "workflows\\simple-square-1024x1024-api.json"
+        },
+        {
+          "stage": "avatar",
+          "workflowPath": "workflows\\sfw-starter-pack.json"
+        },
+        {
+          "stage": "assembly",
+          "workflowPath": "workflows\\comfyui-submit-wait-get-output-shape.json"
+        }
+      ],
+      "enabledByDefault": true,
+      "credentialEnvVars": [],
+      "outputPolicy": "copy-to-local-archive-and-checksum"
+    },
+    {
+      "providerId": "cloud-tts",
+      "type": "cloud",
+      "label": "Approved Cloud TTS",
+      "capabilities": [
+        "tts"
+      ],
+      "enabledByDefault": false,
+      "credentialEnvVars": [
+        "LECTURE_TTS_PROVIDER",
+        "LECTURE_TTS_API_KEY"
+      ],
+      "outputPolicy": "download-to-local-archive-and-checksum"
+    },
+    {
+      "providerId": "cloud-avatar",
+      "type": "cloud",
+      "label": "Approved Cloud Avatar",
+      "capabilities": [
+        "avatar-render"
+      ],
+      "enabledByDefault": false,
+      "credentialEnvVars": [
+        "LECTURE_AVATAR_PROVIDER",
+        "LECTURE_AVATAR_API_KEY"
+      ],
+      "outputPolicy": "download-to-local-archive-and-checksum"
+    },
+    {
+      "providerId": "cloud-video-assembly",
+      "type": "cloud",
+      "label": "Approved Cloud Video Assembly",
+      "capabilities": [
+        "video-assembly"
+      ],
+      "enabledByDefault": false,
+      "credentialEnvVars": [
+        "LECTURE_VIDEO_PROVIDER",
+        "LECTURE_VIDEO_API_KEY"
+      ],
+      "outputPolicy": "download-to-local-archive-and-checksum"
+    }
+  ],
+  "routing": [
+    {
+      "stage": "tts",
+      "preferredProviderId": "cloud-tts",
+      "fallbackProviderIds": [],
+      "publishRequirement": "audio must be copied or downloaded to var\\lecture-media with a SHA-256 checksum"
+    },
+    {
+      "stage": "visuals",
+      "preferredProviderId": "local-comfyui",
+      "fallbackProviderIds": [],
+      "publishRequirement": "visual outputs must be original or licensed, copied to var\\lecture-media, and checksummed"
+    },
+    {
+      "stage": "avatar",
+      "preferredProviderId": "local-comfyui",
+      "fallbackProviderIds": [
+        "cloud-avatar"
+      ],
+      "publishRequirement": "avatar output must use the approved persona disclosure, avoid real-person cloning without consent, and be archived with a checksum"
+    },
+    {
+      "stage": "assembly",
+      "preferredProviderId": "local-comfyui",
+      "fallbackProviderIds": [
+        "cloud-video-assembly"
+      ],
+      "publishRequirement": "final video must be local, checksummed, captioned, and approved by the operator workflow"
+    }
+  ]
+}

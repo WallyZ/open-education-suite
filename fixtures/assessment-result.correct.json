@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "itemId": "debugging-mcq-001",
+  "objectiveId": "software-development:objectives/debugging",
+  "status": "correct",
+  "score": 1.0,
+  "feedback": "Correct. This is evidence for debugger navigation mastery.",
+  "hintUsage": 1,
+  "masteryEvidence": {
+    "objectiveId": "software-development:objectives/debugging",
+    "evidenceType": "quiz",
+    "sourceItemId": "debugging-mcq-001",
+    "status": "correct",
+    "score": 1.0,
+    "hintUsage": 1,
+    "confidenceDelta": 0.06
+  }
+}

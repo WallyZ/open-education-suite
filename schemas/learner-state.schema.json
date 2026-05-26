@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "required": [
+    "schemaVersion",
+    "learnerId",
+    "profile",
+    "mastery",
+    "misconceptions",
+    "reviewQueue",
+    "learningEvents",
+    "auditLog",
+    "privacy",
+    "sync"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "integer" },
+    "learnerId": { "type": "string" },
+    "profile": {
+      "required": [ "learnerId", "goals", "constraints", "preferences", "accommodations", "priorExperience" ]
+    },
+    "mastery": {
+      "type": "array",
+      "items": {
+        "required": [ "objectiveId", "confidence", "lastEvidenceAt", "evidenceCount", "evidenceSources" ]
+      }
+    },
+    "misconceptions": {
+      "type": "array"
+    },
+    "reviewQueue": {
+      "type": "array"
+    },
+    "learningEvents": {
+      "type": "array"
+    },
+    "auditLog": {
+      "type": "array"
+    },
+    "privacy": {
+      "required": [ "piiPolicy", "redactionFields", "localOnly" ]
+    },
+    "sync": {
+      "required": [ "mode", "lastSyncedAt", "conflictPolicy" ]
+    }
+  }
+}

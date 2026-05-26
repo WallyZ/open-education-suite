@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "objectiveId": "software-development:objectives/debugging",
+  "mode": "socratic",
+  "response": "You are close. Before I give the answer, compare what happens when the debugger runs over a function call with what happens when it enters the function body. Which command would let you inspect the first line inside the called function?",
+  "citations": [
+    {
+      "sourceId": "software-development",
+      "sourceRepo": "open-education-software-development",
+      "sourcePath": "resources\\visual-studio-resource-library.md",
+      "claim": "Debugger navigation is part of the software-development resource set."
+    }
+  ],
+  "observedEvidence": [
+    "Learner is working on software-development:objectives/debugging.",
+    "Current deterministic next action is practice."
+  ],
+  "diagnosis": {
+    "type": "possible-misconception",
+    "confidence": 0.62,
+    "rationale": "The learner may be mixing up step over and step into, but the answer should be elicited before marking a misconception."
+  },
+  "nextStep": {
+    "type": "question",
+    "text": "Which command enters the called function?"
+  },
+  "stateUpdateProposal": {
+    "type": "none",
+    "reason": "No answer has been evaluated yet."
+  },
+  "selfCheck": {
+    "grounded": true,
+    "objectiveAligned": true,
+    "accessible": true,
+    "tone": "rigorous-supportive",
+    "unsupportedClaims": [],
+    "directStateMutation": false
+  }
+}

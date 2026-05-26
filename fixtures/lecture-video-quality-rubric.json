@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "rubricId": "lecture-video-quality-rubric-v1",
+  "minimumPublishScore": 3,
+  "scoreScale": {
+    "1": "missing or harmful",
+    "2": "present but weak",
+    "3": "publishable baseline",
+    "4": "strong",
+    "5": "excellent"
+  },
+  "dimensions": [
+    {
+      "dimensionId": "video-pacing",
+      "title": "Video Pacing",
+      "publishExpectation": "Segments are short enough to review, chaptered, and avoid long passive stretches without a learner action."
+    },
+    {
+      "dimensionId": "worked-examples",
+      "title": "Worked Examples",
+      "publishExpectation": "The lecture includes original concrete examples that connect the objective to observable learner work."
+    },
+    {
+      "dimensionId": "active-recall",
+      "title": "Active Recall",
+      "publishExpectation": "The learner is asked to predict, name, retrieve, or decide before the answer is revealed."
+    },
+    {
+      "dimensionId": "misconception-checks",
+      "title": "Misconception Checks",
+      "publishExpectation": "The lecture calls out likely misconceptions and uses diagnostic questions or contrasts."
+    },
+    {
+      "dimensionId": "accessibility",
+      "title": "Accessibility",
+      "publishExpectation": "Captions, transcript, chapters, slide alt text, and non-visual narration are present."
+    },
+    {
+      "dimensionId": "assessment-handoff",
+      "title": "Assessment Handoff",
+      "publishExpectation": "The lecture ends with a practice or assessment artifact that can create evidence without counting watch completion as mastery."
+    }
+  ],
+  "fixtureScores": [
+    {
+      "packageId": "lecture-video:gdev-101-design-vocabulary-short",
+      "scores": {
+        "video-pacing": 3,
+        "worked-examples": 3,
+        "active-recall": 3,
+        "misconception-checks": 3,
+        "accessibility": 3,
+        "assessment-handoff": 3
+      },
+      "notes": "Deterministic fixture meets the publishable baseline for each video-specific teaching dimension."
+    }
+  ]
+}

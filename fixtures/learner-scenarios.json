@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "generatedFor": "adaptive-teacher-regression",
+  "learners": [
+    {
+      "learnerId": "new",
+      "profile": {
+        "learnerId": "new",
+        "goals": [ "game-development:objectives/unreal-basics" ],
+        "constraints": [ "10-hours-per-week" ],
+        "preferences": { "explanationStyle": "stepwise", "practiceMode": "guided" },
+        "accommodations": [],
+        "priorExperience": []
+      },
+      "objectiveMastery": [
+        {
+          "objectiveId": "game-development:objectives/unreal-basics",
+          "confidence": 0.0,
+          "lastEvidenceAt": null,
+          "evidenceCount": 0,
+          "evidenceSources": []
+        }
+      ],
+      "misconceptions": [],
+      "learningEvents": []
+    },
+    {
+      "learnerId": "struggling",
+      "profile": {
+        "learnerId": "struggling",
+        "goals": [ "software-development:objectives/debugging" ],
+        "constraints": [ "short-evening-sessions" ],
+        "preferences": { "explanationStyle": "worked-example", "practiceMode": "scaffolded" },
+        "accommodations": [ "low-distraction-output" ],
+        "priorExperience": [ "basic-csharp" ]
+      },
+      "objectiveMastery": [
+        {
+          "objectiveId": "software-development:objectives/debugging",
+          "confidence": 0.35,
+          "lastEvidenceAt": "2026-05-24T15:00:00Z",
+          "evidenceCount": 3,
+          "evidenceSources": [ "quiz", "project-checkpoint" ]
+        }
+      ],
+      "misconceptions": [
+        {
+          "misconceptionId": "debugger-step-over-vs-into",
+          "objectiveId": "software-development:objectives/debugging",
+          "status": "unresolved",
+          "observedAt": "2026-05-24T15:00:00Z",
+          "remediationPath": [ "hint", "worked-example", "micro-practice" ]
+        }
+      ],
+      "learningEvents": [
+        {
+          "eventId": "evt-struggling-001",
+          "learnerId": "struggling",
+          "verb": "practice_attempted",
+          "objectId": "software-development:objectives/debugging",
+          "occurredAt": "2026-05-24T15:00:00Z",
+          "result": { "success": false, "score": 0.4 },
+          "xapiCandidate": {
+            "actor": "struggling",
+            "verb": "attempted",
+            "object": "software-development:objectives/debugging",
+            "result": { "success": false, "score": 0.4 }
+          }
+        }
+      ]
+    },
+    {
+      "learnerId": "advancing",
+      "profile": {
+        "learnerId": "advancing",
+        "goals": [ "game-development:objectives/blueprint-to-cpp" ],
+        "constraints": [],
+        "preferences": { "explanationStyle": "concise", "practiceMode": "challenge" },
+        "accommodations": [],
+        "priorExperience": [ "unreal-blueprints", "csharp" ]
+      },
+      "objectiveMastery": [
+        {
+          "objectiveId": "game-development:objectives/blueprint-to-cpp",
+          "confidence": 0.9,
+          "lastEvidenceAt": "2026-05-24T12:00:00Z",
+          "evidenceCount": 7,
+          "evidenceSources": [ "project-checkpoint", "quiz" ]
+        }
+      ],
+      "misconceptions": [],
+      "learningEvents": []
+    },
+    {
+      "learnerId": "reviewing",
+      "profile": {
+        "learnerId": "reviewing",
+        "goals": [ "data-science:objectives/regression-basics" ],
+        "constraints": [],
+        "preferences": { "explanationStyle": "examples-first", "practiceMode": "mixed-review" },
+        "accommodations": [],
+        "priorExperience": [ "spreadsheet-analysis" ]
+      },
+      "objectiveMastery": [
+        {
+          "objectiveId": "data-science:objectives/regression-basics",
+          "confidence": 0.78,
+          "lastEvidenceAt": "2026-05-15T12:00:00Z",
+          "evidenceCount": 5,
+          "evidenceSources": [ "quiz" ]
+        }
+      ],
+      "misconceptions": [],
+      "learningEvents": []
+    },
+    {
+      "learnerId": "returning-after-gap",
+      "profile": {
+        "learnerId": "returning-after-gap",
+        "goals": [ "cybersecurity:objectives/network-fundamentals" ],
+        "constraints": [ "returning-after-break" ],
+        "preferences": { "explanationStyle": "recap-first", "practiceMode": "diagnostic" },
+        "accommodations": [],
+        "priorExperience": [ "basic-networking" ]
+      },
+      "objectiveMastery": [
+        {
+          "objectiveId": "cybersecurity:objectives/network-fundamentals",
+          "confidence": 0.62,
+          "lastEvidenceAt": "2026-04-15T12:00:00Z",
+          "evidenceCount": 4,
+          "evidenceSources": [ "quiz", "flashcard-review" ]
+        }
+      ],
+      "misconceptions": [],
+      "learningEvents": []
+    }
+  ]
+}

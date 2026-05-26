@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "promptPayload": {
+    "required": [
+      "role",
+      "objectiveId",
+      "learnerStateSummary",
+      "nextAction",
+      "sourceSnippets",
+      "constraints",
+      "desiredOutputShape",
+      "guardrails"
+    ]
+  },
+  "modelOutput": {
+    "required": [
+      "schemaVersion",
+      "objectiveId",
+      "mode",
+      "response",
+      "citations",
+      "observedEvidence",
+      "diagnosis",
+      "nextStep",
+      "stateUpdateProposal",
+      "selfCheck"
+    ]
+  },
+  "toolContract": [
+    "content.lookup",
+    "learner_state.read",
+    "next_action.read",
+    "assessment.read",
+    "state_update.propose"
+  ]
+}

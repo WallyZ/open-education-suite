@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "rulesetId": "lecture-selection-rules-v1",
+  "passiveWatchPolicy": "Never select or mark mastery from watch completion alone; only checkpoint, assessment, project, or instructor-reviewed evidence may affect mastery.",
+  "modePrecedence": [
+    "remediation-clip",
+    "full-lecture",
+    "transcript",
+    "short-segment"
+  ],
+  "modes": [
+    {
+      "mode": "full-lecture",
+      "when": "No mastery evidence exists for the objective or confidence is below 0.20.",
+      "teacherAction": "Assign the full generated lecture with checkpoints and citations."
+    },
+    {
+      "mode": "short-segment",
+      "when": "The learner has some evidence, no unresolved misconception, and needs focused review.",
+      "teacherAction": "Assign the most relevant chapter or checkpoint segment rather than the full lecture."
+    },
+    {
+      "mode": "transcript",
+      "when": "The learner has some evidence and accommodations or preferences favor low-distraction text-first review.",
+      "teacherAction": "Assign transcript-first study with citations and checkpoint prompts."
+    },
+    {
+      "mode": "remediation-clip",
+      "when": "A misconception or failed checkpoint is unresolved for the objective.",
+      "teacherAction": "Assign the misconception-check or remediation segment before more practice."
+    }
+  ],
+  "requiredRecommendationFields": [
+    "mode",
+    "reason",
+    "objectiveId",
+    "packageId",
+    "masteryImpact"
+  ],
+  "allowedModes": [
+    "full-lecture",
+    "short-segment",
+    "transcript",
+    "remediation-clip"
+  ]
+}

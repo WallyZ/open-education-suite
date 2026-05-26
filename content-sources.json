@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "contentSources": [
+    {
+      "id": "cybersecurity",
+      "title": "Open Education Cybersecurity",
+      "localPath": "../open-education-cybersecurity",
+      "contentManifest": "content-repo.json",
+      "status": "seeded-empty"
+    },
+    {
+      "id": "data-science",
+      "title": "Open Education Data Science",
+      "localPath": "../open-education-data-science",
+      "contentManifest": "content-repo.json",
+      "status": "seeded-empty"
+    },
+    {
+      "id": "game-development",
+      "title": "Open Education Game Development",
+      "localPath": "../open-education-game-development",
+      "contentManifest": "content-repo.json",
+      "status": "seeded-from-suite"
+    },
+    {
+      "id": "software-development",
+      "title": "Open Education Software Development",
+      "localPath": "../open-education-software-development",
+      "contentManifest": "content-repo.json",
+      "status": "seeded-from-suite"
+    }
+  ]
+}

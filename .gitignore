@@ -49,6 +49,15 @@ yarn-error.log
 *.log
 logs/
 debug.log
+.codex-cache/*
+!.codex-cache/task-pack.md
+.codex-cache/logs/
+.codex-cache/tmp/
+
+# -----------------------------
+# Local media archives
+# -----------------------------
+var/lecture-media/
 
 # -----------------------------
 # IDE / Editor Files

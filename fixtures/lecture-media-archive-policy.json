@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "policyId": "lecture-media-archive-policy-v1",
+  "localArchiveRoot": "var\\lecture-media",
+  "packagePathPattern": "{sourceId}\\{packageId}\\",
+  "requiredManifestFields": [
+    "media[].assetId",
+    "media[].type",
+    "media[].path",
+    "media[].sha256",
+    "media[].status",
+    "media[].requiredForPublish"
+  ],
+  "checksumAlgorithm": "sha256",
+  "checksumRule": "Rendered or archived media must record a 64-character SHA-256 checksum in lecture-video.json before publish.",
+  "renderedMediaGitPolicy": "do-not-commit-rendered-media",
+  "largeFileStorageDecision": "Store rendered lecture media in the ignored local archive for now; defer Git LFS or object storage until a publishing workflow needs versioned media distribution.",
+  "allowedStatuses": [
+    "planned",
+    "rendered",
+    "archived"
+  ],
+  "requiredForPublishRule": "Required lecture media must be rendered or archived locally with checksums before the course can depend on it.",
+  "forbiddenLocations": [
+    "fixtures",
+    "docs",
+    "ui",
+    "study-plans",
+    "resources"
+  ],
+  "notes": [
+    "Keep manifests, scripts, captions, transcripts, storyboard, and QA metadata in Git.",
+    "Keep large binary audio and video files out of Git unless this policy is replaced by an explicit large-file storage decision.",
+    "External hosted videos may be optional references, but required instruction must have local rendered or archived media."
+  ]
+}

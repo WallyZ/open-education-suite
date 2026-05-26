@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "learnerId": "returning-after-gap",
+  "profile": {
+    "learnerId": "returning-after-gap",
+    "goals": [ "cybersecurity:objectives/network-fundamentals" ],
+    "constraints": [ "returning-after-break" ],
+    "preferences": {
+      "explanationStyle": "recap-first",
+      "practiceMode": "diagnostic"
+    },
+    "accommodations": [],
+    "priorExperience": [ "basic-networking" ]
+  },
+  "mastery": [
+    {
+      "objectiveId": "cybersecurity:objectives/network-fundamentals",
+      "confidence": 0.62,
+      "lastEvidenceAt": "2026-04-15T12:00:00Z",
+      "evidenceCount": 4,
+      "evidenceSources": [ "quiz", "flashcard-review" ]
+    }
+  ],
+  "misconceptions": [],
+  "reviewQueue": [
+    {
+      "objectiveId": "cybersecurity:objectives/network-fundamentals",
+      "dueAt": "2026-04-18T12:00:00Z",
+      "reason": "returning-after-gap"
+    }
+  ],
+  "learningEvents": [],
+  "auditLog": [],
+  "privacy": {
+    "piiPolicy": "fixtures-use-non-identifying-ids",
+    "redactionFields": [ "profile.accommodations", "profile.constraints" ],
+    "localOnly": true
+  },
+  "sync": {
+    "mode": "local",
+    "lastSyncedAt": null,
+    "conflictPolicy": "append-events-and-recompute-mastery"
+  }
+}

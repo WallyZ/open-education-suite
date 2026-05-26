@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "workflowId": "lecture-operator-review-v1",
+  "publishRule": "Every required review stage must be approved by an operator before a lecture package can be approved for publish.",
+  "selfApprovalPolicy": "Generated systems, generated instructors, and automated checks cannot approve their own lecture packages.",
+  "allowedStatuses": [
+    "pending",
+    "approved",
+    "changes-requested",
+    "rejected"
+  ],
+  "allowedPublishStatuses": [
+    "not-ready",
+    "approved-for-publish",
+    "changes-requested",
+    "rejected"
+  ],
+  "prohibitedReviewers": [
+    "ai-system",
+    "generated-instructor",
+    "automation-only"
+  ],
+  "requiredStages": [
+    {
+      "stageId": "script",
+      "label": "Generated script",
+      "requiredEvidence": [
+        "source citations",
+        "original narration",
+        "misconception checks",
+        "assessment handoff"
+      ]
+    },
+    {
+      "stageId": "visuals",
+      "label": "Slides and visual plan",
+      "requiredEvidence": [
+        "original or licensed visuals",
+        "alt text",
+        "no copied screenshots",
+        "clear storyboard alignment"
+      ]
+    },
+    {
+      "stageId": "media",
+      "label": "Rendered media archive",
+      "requiredEvidence": [
+        "local archive path",
+        "sha256 checksums",
+        "required media rendered or archived",
+        "no host-only dependencies"
+      ]
+    },
+    {
+      "stageId": "accessibility",
+      "label": "Accessibility package",
+      "requiredEvidence": [
+        "captions",
+        "transcript",
+        "chapters",
+        "slide alt text"
+      ]
+    },
+    {
+      "stageId": "license-persona",
+      "label": "License and generated instructor persona",
+      "requiredEvidence": [
+        "license gate pass",
+        "persona disclosure",
+        "voice consent",
+        "likeness consent"
+      ]
+    },
+    {
+      "stageId": "final-package",
+      "label": "Final publish package",
+      "requiredEvidence": [
+        "all required stages approved",
+        "quality rubric passed",
+        "content source linked",
+        "operator final approval"
+      ]
+    }
+  ]
+}

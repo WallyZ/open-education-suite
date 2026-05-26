@@ -1,0 +1,28 @@
+{
+  "name": "open-education-suite",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Open Education Suite is the core AI teaching platform. Its job is to adapt to each student, reason over progress, and ingest learning content from separate content repositories.",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/codex-verify.ps1",
+    "test:ui": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/testing/run-learner-ui-playwright.ps1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WallyZ/open-education-suite.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/WallyZ/open-education-suite/issues"
+  },
+  "homepage": "https://github.com/WallyZ/open-education-suite#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.60.0"
+  }
+}

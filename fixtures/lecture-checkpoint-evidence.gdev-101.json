@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "learnerId": "gdev-101-test-learner",
+  "packageId": "lecture-video:gdev-101-design-vocabulary-short",
+  "objectiveId": "game-development:objectives/course/gdev-101/design-vocabulary",
+  "checkpointId": "identify-vgf",
+  "prompt": "In a familiar game, identify one verb, one goal, and one feedback signal.",
+  "response": "Move is the verb, reaching the star is the goal, and the tile lighting up is feedback.",
+  "evidenceType": "lecture-checkpoint",
+  "masteryImpact": "proposal-only",
+  "submittedAt": "2026-05-25T12:00:00Z"
+}

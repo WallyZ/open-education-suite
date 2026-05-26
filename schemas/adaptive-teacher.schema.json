@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "definitions": {
+    "learnerProfile": {
+      "required": [
+        "learnerId",
+        "goals",
+        "constraints",
+        "preferences",
+        "accommodations",
+        "priorExperience"
+      ],
+      "properties": {
+        "learnerId": { "type": "string" },
+        "goals": { "type": "array" },
+        "constraints": { "type": "array" },
+        "preferences": { "type": "object" },
+        "accommodations": { "type": "array" },
+        "priorExperience": { "type": "array" }
+      }
+    },
+    "objectiveMastery": {
+      "required": [
+        "objectiveId",
+        "confidence",
+        "lastEvidenceAt",
+        "evidenceCount",
+        "evidenceSources"
+      ],
+      "properties": {
+        "objectiveId": { "type": "string" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "lastEvidenceAt": { "type": "string" },
+        "evidenceCount": { "type": "integer", "minimum": 0 },
+        "evidenceSources": { "type": "array" }
+      }
+    },
+    "misconception": {
+      "required": [
+        "misconceptionId",
+        "objectiveId",
+        "status",
+        "observedAt",
+        "remediationPath"
+      ],
+      "properties": {
+        "misconceptionId": { "type": "string" },
+        "objectiveId": { "type": "string" },
+        "status": { "enum": [ "unresolved", "resolved" ] },
+        "observedAt": { "type": "string" },
+        "remediationPath": { "type": "array" }
+      }
+    },
+    "learningEvent": {
+      "required": [
+        "eventId",
+        "learnerId",
+        "verb",
+        "objectId",
+        "occurredAt",
+        "result"
+      ],
+      "properties": {
+        "eventId": { "type": "string" },
+        "learnerId": { "type": "string" },
+        "verb": { "type": "string" },
+        "objectId": { "type": "string" },
+        "occurredAt": { "type": "string" },
+        "result": { "type": "object" },
+        "xapiCandidate": {
+          "required": [ "actor", "verb", "object", "result" ],
+          "properties": {
+            "actor": { "type": "string" },
+            "verb": { "type": "string" },
+            "object": { "type": "string" },
+            "result": { "type": "object" }
+          }
+        }
+      }
+    }
+  }
+}

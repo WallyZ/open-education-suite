@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "definitions": {
+    "assessmentItem": {
+      "required": [
+        "itemId",
+        "objectiveId",
+        "type",
+        "prompt",
+        "feedbackTemplates",
+        "masteryEvidence"
+      ],
+      "properties": {
+        "itemId": { "type": "string" },
+        "objectiveId": { "type": "string" },
+        "type": {
+          "enum": [
+            "recall",
+            "multiple-choice",
+            "short-answer",
+            "code-task",
+            "project-checkpoint",
+            "reflection",
+            "interactive"
+          ]
+        },
+        "prompt": { "type": "string" },
+        "acceptedAnswers": { "type": "array" },
+        "scaffolds": { "type": "array" },
+        "feedbackTemplates": {
+          "required": [ "correct", "partial", "incorrect", "uncertain" ],
+          "properties": {
+            "correct": { "type": "string" },
+            "partial": { "type": "string" },
+            "incorrect": { "type": "string" },
+            "uncertain": { "type": "string" }
+          }
+        },
+        "masteryEvidence": {
+          "required": [ "evidenceType", "confidenceDelta" ],
+          "properties": {
+            "evidenceType": { "type": "string" },
+            "confidenceDelta": { "type": "number" }
+          }
+        },
+        "interactive": {
+          "properties": {
+            "interactionType": { "type": "string" },
+            "launchRef": { "type": "string" },
+            "expectedEvidenceEvent": { "type": "string" },
+            "fallbackPrompt": { "type": "string" }
+          }
+        }
+      }
+    },
+    "assessmentResult": {
+      "required": [
+        "itemId",
+        "objectiveId",
+        "status",
+        "score",
+        "feedback",
+        "masteryEvidence"
+      ],
+      "properties": {
+        "itemId": { "type": "string" },
+        "objectiveId": { "type": "string" },
+        "status": { "enum": [ "correct", "partial", "incorrect", "uncertain" ] },
+        "score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "feedback": { "type": "string" },
+        "hintUsage": { "type": "integer", "minimum": 0 },
+        "masteryEvidence": { "type": "object" }
+      }
+    }
+  }
+}

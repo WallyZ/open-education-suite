@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "learnerId": "gdev-101-test-learner",
+  "profile": {
+    "learnerId": "gdev-101-test-learner",
+    "goals": [ "game-development:objectives/course/gdev-101/design-vocabulary" ],
+    "constraints": [ "short-evening-sessions" ],
+    "preferences": {
+      "explanationStyle": "worked-example",
+      "practiceMode": "scaffolded"
+    },
+    "accommodations": [ "low-distraction-output" ],
+    "priorExperience": [ "played-games-but-new-to-design" ]
+  },
+  "mastery": [
+    {
+      "objectiveId": "game-development:objectives/course/gdev-101/design-vocabulary",
+      "confidence": 0.0,
+      "lastEvidenceAt": null,
+      "evidenceCount": 0,
+      "evidenceSources": []
+    }
+  ],
+  "misconceptions": [],
+  "reviewQueue": [],
+  "learningEvents": [],
+  "auditLog": [],
+  "privacy": {
+    "piiPolicy": "fixtures-use-non-identifying-ids",
+    "redactionFields": [ "profile.accommodations", "profile.constraints" ],
+    "localOnly": true
+  },
+  "sync": {
+    "mode": "local",
+    "lastSyncedAt": null,
+    "conflictPolicy": "append-events-and-recompute-mastery"
+  }
+}
