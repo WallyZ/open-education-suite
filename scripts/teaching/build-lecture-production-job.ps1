@@ -1,11 +1,13 @@
 [CmdletBinding()]
 param(
-    [string]$ManifestPath = '.\fixtures\lecture-video.gdev-101-design-vocabulary.json',
+    [string]$ManifestPath = '..\open-education-game-development\generated-lectures\gdev-101-design-vocabulary\lecture-video.json',
     [string]$ProviderPath = '.\fixtures\lecture-production-providers.json'
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+
+. .\scripts\teaching\lecture-paths.ps1
 
 function Test-HasText {
     param([object]$Value)
@@ -53,25 +55,39 @@ if (-not (Test-Path -LiteralPath $ProviderPath -PathType Leaf)) {
     throw "Missing lecture production providers: $ProviderPath"
 }
 
-$lecture = Get-Content -LiteralPath $ManifestPath -Raw | ConvertFrom-Json
+$resolvedManifestPath = Resolve-LecturePath -Path $ManifestPath
+$lecture = Get-Content -LiteralPath $resolvedManifestPath -Raw | ConvertFrom-Json
 $providers = Get-Content -LiteralPath $ProviderPath -Raw | ConvertFrom-Json
 
-$sourceId = [string]$lecture.contentSource.sourceId
 $safePackageId = ConvertTo-SafePathSegment -Value ([string]$lecture.packageId)
-$archiveRoot = "var\lecture-media\$sourceId\$safePackageId"
+$assetRoot = Get-LectureAssetRoot -Lecture $lecture -ManifestPath $resolvedManifestPath
+$archiveRoot = [string]$assetRoot.relativePath
 
 $stages = @()
-foreach ($stageName in @('tts', 'visuals', 'avatar', 'assembly')) {
+foreach ($stageName in @('tts', 'visuals', 'avatar', 'motion', 'lipsync', 'assembly')) {
     $route = Get-Route -Providers $providers -Stage $stageName
     $provider = Get-Provider -Providers $providers -ProviderId ([string]$route.preferredProviderId)
+    $performanceRefs = switch ($stageName) {
+        'tts' { @('performancePlan.audioProfile', 'performancePlan.pausePrompts') }
+        'visuals' { @('performancePlan.visualSync', 'performancePlan.pausePrompts') }
+        'avatar' { @('performancePlan.visualSync', 'generatedInstructor.realismProfile') }
+        'motion' { @('performancePlan.visualSync', 'generatedInstructor.realismProfile', 'lecture-avatar-rendered-media.json', 'rendered-audio-timing-reference') }
+        'lipsync' { @('performancePlan.audioProfile', 'performancePlan.pausePrompts', 'generatedInstructor.realismProfile', 'lecture-avatar-rendered-media.json', 'rendered-audio-final') }
+        'assembly' { @('performancePlan.audioProfile', 'performancePlan.pausePrompts', 'performancePlan.visualSync') }
+        default { @('performancePlan') }
+    }
     $extension = switch ($stageName) {
         'tts' { 'm4a' }
         'visuals' { 'png' }
         'avatar' { 'mp4' }
+        'motion' { 'mp4' }
+        'lipsync' { 'mp4' }
         'assembly' { 'mp4' }
         default { 'bin' }
     }
-    $assetId = "lecture-$stageName"
+    $assetId = if ($stageName -eq 'motion') { 'lecture-instructor-motion-preview' } elseif ($stageName -eq 'lipsync') { 'lecture-instructor-lipsync-preview' } else { "lecture-$stageName" }
+    $mediaKind = if ($stageName -eq 'visuals') { 'visuals' } elseif ($stageName -eq 'tts') { 'audio' } else { 'video' }
+    $outputRoot = Get-LectureMediaRelativeDirectory -AssetRoot $assetRoot -Kind $mediaKind
     $stages += [ordered]@{
         stage = $stageName
         providerId = $provider.providerId
@@ -84,11 +100,11 @@ foreach ($stageName in @('tts', 'visuals', 'avatar', 'assembly')) {
             'storyboard',
             'generatedInstructor',
             'slides'
-        )
+        ) + $performanceRefs
         output = [ordered]@{
             assetId = $assetId
-            path = "$archiveRoot\$stageName\$assetId.$extension"
-            requiredForPublish = $true
+            path = "$outputRoot\$assetId.$extension"
+            requiredForPublish = ($stageName -notin @('motion', 'lipsync'))
             checksumAlgorithm = 'sha256'
         }
         publishRequirement = $route.publishRequirement
@@ -114,7 +130,7 @@ $stages += [ordered]@{
         manifestUpdate = 'media[].status=archived; media[].sha256=<computed-sha256>'
         checksumAlgorithm = 'sha256'
     }
-    publishRequirement = 'all required artifacts must be present under var\lecture-media and have SHA-256 checksums'
+    publishRequirement = 'all required artifacts must be present under the subject content repo generated-lectures archive and have SHA-256 checksums'
 }
 
 $stages += [ordered]@{

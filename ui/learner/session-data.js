@@ -13,8 +13,21 @@ window.openEducationSessionOutput =
     "nextReviewAt": null,
     "evidence": "none"
   },
-  "prompt": "Study the next source item and summarize what you learned.",
-  "hintOptions": null,
+  "prompt": "Write an essay that argues how mechanics, dynamics, and aesthetics work together in a game you know. Use evidence from a specific play experience, compare at least two design alternatives, explain the tradeoffs, and transfer the lesson to a new prototype idea.",
+  "hintOptions": [
+    {
+      "level": "nudge",
+      "text": "Start by naming the mechanic, the player behavior it creates, and the feeling or aesthetic result."
+    },
+    {
+      "level": "concept-reminder",
+      "text": "Synthesis means connecting ideas, not listing definitions."
+    },
+    {
+      "level": "worked-example",
+      "text": "For example, limited inventory can create tension because each pickup choice has opportunity cost; a larger inventory changes the dynamic and weakens that pressure."
+    }
+  ],
   "learnerProfile": {
     "learnerId": "gdev-101-live-smoke-learner",
     "goals": [
@@ -44,9 +57,9 @@ window.openEducationSessionOutput =
     }
   ],
   "reviewQueue": [],
-  "responseAccepted": false,
-  "assessmentItemId": null,
-  "feedback": "Read the source item and continue when ready.",
+  "responseAccepted": true,
+  "assessmentItemId": "gdev-synthesis-essay-001",
+  "feedback": "This does not yet demonstrate synthesis. Move beyond definitions by connecting concepts, citing evidence, and defending a design judgment.",
   "sourceProvenance": {
     "sourceId": "game-development",
     "sourceRepo": "open-education-game-development",
@@ -55,7 +68,7 @@ window.openEducationSessionOutput =
     "license": "CC-BY-4.0 for repo-authored metadata; linked third-party resources retain original licenses",
     "attribution": "Open Education Game Development"
   },
-  "updatedStatePath": null
+  "updatedStatePath": "F:\\dev\\open-education-suite\\.codex-cache\\tmp\\learner-state.last-session.json"
 }
 ;
 window.openEducationLecturePackage = 
@@ -63,6 +76,7 @@ window.openEducationLecturePackage =
   "schemaVersion": 1,
   "packageId": "lecture-video:gdev-101-design-vocabulary-short",
   "title": "Design Vocabulary: Verbs, Goals, and Feedback",
+  "subjectOwnedAssetRoot": "generated-lectures\\gdev-101-design-vocabulary",
   "contentSource": {
     "sourceId": "game-development",
     "sourceRepo": "open-education-game-development",
@@ -74,14 +88,190 @@ window.openEducationLecturePackage =
   ],
   "durationSeconds": 180,
   "lessonMode": "short-lecture",
-  "renderStatus": "scripted-fixture",
+  "deliveryPlan": {
+    "audienceMode": "shareable-baseline-with-single-learner-adaptation",
+    "baselineUse": "The reusable lecture package covers the objective for a generic learner and can be shared without learner-specific claims.",
+    "adaptiveUse": "At session time, the teacher selects pacing, examples, checkpoints, remediation, and the next lecture plan from the single learner's current evidence while still covering the required objective.",
+    "sequence": [
+      "intro-lecture",
+      "diagnostic-check",
+      "materials-and-curriculum",
+      "guided-practice",
+      "progress-assessment",
+      "next-lecture-plan"
+    ],
+    "fullLectureDuration": {
+      "targetSeconds": 3000,
+      "minimumSeconds": 2700,
+      "maximumSeconds": 3300,
+      "rationale": "Use about 50 minutes for full class-replacement lectures, but divide the time into short active segments with retrieval, examples, board work, and practice so the learner is not passively watching."
+    },
+    "segmentCadence": {
+      "minimumSegmentSeconds": 300,
+      "maximumSegmentSeconds": 720,
+      "checkpointEverySeconds": 480,
+      "practiceEverySeconds": 900
+    },
+    "learningEnvironmentPrompts": [
+      "Set up a quiet, low-distraction place before starting.",
+      "Keep a paper notebook and pen available for vocabulary, sketches, and questions.",
+      "Pause at retrieval prompts before the answer is revealed.",
+      "Rewrite notes after the lecture into cleaner terms, examples, and remaining questions.",
+      "Use the follow-up practice task to produce evidence, not just a feeling of familiarity."
+    ],
+    "adaptationRequirements": [
+      "Always cover every required objective claim and citation in the baseline lecture.",
+      "Adapt examples, pacing, remediation, and practice prompts to one learner's evidence.",
+      "Do not treat watch time or completion as mastery.",
+      "Use diagnostic checks and assessment evidence to plan the next lecture."
+    ],
+    "boardPlan": {
+      "defaultView": "generated-instructor-at-chalkboard",
+      "closeUpAvailable": true,
+      "closeUpLabel": "Board close-up",
+      "moments": [
+        {
+          "timeSecond": 0,
+          "label": "Learning setup",
+          "summary": "Quiet space, pen and paper, pause before answers, rewrite notes after the lecture."
+        },
+        {
+          "timeSecond": 35,
+          "label": "Verb, goal, feedback loop",
+          "summary": "Verb is the action, goal is the target state, feedback is the signal that the action mattered."
+        },
+        {
+          "timeSecond": 95,
+          "label": "Theme versus interaction",
+          "summary": "Theme describes fiction or setting; interaction names the player action, target, and signal."
+        },
+        {
+          "timeSecond": 135,
+          "label": "Practice handoff",
+          "summary": "Revise one rule and write what changed in the verb, goal, or feedback loop."
+        }
+      ]
+    }
+  },
+  "performancePlan": {
+    "audioProfile": {
+      "voiceStyle": "human masculine instructor with warm, focused energy and natural classroom emotion",
+      "voiceMatchPolicy": "match-generated-instructor-gender",
+      "targetInstructorGender": "male",
+      "targetVoiceGender": "masculine",
+      "targetVoiceRegister": "lower adult register with deeper resonance",
+      "emotionTargets": [
+        "calm confidence during definitions",
+        "encouraging curiosity during the worked example",
+        "deliberate silence after active-recall prompts",
+        "supportive handoff into practice"
+      ],
+      "prosodyDirectives": [
+        "vary pace and emphasis instead of monotone narration",
+        "slow slightly before definitions and board labels",
+        "use a clear rising invitation before pause prompts",
+        "avoid exaggerated synthetic enthusiasm"
+      ],
+      "ttsRequirements": [
+        "sentence-level prosody controls",
+        "breath and micro-pause support",
+        "deterministic seed or saved provider metadata",
+        "local archive of final audio"
+      ]
+    },
+    "pausePrompts": [
+      {
+        "promptId": "identify-vgf-pause",
+        "timeSecond": 60,
+        "durationSeconds": 10,
+        "prompt": "Pause here: in a familiar game, name one verb, one goal, and one feedback signal.",
+        "overlayText": "Pause and write: verb, goal, feedback",
+        "resumeCue": "Restart when you are ready to compare your answer.",
+        "boardState": "verb-goal-feedback-loop"
+      }
+    ],
+    "visualSync": {
+      "boardStates": [
+        {
+          "stateId": "learning-setup",
+          "startSecond": 0,
+          "endSecond": 35,
+          "boardText": [
+            "Quiet space",
+            "Pen and paper",
+            "Pause before answers",
+            "Rewrite notes"
+          ],
+          "instructorAction": "Faces the learner, points to the setup checklist, then turns to the board."
+        },
+        {
+          "stateId": "verb-goal-feedback-loop",
+          "startSecond": 35,
+          "endSecond": 95,
+          "boardText": [
+            "Verb = player action",
+            "Goal = target state",
+            "Feedback = signal"
+          ],
+          "instructorAction": "Draws the loop and points to each term as it is defined."
+        },
+        {
+          "stateId": "theme-vs-interaction",
+          "startSecond": 95,
+          "endSecond": 135,
+          "boardText": [
+            "Theme is not interaction",
+            "Name action + target + signal"
+          ],
+          "instructorAction": "Crosses out vague theme claims and rewrites them as interaction claims."
+        },
+        {
+          "stateId": "practice-handoff",
+          "startSecond": 135,
+          "endSecond": 180,
+          "boardText": [
+            "Revise one rule",
+            "Write what changed",
+            "Bring evidence"
+          ],
+          "instructorAction": "Steps aside for board close-up and points to the practice checklist."
+        }
+      ],
+      "minimumBoardStateCoverage": "Every storyboard scene must map to a board state or explicit non-board visual.",
+      "staticFramePolicy": "A single static image is allowed only as a placeholder and must not pass publish readiness without a visual-sync review."
+    }
+  },
+  "renderStatus": "rendered-fixture",
   "generatedInstructor": {
     "personaId": "oes-default-generated-instructor-v1",
+    "gender": "male",
     "disclosure": "This lecture uses an original generated instructor and synthetic voice for an Open Education Suite lesson.",
     "voiceConsent": "synthetic-project-owned",
     "likenessConsent": "synthetic-project-owned",
     "realPersonClone": false,
-    "tone": "clear-rigorous-supportive"
+    "voiceMatchPolicy": "match-generated-instructor-gender",
+    "tone": "clear-rigorous-supportive",
+    "realismProfile": {
+      "presentationStyle": "realistic-synthetic-instructor-at-chalkboard",
+      "renderReadiness": "local-comfyui-avatar-keyframe",
+      "visualFidelityTargets": [
+        "consistent face, body, lighting, and camera angle across the lecture",
+        "natural gaze shifts between learner-facing camera and chalkboard",
+        "legible hand and pointer placement that does not cover board work",
+        "no real-person face, voice, likeness, catchphrases, or branded style"
+      ],
+      "movementPlan": [
+        "open facing the learner, then turn to the board before drawing the vocabulary loop",
+        "point to verb, goal, and feedback labels while naming each term",
+        "pause in a neutral listening posture during active recall prompts",
+        "step aside or trigger board close-up when dense board work appears"
+      ],
+      "boardInteractionPlan": [
+        "write or reveal each chalkboard label when the narration reaches it",
+        "keep the instructor body outside the high-priority board text area",
+        "support a board close-up crop for each listed board moment"
+      ]
+    }
   },
   "sourceReview": [
     {
@@ -113,15 +303,15 @@ window.openEducationLecturePackage =
   ],
   "script": {
     "format": "markdown",
-    "text": "# Design Vocabulary: Verbs, Goals, and Feedback\n\nToday we will use three design words precisely: verb, goal, and feedback. A verb is what the player can do. A goal is what the player is trying to accomplish. Feedback is how the game tells the player what changed and whether the action mattered. In GDEV-101, this vocabulary supports prototype critique and playtest evidence rather than personal preference alone. [course-gdev-101]\n\nConsider a simple rule-change prototype. If the player can only move, but there is no goal, the activity may be a toy instead of a game. If the goal exists but feedback is weak, the player cannot judge progress. Pause here: in a familiar game, name one verb, one goal, and one feedback signal.\n\nA common mistake is to describe theme instead of interaction. Saying a game is about space does not identify the verb. Saying the player wants to win does not identify the local goal. Strong critique names the action, the target, and the signal.\n\nAfter the video, revise one rule in a familiar game and write what changed in the verb, goal, or feedback loop. Bring that to the next practice checkpoint. [course-gdev-101]"
+    "text": "# Design Vocabulary: Verbs, Goals, and Feedback\n\nBefore we start, set up the way a strong in-person class expects you to learn: quiet space, pen and paper open, and a plan to pause before answering. Do not only watch. Listen, write the important words by hand, and after the lecture rewrite the notes in cleaner language with one example of your own.\n\nToday we will use three design words precisely: verb, goal, and feedback. A verb is what the player can do. A goal is what the player is trying to accomplish. Feedback is how the game tells the player what changed and whether the action mattered. In GDEV-101, this vocabulary supports prototype critique and playtest evidence rather than personal preference alone. [course-gdev-101]\n\nOn the board, draw a loop with three labels: verb, goal, feedback. Consider a simple rule-change prototype. If the player can only move, but there is no goal, the activity may be a toy instead of a game. If the goal exists but feedback is weak, the player cannot judge progress. Pause here: in a familiar game, name one verb, one goal, and one feedback signal before the labels are revealed.\n\nA common mistake is to describe theme instead of interaction. Saying a game is about space does not identify the verb. Saying the player wants to win does not identify the local goal. Strong critique names the action, the target, and the signal.\n\nAfter the video, revise one rule in a familiar game and write what changed in the verb, goal, or feedback loop. Bring that to the next practice checkpoint. The adaptive teacher will use your checkpoint and assessment evidence to plan what the next lecture should emphasize. [course-gdev-101]"
   },
   "storyboard": [
     {
       "sceneId": "open-problem",
       "startSecond": 0,
       "endSecond": 35,
-      "visual": "Generated instructor beside a simple paper prototype with three labels: verb, goal, feedback.",
-      "narrationCue": "Introduce the three vocabulary terms and connect them to critique.",
+      "visual": "Generated instructor at a chalkboard labeled quiet setup, pen and paper, pause, rewrite notes.",
+      "narrationCue": "Prepare the learning environment and introduce the three vocabulary terms.",
       "activeRecallPrompt": null,
       "citationIds": [
         "course-gdev-101"
@@ -131,7 +321,7 @@ window.openEducationLecturePackage =
       "sceneId": "worked-example",
       "startSecond": 35,
       "endSecond": 95,
-      "visual": "Slide shows a tiny grid game: move token, reach star, tile lights up.",
+      "visual": "Chalkboard close-up shows a loop: verb points to goal, goal points to feedback, feedback points back to next action.",
       "narrationCue": "Work through one prototype example using verb, goal, and feedback.",
       "activeRecallPrompt": "Name the verb, goal, and feedback signal before the labels appear.",
       "citationIds": [
@@ -142,7 +332,7 @@ window.openEducationLecturePackage =
       "sceneId": "misconception-check",
       "startSecond": 95,
       "endSecond": 135,
-      "visual": "Split screen contrasts theme words with interaction words.",
+      "visual": "Chalkboard close-up contrasts theme words with interaction words.",
       "narrationCue": "Separate theme from interaction and warn against vague critique.",
       "activeRecallPrompt": "Is 'space adventure' a verb, goal, feedback signal, or theme?",
       "citationIds": [
@@ -153,7 +343,7 @@ window.openEducationLecturePackage =
       "sceneId": "practice-handoff",
       "startSecond": 135,
       "endSecond": 180,
-      "visual": "Checklist for a rule-change prototype reflection.",
+      "visual": "Generated instructor highlights a chalkboard checklist for a rule-change prototype reflection.",
       "narrationCue": "Send the learner into the first GDEV-101 practice task.",
       "activeRecallPrompt": "Choose one familiar game and plan one rule change.",
       "citationIds": [
@@ -164,12 +354,12 @@ window.openEducationLecturePackage =
   "transcript": {
     "format": "plain-text",
     "language": "en",
-    "text": "Today we will use three design words precisely: verb, goal, and feedback. A verb is what the player can do. A goal is what the player is trying to accomplish. Feedback is how the game tells the player what changed and whether the action mattered. Consider a simple rule-change prototype. If the player can only move, but there is no goal, the activity may be a toy instead of a game. If the goal exists but feedback is weak, the player cannot judge progress. Pause here: in a familiar game, name one verb, one goal, and one feedback signal. A common mistake is to describe theme instead of interaction. Saying a game is about space does not identify the verb. Saying the player wants to win does not identify the local goal. Strong critique names the action, the target, and the signal. After the video, revise one rule in a familiar game and write what changed in the verb, goal, or feedback loop."
+    "text": "Before we start, set up a quiet learning space, keep a paper notebook and pen available, and plan to pause before answering. Listen, write the important words by hand, and after the lecture rewrite the notes in cleaner language with one example of your own. Today we will use three design words precisely: verb, goal, and feedback. A verb is what the player can do. A goal is what the player is trying to accomplish. Feedback is how the game tells the player what changed and whether the action mattered. Consider a simple rule-change prototype. If the player can only move, but there is no goal, the activity may be a toy instead of a game. If the goal exists but feedback is weak, the player cannot judge progress. Pause here: in a familiar game, name one verb, one goal, and one feedback signal. A common mistake is to describe theme instead of interaction. Saying a game is about space does not identify the verb. Saying the player wants to win does not identify the local goal. Strong critique names the action, the target, and the signal. After the video, revise one rule in a familiar game and write what changed in the verb, goal, or feedback loop. The adaptive teacher will use your checkpoint and assessment evidence to plan what the next lecture should emphasize."
   },
   "captions": {
     "format": "webvtt",
     "language": "en",
-    "text": "WEBVTT\n\n00:00:00.000 --> 00:00:35.000\nToday we will use three design words precisely: verb, goal, and feedback.\n\n00:00:35.000 --> 00:01:35.000\nConsider a simple rule-change prototype. Pause here: in a familiar game, name one verb, one goal, and one feedback signal.\n\n00:01:35.000 --> 00:02:15.000\nA common mistake is to describe theme instead of interaction.\n\n00:02:15.000 --> 00:03:00.000\nAfter the video, revise one rule in a familiar game and write what changed."
+    "text": "WEBVTT\n\n00:00:00.000 --> 00:00:35.000\nSet up a quiet learning space with pen and paper, then use three design words precisely: verb, goal, and feedback.\n\n00:00:35.000 --> 00:01:35.000\nConsider a simple rule-change prototype. Pause here: in a familiar game, name one verb, one goal, and one feedback signal.\n\n00:01:35.000 --> 00:02:15.000\nA common mistake is to describe theme instead of interaction.\n\n00:02:15.000 --> 00:03:00.000\nAfter the video, revise one rule, rewrite your notes, and bring evidence to the next checkpoint."
   },
   "chapters": [
     {
@@ -194,14 +384,14 @@ window.openEducationLecturePackage =
       "slideId": "slide-001",
       "title": "Verb, Goal, Feedback",
       "path": "slides\\001-verb-goal-feedback.md",
-      "altText": "Three labels around a paper prototype: player verb, target goal, and feedback signal.",
+      "altText": "A chalkboard loop with three labels around a prototype: player verb, target goal, and feedback signal.",
       "attribution": "Original generated slide from the cited GDEV-101 course source."
     },
     {
       "slideId": "slide-002",
       "title": "Theme Is Not Interaction",
       "path": "slides\\002-theme-vs-interaction.md",
-      "altText": "A comparison table separating vague theme words from concrete player actions and signals.",
+      "altText": "A chalkboard comparison table separating vague theme words from concrete player actions and signals.",
       "attribution": "Original generated slide from the cited GDEV-101 course source."
     }
   ],
@@ -209,32 +399,85 @@ window.openEducationLecturePackage =
     {
       "assetId": "lecture-video-mp4",
       "type": "video/mp4",
-      "path": "media\\gdev-101-design-vocabulary-short.mp4",
-      "sha256": "pending-render",
-      "status": "planned",
-      "requiredForPublish": true
+      "path": "generated-lectures\\gdev-101-design-vocabulary\\media\\video\\lecture-video-mp4.mp4",
+      "sha256": "48c05403cdfdc943bb95c74690dd633123afb3f03bdd6a63acc0e666d70f6c42",
+      "status": "archived",
+      "requiredForPublish": true,
+      "length": 3186432
     },
     {
       "assetId": "lecture-audio-m4a",
       "type": "audio/mp4",
-      "path": "media\\gdev-101-design-vocabulary-short.m4a",
-      "sha256": "pending-render",
-      "status": "planned",
-      "requiredForPublish": true
+      "path": "generated-lectures\\gdev-101-design-vocabulary\\media\\audio\\lecture-audio-m4a.m4a",
+      "sha256": "9578edf9d9f1f9ec7aa615398961bc7af4f9ec4099f0a27de7e4891c4252162f",
+      "status": "archived",
+      "requiredForPublish": true,
+      "length": 1310308
+    },
+    {
+      "assetId": "lecture-audio-neural-tts",
+      "type": "audio/mpeg",
+      "path": "generated-lectures\\gdev-101-design-vocabulary\\media\\audio\\lecture-audio-neural-tts.mp3",
+      "sha256": "062ef64674137f8747698a78a3732c510d53a8ee2b7fc1e61706da562283c025",
+      "status": "archived",
+      "requiredForPublish": false
+    },
+    {
+      "assetId": "lecture-avatar-comfyui-png",
+      "type": "image/png",
+      "path": "generated-lectures\\gdev-101-design-vocabulary\\media\\visuals\\lecture-avatar-comfyui.png",
+      "sha256": "0585cf05f33bad66ec2125d12f78c76f50ad5b296b6eb86662d02993c8e92e43",
+      "status": "archived",
+      "requiredForPublish": false
     },
     {
       "assetId": "lecture-audio-wav-fixture",
       "type": "audio/wav",
-      "path": "var\\lecture-media\\game-development\\lecture-video_gdev-101-design-vocabulary-short\\audio\\lecture-audio-wav.wav",
-      "sha256": "5975a1f97d6315ba637dcfd46046c94c0e1be799db7e58317da4a18cc6239042",
+      "path": "generated-lectures\\gdev-101-design-vocabulary\\media\\audio\\lecture-audio-wav.wav",
+      "sha256": "8dfe7e84eb9886ead840872ccb7f1f85af91eea3a55b658e983b8bab3174a840",
       "status": "archived",
       "requiredForPublish": false
+    },
+    {
+      "assetId": "lecture-guided-camera-mp4",
+      "type": "video/mp4",
+      "path": "generated-lectures\\gdev-101-design-vocabulary\\media\\video\\lecture-guided-camera-mp4.mp4",
+      "sha256": "30dee51bf6ca9eddecead21b1a2d27149d8592c810f0e978337fad8f38f7dcf5",
+      "length": 2949541,
+      "status": "archived",
+      "requiredForPublish": false,
+      "visualSyncMode": "board-close-up-guided-camera",
+      "sourceAssetIds": [
+        "lecture-video-mp4",
+        "lecture-board-close-up-mp4"
+      ],
+      "cameraPlanSource": "visualSync.cameraPlan",
+      "audioPreserved": true,
+      "transcriptPreserved": true,
+      "checkpointContextPreserved": true,
+      "classroomContextPreserved": true
+    },
+    {
+      "assetId": "lecture-board-close-up-mp4",
+      "type": "video/mp4",
+      "path": "generated-lectures\\gdev-101-design-vocabulary\\media\\video\\lecture-board-close-up-mp4.mp4",
+      "sha256": "3774d8445acae4d9bed9a4d194727be99515e43cb4dc809843846041eec37935",
+      "length": 2262376,
+      "status": "archived",
+      "requiredForPublish": false,
+      "visualSyncMode": "board-close-up-crop",
+      "sourceAssetId": "lecture-video-mp4",
+      "cropSource": "visualSync.boardSurface.closeUpCrop",
+      "audioPreserved": true,
+      "transcriptPreserved": true,
+      "checkpointContextPreserved": true,
+      "classroomContextPreserved": true
     }
   ],
   "licenseAudit": {
     "status": "pass",
     "externalHostDependency": false,
-    "requiredInstructionArchive": "planned-local-render",
+    "requiredInstructionArchive": "generated-lectures\\gdev-101-design-vocabulary\\publish\\lecture-video.publish-ready.json",
     "blockedMaterials": [],
     "notes": [
       "No copied third-party transcript, slides, voice, likeness, or hosted video is used.",
@@ -273,7 +516,7 @@ window.openEducationLecturePackage =
   },
   "operatorReview": {
     "workflowId": "lecture-operator-review-v1",
-    "publishStatus": "not-ready",
+    "publishStatus": "approved-for-publish",
     "stages": [
       {
         "stageId": "script",
@@ -299,11 +542,15 @@ window.openEducationLecturePackage =
       },
       {
         "stageId": "media",
-        "status": "pending",
-        "reviewer": null,
-        "reviewedAt": null,
-        "evidence": [],
-        "notes": "Pending until rendered media has local archive paths and SHA-256 checksums."
+        "status": "approved",
+        "reviewer": "operator-fixture",
+        "reviewedAt": "2026-05-26T12:00:00Z",
+        "evidence": [
+          "Required media archived under generated-lectures\\gdev-101-design-vocabulary.",
+          "SHA-256 checksums recorded for lecture-video-mp4 and lecture-audio-m4a.",
+          "Board-local pause prompt timing reviewed in the rendered media."
+        ],
+        "notes": "Approved for deterministic rendered publish fixture."
       },
       {
         "stageId": "accessibility",
@@ -327,19 +574,43 @@ window.openEducationLecturePackage =
         "notes": "Approved for synthetic instructor and source boundaries."
       },
       {
+        "stageId": "instructor-realism",
+        "status": "approved",
+        "reviewer": "operator-fixture",
+        "reviewedAt": "2026-05-26T12:00:00Z",
+        "evidence": [
+          "Face/body consistency reviewed against the local ComfyUI avatar keyframe and realismProfile.",
+          "Front-row framing reviewed so the learner has an easy view of the instructor and chalkboard.",
+          "Board readability reviewed for the board-local writing layer and chalkboard contrast.",
+          "Board occlusion reviewed so the instructor does not cover high-priority board text and board close-up remains available.",
+          "Board close-up usefulness reviewed against the recorded board surface crop.",
+          "Gesture timing reviewed against storyboard board moments, narration cues, and active-recall pauses.",
+          "Lip-sync timing reviewed against final instructor audio and active-recall pause silence.",
+          "Gaze direction reviewed for learner-facing explanation, board-facing writing, and return-to-learner cues.",
+          "Head and hand motion naturalness reviewed for subtle classroom movement without distracting jitter.",
+          "Board-writing gesture synchronization reviewed so pointing and writing gestures align to board-local chalk marks.",
+          "No whole-frame teaching text overlays are used; instructional writing is constrained to the board surface.",
+          "Generated instructor disclosure reviewed before publish: This lecture uses an original generated instructor and synthetic voice for an Open Education Suite lesson."
+        ],
+        "notes": "Approved for local ComfyUI avatar keyframe realism review."
+      },
+      {
         "stageId": "final-package",
-        "status": "pending",
-        "reviewer": null,
-        "reviewedAt": null,
-        "evidence": [],
-        "notes": "Pending until media is rendered, checksummed, and final package review is complete."
+        "status": "approved",
+        "reviewer": "operator-fixture",
+        "reviewedAt": "2026-05-26T12:00:00Z",
+        "evidence": [
+          "All required review stages are approved.",
+          "Publish-ready path recorded: generated-lectures\\gdev-101-design-vocabulary\\publish\\lecture-video.publish-ready.json"
+        ],
+        "notes": "Approved for deterministic publish gate fixture."
       }
     ],
     "finalApproval": {
-      "status": "pending",
-      "reviewer": null,
-      "reviewedAt": null,
-      "notes": "Final publish approval is blocked until all required stages are approved."
+      "status": "approved",
+      "reviewer": "operator-fixture",
+      "reviewedAt": "2026-05-26T12:05:00Z",
+      "notes": "Final package approval recorded for generated-lectures\\gdev-101-design-vocabulary\\publish\\lecture-video.publish-ready.json."
     }
   },
   "adaptiveHooks": {
@@ -370,7 +641,11 @@ window.openEducationLecturePackage =
       "objectiveId": "game-development:objectives/course/gdev-101/design-vocabulary",
       "prompt": "Revise one rule in a familiar game and explain what changed in the verb, goal, or feedback loop."
     }
-  }
+  },
+  "contentRepoRoot": "F:\\dev\\open-education-game-development",
+  "contentRepoWebRoot": "file:///F:/dev/open-education-game-development/",
+  "contentRepoHttpRoot": "/content-repos/open-education-game-development/",
+  "sourcePackagePath": "generated-lectures\\gdev-101-design-vocabulary\\publish\\lecture-video.publish-ready.json"
 }
 ;
 window.openEducationContentCatalog = 
@@ -425,7 +700,7 @@ window.openEducationContentCatalog =
       "sourceId": "game-development",
       "title": "Open Education Game Development",
       "sourceRepo": "open-education-game-development",
-      "objectCount": 31,
+      "objectCount": 44,
       "courses": [
         {
           "id": "game-development:study-plans/courses/GDEV-010-onboarding-studio.md",

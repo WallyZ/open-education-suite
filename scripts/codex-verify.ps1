@@ -94,7 +94,10 @@ try {
     Assert-FileExists '.\fixtures\learner-state.returning-after-gap.json'
     Assert-FileExists '.\fixtures\assessment-result.correct.json'
     Assert-FileExists '.\fixtures\ai-teacher-response.grounded.json'
-    Assert-FileExists '.\fixtures\lecture-video.gdev-101-design-vocabulary.json'
+    Assert-FileExists '.\fixtures\information-presentation-patterns.json'
+    Assert-FileExists '.\fixtures\lecture-performance-promotion-policy.json'
+    Assert-FileExists '..\open-education-game-development\generated-lectures\gdev-101-design-vocabulary\lecture-video.json'
+    Assert-FileExists '..\open-education-game-development\generated-lectures\gdev-101-design-vocabulary\lecture-rendered-media.json'
     Assert-FileExists '.\fixtures\teaching-quality-benchmarks.json'
     Assert-FileExists '.\fixtures\mastery-calibration.json'
     Assert-FileExists '.\study-plans\templates\study-plan-template.md'
@@ -104,6 +107,7 @@ try {
     Assert-FileExists '.\scripts\teaching\select-next-action.ps1'
     Assert-FileExists '.\scripts\teaching\start-session.ps1'
     Assert-FileExists '.\scripts\teaching\export-learner-ui-session.ps1'
+    Assert-FileExists '.\scripts\teaching\lecture-paths.ps1'
     Assert-FileExists '.\scripts\teaching\learner_ui_bridge_server.py'
     Assert-FileExists '.\scripts\assessment\evaluate-answer.ps1'
     Assert-FileExists '.\scripts\testing\run-golden-workflows.ps1'
@@ -114,8 +118,12 @@ try {
     Assert-FileExists '.\scripts\testing\run-learner-ui-playwright.ps1'
     Assert-FileExists '.\scripts\testing\run-lecture-production-smoke.ps1'
     Assert-FileExists '.\scripts\quality\check-content-quality.ps1'
+    Assert-FileExists '.\scripts\quality\check-course-source-links.ps1'
+    Assert-FileExists '.\scripts\quality\check-course-design-quality.ps1'
     Assert-FileExists '.\scripts\quality\check-teaching-quality.ps1'
+    Assert-FileExists '.\scripts\quality\check-information-presentation-patterns.ps1'
     Assert-FileExists '.\scripts\quality\check-lecture-video.ps1'
+    Assert-FileExists '.\scripts\quality\check-lecture-performance-promotion.ps1'
     Assert-FileExists '.\scripts\state\read-learner-state.ps1'
     Assert-FileExists '.\scripts\state\update-learner-state.ps1'
     Assert-FileExists '.\scripts\state\write-audit-report.ps1'
@@ -208,6 +216,45 @@ try {
     }
     if ($assessmentResult.masteryEvidence.confidenceDelta -le 0) {
         throw 'Assessment evaluation fixture must produce positive mastery evidence.'
+    }
+
+    $assessmentFixture = Get-Content -LiteralPath '.\fixtures\assessment-items.json' -Raw | ConvertFrom-Json
+    if ($assessmentFixture.assessmentPolicy.defaultHighRigorType -ne 'essay') {
+        throw 'Assessment policy must prefer essays as the default high-rigor assessment type.'
+    }
+    if ($assessmentFixture.assessmentPolicy.quizRole -notmatch 'not sufficient evidence for synthesis-level mastery') {
+        throw 'Assessment policy must limit quizzes to diagnostic, retrieval, and misconception-check roles.'
+    }
+    $essayFixture = @($assessmentFixture.items | Where-Object { $_.type -eq 'essay' -and $_.rigor.preferredForSummative -eq $true })
+    if ($essayFixture.Count -lt 1) {
+        throw 'Assessment fixtures must include at least one summative synthesis essay item.'
+    }
+    if ([double]$essayFixture[0].masteryEvidence.confidenceDelta -le [double]$assessmentResult.masteryEvidence.confidenceDelta) {
+        throw 'Synthesis essay evidence must carry stronger mastery weight than a quiz item.'
+    }
+
+    $essayAnswer = @(
+        'The core mechanic is limited inventory, and it creates a dynamic where the player constantly chooses what to keep, discard, or risk losing.'
+        'The aesthetic is tension because every choice feels meaningful during the play experience.'
+        'As evidence, a boss fight with scarce healing items shows that the rule changes behavior because players plan movement and resource use before acting.'
+        'I can compare this with an alternative unlimited inventory, which creates a different dynamic because there is less pressure.'
+        'The tradeoff is cost and benefit: scarcity can sharpen decisions, but too much scarcity can frustrate learning.'
+        'The lesson I would transfer into a prototype is to tune inventory limits around the emotion I want, then test whether players describe the intended pressure.'
+    ) -join ' '
+    $essayOutput = & .\scripts\assessment\evaluate-answer.ps1 -ItemId 'gdev-synthesis-essay-001' -Answer $essayAnswer -HintsUsed 0 2>&1
+    $essayOutput | Tee-Object -FilePath $logPath -Append
+    if ($LASTEXITCODE -ne 0) {
+        throw "Synthesis essay evaluation check failed with exit code $LASTEXITCODE."
+    }
+    $essayResult = $essayOutput | ConvertFrom-Json
+    if ($essayResult.status -ne 'correct') {
+        throw 'Synthesis essay fixture must produce a correct result for a complete synthesis answer.'
+    }
+    if ($essayResult.masteryEvidence.evidenceType -ne 'synthesis-essay') {
+        throw 'Synthesis essay fixture must produce synthesis-essay mastery evidence.'
+    }
+    if ([int]$essayResult.masteryEvidence.rubricEvidence.passedCriteria -ne [int]$essayResult.masteryEvidence.rubricEvidence.totalCriteria) {
+        throw 'Synthesis essay fixture must pass every rubric criterion for the complete answer.'
     }
 
     $validStateOutput = & .\scripts\state\read-learner-state.ps1 -Path '.\fixtures\learner-state.valid.json' 2>&1
@@ -342,6 +389,32 @@ try {
         throw 'Content quality check reported errors.'
     }
 
+    $courseSourceLinkOutput = & .\scripts\quality\check-course-source-links.ps1 2>&1
+    $courseSourceLinkOutput | Tee-Object -FilePath $logPath -Append
+    if ($LASTEXITCODE -ne 0) {
+        throw "Course source-link audit failed with exit code $LASTEXITCODE."
+    }
+    $courseSourceLinkResult = $courseSourceLinkOutput | ConvertFrom-Json
+    if ($courseSourceLinkResult.errorCount -ne 0) {
+        throw 'Course source-link audit reported errors.'
+    }
+    if ($courseSourceLinkResult.readOnly -ne $true -or $courseSourceLinkResult.networkAccess -ne 'none') {
+        throw 'Course source-link audit must be read-only and offline-safe by default.'
+    }
+
+    $courseDesignQualityOutput = & .\scripts\quality\check-course-design-quality.ps1 2>&1
+    $courseDesignQualityOutput | Tee-Object -FilePath $logPath -Append
+    if ($LASTEXITCODE -ne 0) {
+        throw "Course design quality gate failed with exit code $LASTEXITCODE."
+    }
+    $courseDesignQualityResult = $courseDesignQualityOutput | ConvertFrom-Json
+    if ($courseDesignQualityResult.errorCount -ne 0) {
+        throw 'Course design quality gate reported errors.'
+    }
+    if ($courseDesignQualityResult.readOnly -ne $true -or $courseDesignQualityResult.networkAccess -ne 'none') {
+        throw 'Course design quality gate must be read-only and offline-safe by default.'
+    }
+
     $teachingQualityOutput = & .\scripts\quality\check-teaching-quality.ps1 2>&1
     $teachingQualityOutput | Tee-Object -FilePath $logPath -Append
     if ($LASTEXITCODE -ne 0) {
@@ -352,6 +425,19 @@ try {
         throw 'Teaching quality check reported errors.'
     }
 
+    $informationPresentationOutput = & .\scripts\quality\check-information-presentation-patterns.ps1 2>&1
+    $informationPresentationOutput | Tee-Object -FilePath $logPath -Append
+    if ($LASTEXITCODE -ne 0) {
+        throw "Information presentation pattern check failed with exit code $LASTEXITCODE."
+    }
+    $informationPresentationResult = $informationPresentationOutput | ConvertFrom-Json
+    if ($informationPresentationResult.errorCount -ne 0) {
+        throw 'Information presentation pattern check reported errors.'
+    }
+    if ($informationPresentationResult.readOnly -ne $true -or $informationPresentationResult.networkAccess -ne 'none') {
+        throw 'Information presentation pattern check must be read-only and offline-safe by default.'
+    }
+
     $lectureVideoOutput = & .\scripts\quality\check-lecture-video.ps1 2>&1
     $lectureVideoOutput | Tee-Object -FilePath $logPath -Append
     if ($LASTEXITCODE -ne 0) {
@@ -360,6 +446,19 @@ try {
     $lectureVideoResult = $lectureVideoOutput | ConvertFrom-Json
     if ($lectureVideoResult.errorCount -ne 0) {
         throw 'Lecture video check reported errors.'
+    }
+
+    $lecturePerformancePromotionOutput = & .\scripts\quality\check-lecture-performance-promotion.ps1 2>&1
+    $lecturePerformancePromotionOutput | Tee-Object -FilePath $logPath -Append
+    if ($LASTEXITCODE -ne 0) {
+        throw "Lecture performance promotion gate failed with exit code $LASTEXITCODE."
+    }
+    $lecturePerformancePromotionResult = $lecturePerformancePromotionOutput | ConvertFrom-Json
+    if ($lecturePerformancePromotionResult.errorCount -ne 0) {
+        throw 'Lecture performance promotion gate reported errors.'
+    }
+    if ($lecturePerformancePromotionResult.readOnly -ne $true -or $lecturePerformancePromotionResult.networkAccess -ne 'none') {
+        throw 'Lecture performance promotion gate must be read-only and offline-safe by default.'
     }
 
     $lectureProductionSmokeOutput = & .\scripts\testing\run-lecture-production-smoke.ps1 2>&1
@@ -382,6 +481,15 @@ try {
     $nextWork = $nextWorkOutput | ConvertFrom-Json
     if ($nextWork.status -ne 'open' -and $nextWork.status -ne 'none') {
         throw 'Next work helper returned an invalid status.'
+    }
+    if ([int]$nextWork.todoFileCount -lt 1) {
+        throw 'Next work helper must report the number of TODO files scanned.'
+    }
+    if ([int]$nextWork.checkedItemCount -lt ([int]$nextWork.openItemCount + [int]$nextWork.completedItemCount)) {
+        throw 'Next work helper reported inconsistent TODO item counts.'
+    }
+    if ($nextWork.status -eq 'none' -and [int]$nextWork.openItemCount -ne 0) {
+        throw 'Next work helper reported no open item while openItemCount is non-zero.'
     }
 
     Write-VerifyLog "codex-verify passed mode=$Mode log=$logPath"

@@ -136,14 +136,25 @@ test.describe("learner workspace", () => {
     await page.getByRole("button", { name: "Lecture" }).click();
     await expect(page.getByRole("heading", { name: "Design Vocabulary: Verbs, Goals, and Feedback" })).toBeVisible();
     await expect(page.getByText("This lecture uses an original generated instructor")).toBeVisible();
+    await expect(page.locator("#learningEnvironmentList")).toContainText("Keep a paper notebook and pen available");
+    await expect(page.getByText("Verb is the action, goal is the target state")).toBeVisible();
     await expect(page.locator("#lectureTranscript")).toContainText("A verb is what the player can do.");
     await expect(page.getByText("open-education-game-development / study-plans\\courses\\GDEV-101-game-design-foundations.md")).toBeVisible();
+
+    await page.getByRole("button", { name: "Board close-up" }).click();
+    await expect(page.getByText("Board close-up is on.")).toBeVisible();
 
     await page.getByRole("button", { name: "Play lecture" }).click();
     await expect(page.getByRole("button", { name: "Pause lecture" })).toHaveAttribute("aria-pressed", "true");
 
+    await expect(page.locator("#pausePromptList")).toContainText("Jump to 1:00 pause");
+    await page.locator('.pause-prompt-button[data-pause-second="60"]').click();
+    await expect(page.locator("#lecturePosition")).toHaveText("1:00 / 3:00");
+    await expect(page.locator("#lecturePauseOverlay")).toContainText("Pause and write: verb, goal, feedback");
+
     await page.locator("#lectureProgress").fill("95");
     await expect(page.locator("#lecturePosition")).toHaveText("1:35 / 3:00");
+    await expect(page.locator("#lecturePauseOverlay")).toBeHidden();
 
     await page.getByRole("button", { name: "Practice Handoff 2:15" }).click();
     await expect(page.locator("#lecturePosition")).toHaveText("2:15 / 3:00");

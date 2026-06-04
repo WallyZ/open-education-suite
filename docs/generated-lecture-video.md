@@ -19,6 +19,7 @@ The suite should be able to create original lecture videos with a generated inst
 A generated lecture package should include:
 
 - `lecture-video.json`: package manifest with schema version, source object ids, objective ids, generation settings, media paths, checksums, license audit, and source review notes.
+- `deliveryPlan`: audience mode, generic baseline use, single-learner adaptation rules, full-lecture duration target, segment cadence, learning-environment prompts, and board close-up plan.
 - `script.md`: instructor narration, stage directions, pause prompts, citations, and adaptation notes.
 - `storyboard.md`: scene order, visual plan, board or slide moments, checks for common misconceptions, and active recall prompts.
 - `slides/`: generated or authored visual material with alt text and attribution metadata.
@@ -36,6 +37,44 @@ A generated lecture package should include:
 6. Assembly: combine narration, instructor, slides, board moments, captions, chapters, and transcript.
 7. QA: verify source grounding, accessibility, copyright/licensing, factual accuracy, pacing, and alignment with the adaptive teacher.
 8. Publish package: write the manifest, checksums, local archive path, and content package linkage.
+
+## Generic Baseline And Single-Learner Adaptation
+
+The suite should produce a shareable baseline lecture for a course objective, then adapt the teaching session around one learner. The baseline lecture is content-grounded and not personalized: it covers the objective, cites the course package, includes practice opportunities, and avoids assumptions about a specific learner. The adaptive teacher then selects the mode, pacing, examples, remediation, checkpoint prompts, and next lecture emphasis from that learner's evidence.
+
+The default teaching sequence is:
+
+1. Intro lecture: orient the learner, define the objective, and model the core ideas.
+2. Diagnostic check: ask a short retrieval or application question before marking progress.
+3. Materials and curriculum: provide the relevant reading, video, practice, and project structure.
+4. Guided practice: create evidence through short answers, sketches, prototypes, or problem solving.
+5. Progress assessment: test the learner against the objective without treating watch time as mastery.
+6. Next lecture plan: choose the next full lecture, segment, transcript path, or remediation clip from the evidence.
+
+The teacher must always cover the required material, but should adapt the route through it for the single learner's needs.
+
+## Lecture Duration And Cadence
+
+Use about 50 minutes as the target for full class-replacement lectures: `3000` seconds, with an acceptable range of `2700` to `3300` seconds. That does not mean 50 minutes of passive video. Full lectures should be divided into 5-12 minute concept segments, with active recall roughly every 6-10 minutes and practice handoffs every 10-15 minutes.
+
+Short deterministic fixtures can remain 1-10 minutes for verification, smoke tests, previews, and publishing gates. Those fixtures must still carry the full-lecture duration policy so the production planner knows what to generate for real course delivery.
+
+## Chalkboard And Board Close-Up
+
+Generated lectures should default to a teacher at a chalkboard or equivalent board surface when the subject benefits from visual explanation. The board plan should identify each important board moment, its timestamp, label, and summary. The learner UI should expose a board close-up mode so a learner can inspect the board without losing the transcript, citations, or checkpoints.
+
+Board visuals should be original or generated, accessible through narration and alt text, and useful without copying another teacher's board layout, slides, or visual identity.
+
+## Learning Environment And Note-Taking
+
+Lectures should prompt the learner to prepare an environment that supports real learning:
+
+- Choose a quiet, low-distraction place.
+- Keep a paper notebook and pen available.
+- Listen first, then write the key words, diagrams, questions, and examples by hand.
+- Pause before checkpoint answers are revealed.
+- Rewrite notes after the lecture into cleaner terms, worked examples, and remaining questions.
+- Treat practice and assessment evidence as the progress signal, not the feeling of having watched the lecture.
 
 ## Lecture Plan Generator
 
@@ -61,7 +100,7 @@ The generator emits JSON with `contentSource`, `citations`, `script`, `storyboar
 The gate also has a deterministic `-SelfTest` mode that mutates the approved fixture into four blocked cases and confirms each one fails.
 
 ```powershell
-.\scripts\quality\check-lecture-license-gate.ps1 -ManifestPath .\fixtures\lecture-video.gdev-101-design-vocabulary.json -SelfTest
+.\scripts\quality\check-lecture-license-gate.ps1 -ManifestPath ..\open-education-game-development\generated-lectures\gdev-101-design-vocabulary\lecture-video.json -SelfTest
 ```
 
 ## Generated Instructor Persona Rules
@@ -73,19 +112,27 @@ The default policy requires:
 - Disclosure: "This lecture uses an original generated instructor and synthetic voice for an Open Education Suite lesson."
 - Voice consent: only project-owned synthetic voices or explicitly consented voices.
 - Likeness consent: only synthetic non-real-person likenesses or explicitly consented real-person likenesses.
+- Voice matching: `generatedInstructor.gender`, `generatedInstructor.voiceMatchPolicy`, and `performancePlan.audioProfile` must agree before rendering; a male instructor routes to a masculine lower-register profile, a female instructor routes to a feminine profile, and neutral/nonbinary instructors route to a neutral adult profile.
 - Tone: clear, rigorous, calm, specific about evidence, transparent about uncertainty, and supportive without false praise.
 - Prohibited uses: real-person voice cloning without consent, real-person likeness cloning without consent, creator or teacher impersonation, undisclosed generated instruction, and false claims that a generated instructor is human or live.
 
 The persona policy is checked by `scripts/quality/check-lecture-video.ps1` against the deterministic fixture so generated instructor disclosure, consent, and tone rules cannot drift silently.
 
+## Instructor Realism Contract
+
+Each lecture package carries a `generatedInstructor.realismProfile` so realistic rendering has a deterministic target before a provider is plugged in. The profile must name the presentation style, render-readiness state, visual fidelity targets, movement plan, and board interaction plan.
+
+The first GDEV fixture uses a realistic synthetic instructor at a chalkboard. It requires natural gaze shifts, board-aware pointing, pauses during active recall, no real-person clone, and a board layout where the instructor does not cover high-priority text. The current local path uses a ComfyUI-generated avatar keyframe as the instructor visual source; ffmpeg only assembles that rendered keyframe with audio for the short fixture.
+
 ## Local Archive Conventions
 
-`fixtures/lecture-media-archive-policy.json` defines where rendered lecture media lives and how it is referenced. The current large-file storage decision is: do not commit rendered media to Git. Store rendered audio and video under the ignored local archive `var\lecture-media`, record SHA-256 checksums in `lecture-video.json`, and defer Git LFS or object storage until a publishing workflow needs versioned media distribution.
+`fixtures/lecture-media-archive-policy.json` defines where rendered lecture media lives and how it is referenced. Generated lecture packages and subject-specific materials belong in the owning content repo. For game development, that means `F:\dev\open-education-game-development\generated-lectures\...`, not this core suite repo. The current large-file storage decision is: keep manifests, captions, transcripts, storyboards, QA metadata, and checksums in the content repo; ignore large rendered audio/video binaries until the project adopts Git LFS or object storage.
 
 Conventions:
 
-- Keep `lecture-video.json`, scripts, captions, transcripts, storyboards, slides metadata, and QA reports in Git.
-- Keep rendered `.mp4`, `.m4a`, `.wav`, and similar large binaries under `var\lecture-media\{sourceId}\{packageId}\`.
+- Keep `lecture-video.json`, scripts, captions, transcripts, storyboards, slides metadata, and QA reports in the owning subject repo.
+- The large binary rule is still: do not commit rendered media.
+- Keep rendered `.mp4`, `.m4a`, `.wav`, and similar large binaries under `generated-lectures\{lectureSlug}\media\` in the owning subject repo, with that media folder ignored by Git unless a large-file policy replaces this rule.
 - Required media must move from `planned` to `rendered` or `archived` before a course can depend on it.
 - Rendered or archived media must use a 64-character SHA-256 checksum in the manifest.
 - Required course paths cannot point only to hosted media.
@@ -115,6 +162,10 @@ Required dimensions:
 - Misconception Checks: diagnostic contrasts for likely misunderstandings.
 - Accessibility: captions, transcript, chapters, slide alt text, and narration that does not rely on visuals alone.
 - Assessment Handoff: a practice or assessment artifact that creates evidence without treating watch completion as mastery.
+- Learning Environment: low-distraction setup, pen-and-paper note taking, pausing before answers, and rewritten notes after the lecture.
+- Board Clarity: legible board work, narrated diagrams, and close-up access.
+- Instructor Realism: consistent synthetic identity, natural gaze and gestures, board-aware movement, and no real-person cloning.
+- Adaptive Continuity: checkpoint and assessment evidence shape the next lecture while the required material remains covered.
 
 ## Source Review Matrix
 
@@ -188,9 +239,10 @@ Required stages:
 - Media: local archive path, SHA-256 checksums, rendered or archived required media, and no host-only dependencies.
 - Accessibility: captions, transcript, chapters, and slide alt text.
 - License and persona: license gate pass, generated instructor disclosure, voice consent, and likeness consent.
+- Instructor realism: face/body consistency, board occlusion check, gesture timing, and generated instructor disclosure.
 - Final package approval: all required stages approved, quality rubric passed, content source linked, and operator final approval.
 
-Generated systems, generated instructors, and automated checks cannot approve their own packages. A package can only move to `approved-for-publish` after all required stages are `approved`, required media is rendered or archived with 64-character checksums, and `finalApproval.status` is `approved` by an allowed operator. The deterministic GDEV fixture records script, visuals, accessibility, and license/persona approval, but remains `not-ready` until rendered media and final package approval are complete.
+Generated systems, generated instructors, and automated checks cannot approve their own packages. A package can only move to `approved-for-publish` after all required stages are `approved`, required media is rendered or archived with 64-character checksums, and `finalApproval.status` is `approved` by an allowed operator. The instructor realism stage must explicitly document face/body consistency, board occlusion, gesture timing, and generated instructor disclosure before publish. The deterministic GDEV fixture records script, visuals, accessibility, and license/persona approval, but remains `not-ready` until rendered media, instructor realism review, and final package approval are complete.
 
 ## Lecture Media Production Providers
 
@@ -198,7 +250,7 @@ Generated systems, generated instructors, and automated checks cannot approve th
 
 Rules:
 
-- Local ComfyUI production must copy outputs into `var\lecture-media` and record SHA-256 checksums before publish.
+- Local ComfyUI production must copy outputs into the subject content repo `generated-lectures` archive and record SHA-256 checksums before publish.
 - Cloud providers must not store credentials in the repo; adapters may only read secret values from environment variables or a local-only secret store.
 - Cloud outputs must be downloaded, archived, and checksummed before they can satisfy required course paths.
 - Host-only cloud outputs are not acceptable for required lecture instruction.
@@ -208,7 +260,7 @@ Rules:
 
 `scripts/teaching/build-lecture-production-job.ps1` turns a `lecture-video.json` package and provider profile into a deterministic dry-run job. It does not call ComfyUI, TTS, avatar, or cloud services. It only plans the production stages and expected archive outputs.
 
-The dry-run job includes TTS, visuals, avatar, assembly, archive, and QA stages. Every required output path is under `var\lecture-media`, every renderable artifact requires `sha256`, and publish remains blocked until a real render, checksum/archive update, and operator review pass.
+The dry-run job includes TTS, visuals, avatar, assembly, archive, and QA stages. Every required output path is under the subject content repo `generated-lectures` archive, every renderable artifact requires `sha256`, and publish remains blocked until a real render, checksum/archive update, and operator review pass.
 
 ## Local ComfyUI Adapter
 
@@ -216,15 +268,47 @@ The dry-run job includes TTS, visuals, avatar, assembly, archive, and QA stages.
 
 The adapter can also read a completed output folder and report file lengths plus SHA-256 hashes. Operators can use `-Submit` later to write a handoff JSON into the sibling repo's `.codex-cache\tmp` area, but automated verification uses dry-run mode only.
 
+## Local ComfyUI TTS Readiness
+
+`local-comfyui-tts` is now defined as a disabled local candidate provider for generic synthetic instructor voice. It uses the `ComfyUI-automation` Qwen3 voice-design workflow, not the voice-clone workflow, and stays behind a readiness gate until the runtime exposes the required TTS nodes.
+
+Run the non-failing readiness report:
+
+```powershell
+.\scripts\quality\check-comfyui-tts-readiness.ps1
+```
+
+Run the strict gate before switching lecture voice routing to local ComfyUI:
+
+```powershell
+.\scripts\quality\check-comfyui-tts-readiness.ps1 -RequireReady
+```
+
+The gate requires `Qwen3TTSModelLoader`, `Qwen3TTSVoiceDesign`, and `SaveAudio`, rejects `Qwen3TTSVoiceClone`, and keeps operator listening review mandatory. On this machine, ComfyUI is reachable but the runtime does not currently expose those TTS node classes, so local ComfyUI voice rendering is not publish-ready yet.
+
+## Rendered ComfyUI Avatar Fixture
+
+`scripts/teaching/render-lecture-avatar-comfyui.ps1` renders the GDEV synthetic instructor keyframe through the local ComfyUI API and writes the image to the subject repo under `generated-lectures\gdev-101-design-vocabulary\media\visuals`. `lecture-avatar-rendered-media.json` records the local ComfyUI provider, workflow path, subject-owned media path, file length, and SHA-256 checksum.
+
+The avatar keyframe is a real local generated visual, not an ffmpeg-drawn instructor block. The checked publish renderer uses `local-comfyui+ffmpeg`: ComfyUI supplies the instructor-at-chalkboard keyframe and ffmpeg assembles the MP4 with the local lecture audio.
+
 ## Cloud Production Adapter Contracts
 
 `scripts/teaching/invoke-cloud-production-adapter.ps1` validates the secret-free cloud provider contracts for TTS, avatar, and video assembly. It reports only environment variable names and whether each variable is present; values are always redacted.
 
-Cloud adapters stay opt-in. Verification runs in `contract-check` mode, so missing cloud credentials do not fail local development. Operators can use `-RequireConfigured` when they want to confirm that a specific machine is ready for cloud rendering. Even then, cloud outputs must be downloaded to `var\lecture-media`, checksummed, and approved before publish.
+Cloud adapters stay opt-in. Verification runs in `contract-check` mode, so missing cloud credentials do not fail local development. Operators can use `-RequireConfigured` when they want to confirm that a specific machine is ready for cloud rendering. Even then, cloud outputs must be downloaded to the subject content repo, checksummed, and approved before publish.
+
+For publish-grade lecture voice, the TTS adapter supports an OpenAI-compatible binary speech endpoint. Operators configure `LECTURE_TTS_PROVIDER`, `LECTURE_TTS_API_KEY`, `LECTURE_TTS_ENDPOINT`, `LECTURE_TTS_MODEL`, and `LECTURE_TTS_VOICE` outside the repo, then run:
+
+```powershell
+.\scripts\teaching\invoke-cloud-production-adapter.ps1 -RenderTts -RequireConfigured -ManifestPath ..\open-education-game-development\generated-lectures\gdev-101-design-vocabulary\lecture-video.json
+```
+
+The render writes `lecture-audio-neural-tts.mp3` and `lecture-neural-tts-rendered-media.json` under the owning subject repo's `generated-lectures` folder. The adapter never prints or stores credential values. The returned audio is still blocked from publish until the checksum/archive update and operator listening review pass.
 
 ## Rendered Audio Fixture
 
-`scripts/teaching/render-lecture-audio-fixture.ps1` produces a real short local WAV file for the GDEV lecture fixture under the ignored `var\lecture-media` archive. `fixtures/lecture-rendered-media.gdev-101.json` records the audio path, render engine, status, and SHA-256 checksum.
+`scripts/teaching/render-lecture-audio-fixture.ps1` produces a real short local WAV file for the GDEV lecture fixture under `F:\dev\open-education-game-development\generated-lectures\gdev-101-design-vocabulary\media\audio`. `lecture-rendered-media.json` in that lecture folder records the audio path, render engine, status, and SHA-256 checksum.
 
 The audio fixture proves the archive can hold real generated media without committing binaries. It is not the final publishable lecture video; the package still requires final video assembly, checksum/archive manifest updates, and operator approval before `approved-for-publish`.
 
@@ -234,24 +318,24 @@ The audio fixture proves the archive can hold real generated media without commi
 
 The manifest covers audio, video, captions, and package metadata:
 
-- Rendered audio and video files must live under `var\lecture-media` and have matching SHA-256 values before they can satisfy required publish media.
+- Rendered audio and video files must live under the subject repo `generated-lectures` archive and have matching SHA-256 values before they can satisfy required publish media.
 - Inline WebVTT captions are checksummed from `captions.text` so the package has a stable accessibility artifact even before captions are written to a standalone file.
 - Package metadata is checksummed from the lecture manifest bytes so operator review can tie approval to the exact package being published.
 - planned required media stays a publish blocker until the real file exists locally and the checksum matches.
 
-The tool only writes when called with `-Apply -OutputPath ...`, and output is constrained to `var\lecture-media` or `.codex-cache\tmp`. The manifest also records `requiresOperatorPublishGate`, because checksums alone do not approve a lecture for learners.
+The tool only writes when called with `-Apply -OutputPath ...`, and output is constrained to the subject lecture archive or `.codex-cache\tmp`. The manifest also records `requiresOperatorPublishGate`, because checksums alone do not approve a lecture for learners.
 
 ## Operator Publish Gate Run
 
-`scripts/teaching/render-lecture-publish-fixture.ps1` uses the local `ffmpeg` encoder to turn the rendered WAV fixture into archived M4A and MP4 files under `var\lecture-media`. This gives the operator gate a real rendered package candidate instead of a host-only URL or metadata-only placeholder.
+`scripts/teaching/render-lecture-publish-fixture.ps1` uses the local ComfyUI avatar keyframe plus the local `ffmpeg` encoder to turn the rendered WAV fixture into archived M4A and MP4 files under the game-development content repo's generated lecture folder. This gives the operator gate a real rendered package candidate instead of a host-only URL, metadata-only placeholder, or an ffmpeg-drawn instructor.
 
-`scripts/teaching/run-lecture-publish-gate.ps1` then builds a publish candidate, records the publish-ready path, and runs `scripts/quality/check-lecture-operator-review.ps1 -RequirePublishReady`. In dry-run mode it writes only to `.codex-cache\tmp`; with `-Apply`, it writes the approved package manifest to `var\lecture-media\...\publish\lecture-video.publish-ready.json`.
+`scripts/teaching/run-lecture-publish-gate.ps1` then builds a publish candidate, records the publish-ready path, and runs `scripts/quality/check-lecture-operator-review.ps1 -RequirePublishReady`. In dry-run mode it writes only to `.codex-cache\tmp`; with `-Apply`, it writes the approved package manifest to `generated-lectures\...\publish\lecture-video.publish-ready.json` in the owning subject repo.
 
 The gate can return `approved-for-publish` only when required media is archived, SHA-256 checksums are recorded, every review stage has an allowed human reviewer, and final package approval is present. The checked path is still an operator-controlled archive artifact; learner-facing selection should use it only after the production smoke test proves playback and transcript behavior.
 
 ## Production Learner Smoke Test
 
-`scripts/testing/run-lecture-production-smoke.ps1` exercises the rendered package through the learner flow. It renders the deterministic publish fixture, applies the operator gate to write the publish-ready manifest under `var\lecture-media`, exports a temporary learner UI session against that manifest, and runs Playwright against the temporary UI copy.
+`scripts/testing/run-lecture-production-smoke.ps1` exercises the rendered package through the learner flow. It renders the deterministic publish fixture, applies the operator gate to write the publish-ready manifest under the subject repo `generated-lectures` folder, exports a temporary learner UI session against that manifest, and runs Playwright against the temporary UI copy.
 
 The smoke test proves the learner can select the lecture view, load the archived MP4 asset, see the transcript and SHA-256 provenance, press play, and continue using the timeline. The test uses `.codex-cache\tmp` for the temporary UI and Playwright spec, while the approved package manifest stays in the ignored lecture media archive.
 

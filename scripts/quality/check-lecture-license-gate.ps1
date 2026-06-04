@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [string]$ManifestPath = '.\fixtures\lecture-video.gdev-101-design-vocabulary.json',
+    [string]$ManifestPath = '..\open-education-game-development\generated-lectures\gdev-101-design-vocabulary\lecture-video.json',
     [switch]$SelfTest
 )
 

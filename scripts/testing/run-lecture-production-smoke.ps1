@@ -6,6 +6,8 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+. .\scripts\teaching\lecture-paths.ps1
+
 $repo = (& git -C . rev-parse --show-toplevel).Trim()
 if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($repo)) {
     throw 'Unable to resolve repository root with git.'
@@ -18,6 +20,8 @@ $tmpRoot = Join-Path (Join-Path $cacheRoot 'tmp') $runId
 $artifactRoot = Join-Path $tmpRoot 'artifacts'
 $uiRoot = Join-Path $tmpRoot 'ui\learner'
 $logPath = Join-Path $logRoot "$runId.log"
+$lectureManifestPath = '..\open-education-game-development\generated-lectures\gdev-101-design-vocabulary\lecture-video.json'
+$renderedMediaPath = '..\open-education-game-development\generated-lectures\gdev-101-design-vocabulary\lecture-rendered-media.json'
 
 [void](New-Item -ItemType Directory -Force -Path $logRoot, $artifactRoot, $uiRoot)
 
@@ -38,13 +42,13 @@ try {
 
     "lecture-production-smoke start run=$runId" | Tee-Object -FilePath $logPath -Append
 
-    $renderOutput = & .\scripts\teaching\render-lecture-publish-fixture.ps1 2>&1
+    $renderOutput = & .\scripts\teaching\render-lecture-publish-fixture.ps1 -ManifestPath $lectureManifestPath -RenderedMediaPath $renderedMediaPath 2>&1
     $renderOutput | Tee-Object -FilePath $logPath -Append
     if ($LASTEXITCODE -ne 0) {
         throw "Lecture publish fixture render failed with exit code $LASTEXITCODE."
     }
 
-    $publishGateOutput = & .\scripts\teaching\run-lecture-publish-gate.ps1 -Apply 2>&1
+    $publishGateOutput = & .\scripts\teaching\run-lecture-publish-gate.ps1 -ManifestPath $lectureManifestPath -Apply 2>&1
     $publishGateOutput | Tee-Object -FilePath $logPath -Append
     if ($LASTEXITCODE -ne 0) {
         throw "Lecture publish gate failed with exit code $LASTEXITCODE."
@@ -56,7 +60,10 @@ try {
     }
 
     Get-ChildItem -LiteralPath '.\ui\learner' | Copy-Item -Destination $uiRoot -Recurse -Force
-    $publishReadyFullPath = Join-Path $repo $publishGate.publishReadyPath
+    $resolvedLectureManifestPath = Resolve-LecturePath -Path $lectureManifestPath
+    $lecture = Get-Content -LiteralPath $resolvedLectureManifestPath -Raw | ConvertFrom-Json
+    $assetRoot = Get-LectureAssetRoot -Lecture $lecture -ManifestPath $resolvedLectureManifestPath
+    $publishReadyFullPath = Resolve-LectureContentPath -ContentRoot ([string]$assetRoot.contentRoot) -Path ([string]$publishGate.publishReadyPath)
     $sessionExportOutput = & .\scripts\teaching\export-learner-ui-session.ps1 -OutputPath (Join-Path $uiRoot 'session-data.js') -LecturePackagePath $publishReadyFullPath 2>&1
     $sessionExportOutput | Tee-Object -FilePath $logPath -Append
     if ($LASTEXITCODE -ne 0) {

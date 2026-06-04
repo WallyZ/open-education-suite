@@ -153,10 +153,26 @@
               </div>
               <div class="playback-controls">
                 <button class="primary-button" type="button" id="lecturePlayButton" aria-pressed="false">Play lecture</button>
+                <button class="secondary-button" type="button" id="boardCloseUpButton" aria-pressed="false">Board close-up</button>
                 <div class="timeline-control">
                   <label for="lectureProgress">Position</label>
                   <input id="lectureProgress" type="range" min="0" max="180" step="5" value="0">
                   <span id="lecturePosition">0:00 / 3:00</span>
+                </div>
+              </div>
+              <div class="lecture-study-support">
+                <div>
+                  <h3>Learning setup</h3>
+                  <ul id="learningEnvironmentList"></ul>
+                </div>
+                <div>
+                  <h3>Board notes</h3>
+                  <p id="boardCloseUpStatus">Board close-up is off.</p>
+                  <div class="board-moment-list" id="boardMomentList"></div>
+                </div>
+                <div>
+                  <h3>Pause prompts</h3>
+                  <div class="pause-prompt-list" id="pausePromptList" aria-label="Lecture pause prompts"></div>
                 </div>
               </div>
               <div class="chapter-list" id="chapterList" aria-label="Lecture chapters"></div>

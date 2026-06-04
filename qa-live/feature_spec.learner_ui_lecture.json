@@ -105,6 +105,21 @@
           "target": "This lecture uses an original generated instructor"
         },
         {
+          "description": "Confirm the lecture prompts a real learning setup",
+          "kind": "assert_visible_text",
+          "target": "Keep a paper notebook and pen available"
+        },
+        {
+          "description": "Turn on board close-up mode",
+          "kind": "click",
+          "target": "text=Board close-up"
+        },
+        {
+          "description": "Confirm board close-up mode is active",
+          "kind": "assert_visible_text",
+          "target": "Board close-up is on."
+        },
+        {
           "description": "Confirm the transcript contains the core vocabulary explanation",
           "kind": "assert_text",
           "target": "A verb is what the player can do."
@@ -133,6 +148,21 @@
           "description": "Confirm playback returns to play state",
           "kind": "assert_text",
           "target": "Play lecture"
+        },
+        {
+          "description": "Seek to the active-recall pause window",
+          "kind": "click",
+          "target": ".pause-prompt-button[data-pause-second=\"60\"]"
+        },
+        {
+          "description": "Confirm the timed pause overlay matches the lecture prompt",
+          "kind": "assert_visible_text",
+          "target": "Pause and write: verb, goal, feedback"
+        },
+        {
+          "description": "Confirm the pause window updates the visible timeline",
+          "kind": "assert_visible_text",
+          "target": "1:00 / 3:00"
         },
         {
           "description": "Open the progress tab",
@@ -192,7 +222,7 @@
         {
           "description": "Jump to the practice handoff chapter",
           "kind": "click",
-          "target": "text=Practice Handoff"
+          "target": ".chapter-button[data-start-second=\"135\"]"
         },
         {
           "description": "Confirm chapter seeking updates the resume position",

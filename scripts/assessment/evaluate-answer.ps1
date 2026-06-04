@@ -28,6 +28,7 @@ $item = $item[0]
 
 $status = 'uncertain'
 $score = 0.0
+$rubricEvidence = $null
 
 if ($item.type -in @('multiple-choice', 'short-answer', 'recall')) {
     $normalizedAnswer = Normalize-Answer -Value $Answer
@@ -43,6 +44,56 @@ if ($item.type -in @('multiple-choice', 'short-answer', 'recall')) {
     else {
         $status = 'incorrect'
         $score = 0.0
+    }
+}
+elseif ($item.type -eq 'essay') {
+    $normalizedAnswer = Normalize-Answer -Value $Answer
+    $wordCount = [regex]::Matches($Answer, "\b[\p{L}\p{N}][\p{L}\p{N}'-]*\b").Count
+    $minimumWordCount = [int]$item.rubric.minimumWordCount
+    $criteria = @($item.rubric.criteria)
+    $criterionResults = @()
+
+    foreach ($criterion in $criteria) {
+        $signals = @($criterion.requiredSignals)
+        $matchedSignals = @($signals | Where-Object {
+                $signal = Normalize-Answer -Value $_
+                $normalizedAnswer.Contains($signal)
+            })
+        $criterionResults += [ordered]@{
+            id = $criterion.id
+            label = $criterion.label
+            passed = ($matchedSignals.Count -eq $signals.Count)
+            matchedSignals = @($matchedSignals)
+            requiredSignals = @($signals)
+        }
+    }
+
+    $passedCriteria = @($criterionResults | Where-Object { $_.passed })
+    $minimumPartialCriteria = [Math]::Max([Math]::Ceiling($criteria.Count * 0.6), 1)
+
+    if ($wordCount -lt $minimumWordCount) {
+        $status = 'incorrect'
+        $score = 0.0
+    }
+    elseif ($criteria.Count -gt 0 -and $passedCriteria.Count -eq $criteria.Count) {
+        $status = 'correct'
+        $score = 1.0
+    }
+    elseif ($criteria.Count -gt 0 -and $passedCriteria.Count -ge $minimumPartialCriteria) {
+        $status = 'partial'
+        $score = 0.65
+    }
+    else {
+        $status = 'incorrect'
+        $score = 0.0
+    }
+
+    $rubricEvidence = [ordered]@{
+        wordCount = $wordCount
+        minimumWordCount = $minimumWordCount
+        passedCriteria = $passedCriteria.Count
+        totalCriteria = $criteria.Count
+        criteria = @($criterionResults)
     }
 }
 elseif ($item.type -eq 'project-checkpoint') {
@@ -82,5 +133,6 @@ else {
         score = $score
         hintUsage = $HintsUsed
         confidenceDelta = $confidenceDelta
+        rubricEvidence = $rubricEvidence
     }
 } | ConvertTo-Json -Depth 8

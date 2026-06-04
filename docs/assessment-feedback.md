@@ -2,11 +2,27 @@
 
 Assessments collect mastery evidence. They are not limited to quizzes; project checkpoints and interactive exercises can also update mastery when they produce clear evidence.
 
+## Assessment Rigor Policy
+
+Essays are the default high-rigor assessment type for complex objectives because they require a learner to explain, connect evidence, compare alternatives, handle tradeoffs, and defend a conclusion. A quiz can check recall or diagnose a misconception, but it should not be treated as enough evidence for synthesis-level mastery.
+
+For summative testing, prefer this order unless the objective requires a different artifact:
+
+1. essay
+2. project-checkpoint with written defense
+3. oral/explained-answer transcript
+4. code-task or interactive simulation with written rationale
+5. short-answer
+6. multiple-choice or recall
+
+Essay prompts must include a rubric, minimum evidence requirements, and at least one synthesis move such as comparison, causal explanation, tradeoff analysis, counterargument, transfer, or design justification.
+
 ## Assessment Item Types
 
 - `recall`
 - `multiple-choice`
 - `short-answer`
+- `essay`
 - `code-task`
 - `project-checkpoint`
 - `reflection`

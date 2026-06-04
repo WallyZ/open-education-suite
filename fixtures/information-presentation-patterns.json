@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "strategyId": "information-presentation-patterns-v1",
+  "goal": "Select presentation patterns from information type, subject, learner evidence, accessibility needs, cognitive load, and practice outcome.",
+  "informationTypes": [
+    {
+      "id": "fact",
+      "presentationModes": ["retrieval-card", "contrast-example", "mnemonic", "spaced-review"],
+      "practiceEvidence": ["recall", "recognition", "use-in-context"]
+    },
+    {
+      "id": "concept",
+      "presentationModes": ["definition", "non-example", "concept-map", "worked-example", "Socratic-question"],
+      "practiceEvidence": ["explain-in-own-words", "classify-example", "generate-example"]
+    },
+    {
+      "id": "procedure",
+      "presentationModes": ["step-demo", "worked-example", "guided-practice", "faded-scaffold", "checklist"],
+      "practiceEvidence": ["complete-procedure", "explain-step-choice", "debug-step"]
+    },
+    {
+      "id": "process",
+      "presentationModes": ["timeline", "flow-diagram", "animation", "state-transition", "checkpoint-question"],
+      "practiceEvidence": ["order-steps", "predict-next-state", "identify-breakpoint"]
+    },
+    {
+      "id": "causal-system",
+      "presentationModes": ["simulation", "variable-control", "prediction-prompt", "graph-linked-explanation", "what-if"],
+      "practiceEvidence": ["predict-outcome", "explain-cause", "test-variable"]
+    },
+    {
+      "id": "spatial-structure",
+      "presentationModes": ["diagram", "annotated-image", "model-rotation", "map", "close-up"],
+      "practiceEvidence": ["label-structure", "trace-path", "sketch-from-memory"]
+    },
+    {
+      "id": "quantitative-data",
+      "presentationModes": ["table", "chart", "interactive-notebook", "worked-calculation", "data-story"],
+      "practiceEvidence": ["interpret-chart", "compute-result", "choose-visualization"]
+    },
+    {
+      "id": "code-or-system",
+      "presentationModes": ["live-code", "trace-table", "debugging-walkthrough", "architecture-diagram", "unit-test"],
+      "practiceEvidence": ["predict-output", "fix-bug", "write-small-program"]
+    },
+    {
+      "id": "design-critique",
+      "presentationModes": ["case-comparison", "rubric", "before-after", "think-aloud", "peer-review"],
+      "practiceEvidence": ["justify-choice", "apply-rubric", "revise-artifact"]
+    },
+    {
+      "id": "lab-workflow",
+      "presentationModes": ["protocol", "safety-brief", "simulation", "observation-log", "error-analysis"],
+      "practiceEvidence": ["follow-protocol", "record-observation", "explain-risk"]
+    },
+    {
+      "id": "case-or-argument",
+      "presentationModes": ["case-study", "source-comparison", "timeline", "claim-evidence-reasoning", "debate-map"],
+      "practiceEvidence": ["cite-evidence", "compare-interpretations", "write-argument"]
+    },
+    {
+      "id": "creative-work",
+      "presentationModes": ["studio-demo", "critique", "portfolio-example", "constraint-prompt", "iteration-log"],
+      "practiceEvidence": ["make-artifact", "reflect-on-choices", "revise-from-feedback"]
+    }
+  ],
+  "subjectProfiles": [
+    {
+      "id": "math",
+      "primaryPatterns": ["worked-example", "manipulable-visual", "proof-sketch", "retrieval"],
+      "avoid": ["formula-only-explanation"]
+    },
+    {
+      "id": "science",
+      "primaryPatterns": ["simulation", "lab-workflow", "causal-model", "data-interpretation"],
+      "avoid": ["fact-list-without-model"]
+    },
+    {
+      "id": "programming",
+      "primaryPatterns": ["live-code", "trace-table", "debugging-walkthrough", "unit-test"],
+      "avoid": ["syntax-dump-without-execution"]
+    },
+    {
+      "id": "game-development",
+      "primaryPatterns": ["studio-demo", "design-critique", "prototype-loop", "playtest-evidence"],
+      "avoid": ["taste-based-feedback-only"]
+    },
+    {
+      "id": "cybersecurity",
+      "primaryPatterns": ["threat-model", "attack-defense-lab", "case-study", "checklist"],
+      "avoid": ["tool-demo-without-risk-model"]
+    },
+    {
+      "id": "data-science",
+      "primaryPatterns": ["notebook", "chart", "model-diagnostic", "data-story"],
+      "avoid": ["metric-only-explanation"]
+    },
+    {
+      "id": "humanities",
+      "primaryPatterns": ["source-comparison", "claim-evidence-reasoning", "timeline", "discussion"],
+      "avoid": ["summary-without-evidence"]
+    },
+    {
+      "id": "language",
+      "primaryPatterns": ["comprehensible-input", "dialogue", "spaced-retrieval", "production-practice"],
+      "avoid": ["grammar-table-only"]
+    },
+    {
+      "id": "art-design",
+      "primaryPatterns": ["visual-analysis", "studio-demo", "critique", "portfolio-iteration"],
+      "avoid": ["aesthetic-claim-without-observation"]
+    },
+    {
+      "id": "professional-practice",
+      "primaryPatterns": ["scenario", "role-play", "decision-tree", "case-reflection"],
+      "avoid": ["policy-reading-without-application"]
+    }
+  ],
+  "adaptiveSelectionRules": [
+    {
+      "id": "novice-start",
+      "when": ["low-prior-knowledge", "low-confidence"],
+      "choose": ["worked-example", "visual-overview", "guided-practice"],
+      "mustInclude": ["retrieval-check", "low-stakes-practice"]
+    },
+    {
+      "id": "misconception-repair",
+      "when": ["misconception-present"],
+      "choose": ["contrast-example", "non-example", "diagnostic-question"],
+      "mustInclude": ["explain-why-wrong", "new-evidence"]
+    },
+    {
+      "id": "procedure-fluency",
+      "when": ["procedure-known", "errors-in-execution"],
+      "choose": ["faded-scaffold", "debug-step", "timed-but-not-rushed-practice"],
+      "mustInclude": ["error-analysis", "repeat-with-variation"]
+    },
+    {
+      "id": "advanced-transfer",
+      "when": ["mastery-evidence-strong"],
+      "choose": ["case-comparison", "open-project", "teach-back"],
+      "mustInclude": ["transfer-task", "reflection"]
+    },
+    {
+      "id": "accessibility-adaptation",
+      "when": ["accommodation-needed", "modality-barrier"],
+      "choose": ["transcript", "captions", "alt-text", "keyboard-accessible-interactive", "low-motion-version"],
+      "mustInclude": ["equivalent-practice-evidence"]
+    }
+  ],
+  "qualityRequirements": {
+    "minimumModesPerComplexObjective": 3,
+    "requiredLearningMoves": ["explain", "show-example", "ask-retrieval", "provide-practice", "collect-evidence"],
+    "requiredAccessibleAlternates": ["caption-or-transcript", "alt-text-for-visuals", "keyboard-path-for-interactives"],
+    "forbiddenDefaults": ["lecture-only-for-everything", "passive-watch-time-as-mastery", "subject-content-inside-core-repo"],
+    "readOnlyAgainstContentRepos": true
+  }
+}

@@ -71,7 +71,9 @@ function Select-ContentObjectForObjective {
             $_.sourcePath -like "*$courseCode*" -or $_.title -like "*$courseCode*"
         })
         if ($courseMatches.Count -gt 0) {
-            return @($courseMatches | Sort-Object sourcePath | Select-Object -First 1)[0]
+            return @($courseMatches | Sort-Object @{ Expression = {
+                if ($_.type -eq 'study-plan' -and $_.sourcePath -like 'study-plans\courses\*') { 0 } else { 1 }
+            } }, sourcePath | Select-Object -First 1)[0]
         }
     }
 

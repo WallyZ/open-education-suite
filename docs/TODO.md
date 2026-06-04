@@ -20,6 +20,13 @@ This is the index for platform backlog items. Each detailed backlog file lives u
 - [TODO_11_learner_facing_ui.md](todo/TODO_11_learner_facing_ui.md) - learner-facing workspace, session UI, accessibility, and interaction flow
 - [TODO_12_generated_lecture_video.md](todo/TODO_12_generated_lecture_video.md) - generated instructor lecture videos, source review, durable local media packages, and video QA
 - [TODO_13_lecture_media_production.md](todo/TODO_13_lecture_media_production.md) - renderer/TTS/avatar production, local ComfyUI routing, cloud provider adapters, checksums, archive, and publish gate
+- [TODO_14_subject_owned_lecture_assets_and_instructor_realism.md](todo/TODO_14_subject_owned_lecture_assets_and_instructor_realism.md) - subject-owned generated lecture assets, media routing, and realistic instructor targets
+- [TODO_15_lecture_performance_and_synchronized_board.md](todo/TODO_15_lecture_performance_and_synchronized_board.md) - emotional audio, timed pause overlays, and board/storyboard synchronization
+- [TODO_16_natural_human_lecture_voice.md](todo/TODO_16_natural_human_lecture_voice.md) - natural lecture voice, expressive local fixtures, neural TTS handoff, and listening review gates
+- [TODO_17_front_row_classroom_video_realism.md](todo/TODO_17_front_row_classroom_video_realism.md) - front-row classroom video, board-local writing, realistic instructor motion, and lip sync
+- [TODO_18_courseware_source_review_and_course_design.md](todo/TODO_18_courseware_source_review_and_course_design.md) - MIT OCW and similar source-course review, course authoring patterns, and source-link quality gates
+- [TODO_19_publish_grade_classroom_video_realism.md](todo/TODO_19_publish_grade_classroom_video_realism.md) - publish-grade instructor performance, gesture planning, classroom realism, chalk realism, visual QA, and shot direction
+- [TODO_20_information_presentation_strategy.md](todo/TODO_20_information_presentation_strategy.md) - information-type and subject-aware presentation patterns, modality selection, accessibility, and quality gates
 
 ## Projects Reviewed for Ideas
 
@@ -33,3 +40,21 @@ This is the index for platform backlog items. Each detailed backlog file lives u
 - [Learning Locker](https://github.com/LearningLocker/learninglocker) - xAPI learning record store model
 - [H5P Hub Client](https://github.com/h5p/h5p-hub-client) - discoverable interactive content types and browser compatibility checks
 - [INGInious](https://github.com/INGInious/INGInious) - automated assessment platform for programming-style tasks
+- [Wav2Lip](https://github.com/Rudrabha/Wav2Lip) - audio-driven lip sync and mouth/audio alignment patterns for realistic instructor video
+- [SadTalker](https://github.com/OpenTalker/SadTalker) - still-image talking-head animation ideas for moving beyond static instructor frames
+- [MuseTalk](https://github.com/TMElyralab/MuseTalk) - high-quality lip-sync route with ComfyUI integration candidates
+- [LivePortrait](https://github.com/KlingAIResearch/LivePortrait) - portrait motion transfer ideas for subtle head, gaze, and expression movement
+- [AniPortrait](https://github.com/Zejun-Yang/AniPortrait) - audio/pose-conditioned portrait animation ideas for later instructor realism work
+- [MIT OpenCourseWare](https://ocw.mit.edu/) - durable course pages with syllabus, calendar, readings, lecture notes, assignments, exams, projects, downloads, attribution, and licensing patterns
+- [MIT Open Learning Library](https://openlearning.mit.edu/courses-programs/open-learning-library) - self-paced interactive practice with immediate feedback and course-card metadata
+- [Harvard CS50](https://cs50.harvard.edu/courses/) - week/module navigation, videos, notes, problem sets, practice, final projects, course policies, tools, and community support
+- [Stanford Engineering Everywhere](https://see.stanford.edu/) - archive-style lecture videos, handouts, assignments, exams, and prerequisites
+- [CMU Open Learning Initiative](https://oli.cmu.edu/courses/) - learning-engineered pages, activities, practice, checkpoints, and feedback loops
+- [OpenStax](https://openstax.org/subjects) - open textbook chapters, objectives, examples, exercises, glossaries, and instructor/learner resources
+- [OpenLearn](https://www.open.edu/openlearn/free-courses/full-catalogue) - short-course levels, estimated hours, activities, quizzes, badges, and accessible self-study resources
+- [Saylor Academy](https://learn.saylor.org/) - unit-based free courses with outcomes, readings, assessments, final exams, and completion/certificate paths
+- [Nand2Tetris](https://www.nand2tetris.org/course) - cumulative project ladder from first principles to a working computing system
+- [PhET Interactive Simulations](https://phet.colorado.edu/) - exploratory simulations for causal, scientific, and mathematical systems
+- [GeoGebra](https://www.geogebra.org/) and [Desmos Classroom](https://teacher.desmos.com/) - manipulable math visuals, graphing, and teacher-paced activities
+- [Jupyter](https://jupyter.org/) and [Observable](https://observablehq.com/) - executable notebooks for code, data, visualization, and explanation
+- [LabXchange](https://www.labxchange.org/) - lab pathways, interactives, simulations, and case-based science learning

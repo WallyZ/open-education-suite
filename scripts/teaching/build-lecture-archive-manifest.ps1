@@ -1,13 +1,15 @@
 [CmdletBinding()]
 param(
-    [string]$ManifestPath = '.\fixtures\lecture-video.gdev-101-design-vocabulary.json',
-    [string]$RenderedMediaPath = '.\fixtures\lecture-rendered-media.gdev-101.json',
+    [string]$ManifestPath = '..\open-education-game-development\generated-lectures\gdev-101-design-vocabulary\lecture-video.json',
+    [string]$RenderedMediaPath = '..\open-education-game-development\generated-lectures\gdev-101-design-vocabulary\lecture-rendered-media.json',
     [string]$OutputPath = '',
     [switch]$Apply
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+
+. .\scripts\teaching\lecture-paths.ps1
 
 function Test-HasText {
     param([object]$Value)
@@ -74,7 +76,7 @@ function Get-RelativeArchivePath {
     )
 
     $mediaPath = [string]$Media.path
-    if ($mediaPath.StartsWith('var\lecture-media\')) {
+    if ($mediaPath.StartsWith($ArchiveRoot)) {
         return $mediaPath
     }
 
@@ -96,37 +98,52 @@ function Resolve-RepoPath {
 }
 
 function Test-AllowedOutputPath {
-    param([string]$Path)
+    param(
+        [string]$Path,
+        [string]$ContentRoot,
+        [string]$ArchiveRoot
+    )
 
-    $fullPath = Resolve-RepoPath -Path $Path
+    $fullPath = if ([System.IO.Path]::IsPathRooted($Path)) {
+        [System.IO.Path]::GetFullPath($Path)
+    }
+    elseif ($Path.StartsWith($ArchiveRoot)) {
+        Resolve-LectureContentPath -ContentRoot $ContentRoot -Path $Path
+    }
+    else {
+        Resolve-RepoPath -Path $Path
+    }
     $repoRoot = [System.IO.Path]::GetFullPath((Get-Location).Path)
-    $archiveRoot = [System.IO.Path]::GetFullPath((Join-Path -Path $repoRoot -ChildPath 'var\lecture-media'))
+    $contentArchiveRoot = Resolve-LectureContentPath -ContentRoot $ContentRoot -Path $ArchiveRoot
     $tmpRoot = [System.IO.Path]::GetFullPath((Join-Path -Path $repoRoot -ChildPath '.codex-cache\tmp'))
-    return $fullPath.StartsWith($archiveRoot, [System.StringComparison]::OrdinalIgnoreCase) -or
+    return $fullPath.StartsWith($contentArchiveRoot, [System.StringComparison]::OrdinalIgnoreCase) -or
         $fullPath.StartsWith($tmpRoot, [System.StringComparison]::OrdinalIgnoreCase)
 }
 
-if (-not (Test-Path -LiteralPath $ManifestPath -PathType Leaf)) {
+$resolvedManifestPath = Resolve-LecturePath -Path $ManifestPath
+$resolvedRenderedMediaPath = Resolve-LecturePath -Path $RenderedMediaPath
+
+if (-not (Test-Path -LiteralPath $resolvedManifestPath -PathType Leaf)) {
     throw "Missing lecture manifest: $ManifestPath"
 }
-if (-not (Test-Path -LiteralPath $RenderedMediaPath -PathType Leaf)) {
+if (-not (Test-Path -LiteralPath $resolvedRenderedMediaPath -PathType Leaf)) {
     throw "Missing rendered media metadata: $RenderedMediaPath"
 }
 if ($Apply -and -not (Test-HasText $OutputPath)) {
     throw 'OutputPath is required when -Apply is used.'
 }
-if ($Apply -and -not (Test-AllowedOutputPath -Path $OutputPath)) {
-    throw 'Archive manifest output must be written under var\lecture-media or .codex-cache\tmp.'
+
+$lectureRaw = Get-Content -LiteralPath $resolvedManifestPath -Raw
+$lecture = $lectureRaw | ConvertFrom-Json
+$assetRoot = Get-LectureAssetRoot -Lecture $lecture -ManifestPath $resolvedManifestPath
+$renderedMedia = Get-Content -LiteralPath $resolvedRenderedMediaPath -Raw | ConvertFrom-Json
+if ($Apply -and -not (Test-AllowedOutputPath -Path $OutputPath -ContentRoot ([string]$assetRoot.contentRoot) -ArchiveRoot ([string]$assetRoot.relativePath))) {
+    throw 'Archive manifest output must be written under the subject lecture archive or .codex-cache\tmp.'
 }
 
-$lectureRaw = Get-Content -LiteralPath $ManifestPath -Raw
-$lecture = $lectureRaw | ConvertFrom-Json
-$renderedMedia = Get-Content -LiteralPath $RenderedMediaPath -Raw | ConvertFrom-Json
-
-$sourceId = [string]$lecture.contentSource.sourceId
 $safePackageId = ConvertTo-SafePathSegment -Value ([string]$lecture.packageId)
-$archiveRoot = "var\lecture-media\$sourceId\$safePackageId"
-$packageMetadataSha = Get-Sha256File -Path (Resolve-RepoPath -Path $ManifestPath)
+$archiveRoot = [string]$assetRoot.relativePath
+$packageMetadataSha = Get-Sha256File -Path $resolvedManifestPath
 $captionText = [string]$lecture.captions.text
 $captionSha = Get-Sha256Text -Value $captionText
 $publishBlockers = [System.Collections.Generic.List[string]]::new()
@@ -146,14 +163,14 @@ foreach ($media in @($lecture.media)) {
         }
     }
     elseif ($media.status -in @('rendered', 'archived')) {
-        if (-not ([string]$media.path).StartsWith('var\lecture-media\')) {
-            $entryBlockers.Add("Rendered $kind asset is outside the local archive: $($media.assetId)")
+        if (-not ([string]$media.path).StartsWith($archiveRoot)) {
+            $entryBlockers.Add("Rendered $kind asset is outside the subject lecture archive: $($media.assetId)")
         }
         if ([string]$media.sha256 -notmatch '^[a-f0-9]{64}$') {
             $entryBlockers.Add("Rendered $kind asset is missing a lowercase SHA-256 checksum: $($media.assetId)")
         }
 
-        $resolvedMediaPath = Resolve-RepoPath -Path ([string]$media.path)
+        $resolvedMediaPath = Resolve-LectureContentPath -ContentRoot ([string]$assetRoot.contentRoot) -Path ([string]$media.path)
         if (-not (Test-Path -LiteralPath $resolvedMediaPath -PathType Leaf)) {
             $entryBlockers.Add("Rendered $kind asset file is missing: $($media.path)")
         }
@@ -236,7 +253,7 @@ $archiveManifest = [ordered]@{
     generationMode = 'deterministic'
     dryRun = -not $Apply
     archiveRoot = $archiveRoot
-    renderedMediaMetadataPath = $RenderedMediaPath
+    renderedMediaMetadataPath = ConvertTo-LectureContentRelativePath -ContentRoot ([string]$assetRoot.contentRoot) -Path $resolvedRenderedMediaPath
     assets = [ordered]@{
         media = @($mediaEntries)
         captions = @($captionEntry)
@@ -258,7 +275,15 @@ $archiveManifest = [ordered]@{
 $json = $archiveManifest | ConvertTo-Json -Depth 12
 
 if ($Apply) {
-    $resolvedOutputPath = Resolve-RepoPath -Path $OutputPath
+    $resolvedOutputPath = if ([System.IO.Path]::IsPathRooted($OutputPath)) {
+        [System.IO.Path]::GetFullPath($OutputPath)
+    }
+    elseif ($OutputPath.StartsWith($archiveRoot)) {
+        Resolve-LectureContentPath -ContentRoot ([string]$assetRoot.contentRoot) -Path $OutputPath
+    }
+    else {
+        Resolve-RepoPath -Path $OutputPath
+    }
     $outputDirectory = Split-Path -Parent $resolvedOutputPath
     if (-not (Test-Path -LiteralPath $outputDirectory -PathType Container)) {
         New-Item -ItemType Directory -Path $outputDirectory | Out-Null

@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [string]$StatePath = '.\fixtures\learner-state.gdev-101.json',
-    [string]$LecturePath = '.\fixtures\lecture-video.gdev-101-design-vocabulary.json',
+    [string]$LecturePath = '..\open-education-game-development\generated-lectures\gdev-101-design-vocabulary\lecture-video.json',
     [string]$RulesPath = '.\fixtures\lecture-selection-rules.json',
     [switch]$SelfTest
 )

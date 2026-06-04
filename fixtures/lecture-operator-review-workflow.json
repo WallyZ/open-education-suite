@@ -38,7 +38,8 @@
         "original or licensed visuals",
         "alt text",
         "no copied screenshots",
-        "clear storyboard alignment"
+        "clear storyboard alignment",
+        "board-content synchronization"
       ]
     },
     {
@@ -48,7 +49,9 @@
         "local archive path",
         "sha256 checksums",
         "required media rendered or archived",
-        "no host-only dependencies"
+        "no host-only dependencies",
+        "audio naturalness check",
+        "board-local pause prompt timing"
       ]
     },
     {
@@ -72,13 +75,33 @@
       ]
     },
     {
+      "stageId": "instructor-realism",
+      "label": "Generated instructor realism",
+      "requiredEvidence": [
+        "face/body consistency",
+        "front-row framing",
+        "board readability",
+        "board occlusion check",
+        "board close-up usefulness",
+        "gesture timing",
+        "lip-sync timing",
+        "gaze direction",
+        "head and hand motion naturalness",
+        "board-writing gesture synchronization",
+        "no whole-frame teaching text overlays",
+        "generated instructor disclosure",
+        "human emotional delivery check"
+      ]
+    },
+    {
       "stageId": "final-package",
       "label": "Final publish package",
       "requiredEvidence": [
         "all required stages approved",
         "quality rubric passed",
         "content source linked",
-        "operator final approval"
+        "operator final approval",
+        "learner usefulness review"
       ]
     }
   ]

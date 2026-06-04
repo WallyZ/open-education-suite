@@ -3,7 +3,7 @@
   "providerSetId": "lecture-production-providers-v1",
   "defaultProviderId": "local-comfyui",
   "credentialPolicy": "No provider credentials, tokens, endpoints, or account ids may be committed. Cloud adapters must read secrets from environment variables or a local-only secret store.",
-  "artifactPolicy": "Every required production artifact must be downloaded or copied into var\\lecture-media, recorded in lecture-video.json, and verified with a SHA-256 checksum before publish.",
+  "artifactPolicy": "Every required production artifact must be downloaded or copied into the owning subject content repo generated-lectures folder, recorded in lecture-video.json, and verified with a SHA-256 checksum before publish.",
   "providers": [
     {
       "providerId": "local-comfyui",
@@ -38,16 +38,174 @@
     {
       "providerId": "cloud-tts",
       "type": "cloud",
-      "label": "Approved Cloud TTS",
+      "label": "Approved Neural TTS",
       "capabilities": [
-        "tts"
+        "tts",
+        "neural-tts"
       ],
       "enabledByDefault": false,
       "credentialEnvVars": [
         "LECTURE_TTS_PROVIDER",
-        "LECTURE_TTS_API_KEY"
+        "LECTURE_TTS_API_KEY",
+        "LECTURE_TTS_ENDPOINT",
+        "LECTURE_TTS_MODEL",
+        "LECTURE_TTS_VOICE"
+      ],
+      "qualityRequirements": [
+        "natural human-like classroom voice",
+        "sentence-level pacing and emphasis",
+        "active-recall pause silence preserved",
+        "binary audio response downloaded to local archive"
       ],
       "outputPolicy": "download-to-local-archive-and-checksum"
+    },
+    {
+      "providerId": "local-comfyui-tts",
+      "type": "local",
+      "label": "Local ComfyUI Generic Instructor TTS",
+      "integrationRepo": "ComfyUI-automation",
+      "localPath": "..\\ComfyUI-automation",
+      "capabilities": [
+        "tts",
+        "neural-tts",
+        "voice-design"
+      ],
+      "workflowRoot": "workflows",
+      "workflowMappings": [
+        {
+          "stage": "tts",
+          "workflowPath": "workflows\\open-education\\generic-qwen3-voice-design-api.json"
+        }
+      ],
+      "enabledByDefault": false,
+      "credentialEnvVars": [],
+      "qualityRequirements": [
+        "natural human-like classroom voice",
+        "generic synthetic instructor voice only",
+        "no real-person voice cloning without explicit consent",
+        "sentence-level pacing and emphasis",
+        "active-recall pause silence preserved",
+        "binary audio response copied to local archive"
+      ],
+      "readiness": {
+        "endpointEnvVar": "LECTURE_COMFYUI_ENDPOINT",
+        "defaultEndpoint": "http://127.0.0.1:8188",
+        "requiredNodeClasses": [
+          "FB_Qwen3TTSVoiceDesign",
+          "SaveAudio"
+        ],
+        "disallowedNodeClasses": [
+          "FB_Qwen3TTSVoiceClone",
+          "FB_Qwen3TTSVoiceClonePrompt",
+          "FB_Qwen3TTSCustomVoice"
+        ],
+        "approvedWorkflowMode": "generic-voice-design-non-clone",
+        "requireOperatorListeningReview": true
+      },
+      "outputPolicy": "copy-to-local-archive-and-checksum"
+    },
+    {
+      "providerId": "local-comfyui-motion",
+      "type": "local",
+      "label": "Local ComfyUI Instructor Motion Spike",
+      "integrationRepo": "ComfyUI-automation",
+      "localPath": "..\\ComfyUI-automation",
+      "capabilities": [
+        "instructor-motion",
+        "portrait-animation",
+        "pre-lip-sync-motion"
+      ],
+      "enabledByDefault": false,
+      "credentialEnvVars": [],
+      "qualityRequirements": [
+        "subtle classroom head, gaze, posture, and pointer motion",
+        "pre-lip-sync motion only until a separate lip-sync stage passes",
+        "board readability and board close-up crop must be preserved",
+        "generated instructor disclosure must remain valid",
+        "operator motion review is required before publish promotion"
+      ],
+      "readiness": {
+        "endpointEnvVar": "LECTURE_COMFYUI_ENDPOINT",
+        "defaultEndpoint": "http://127.0.0.1:8188",
+        "approvedWorkflowMode": "pre-lip-sync-subtle-motion-spike",
+        "requireOperatorMotionReview": true,
+        "candidatePipelines": [
+          {
+            "pipelineId": "liveportrait",
+            "label": "LivePortrait",
+            "routingRole": "preferred",
+            "purpose": "subtle portrait motion, gaze shifts, and posture movement from the generated instructor keyframe",
+            "customNodeNamePatterns": [
+              "*LivePortrait*",
+              "*ComfyUI-LivePortrait*"
+            ]
+          },
+          {
+            "pipelineId": "sadtalker",
+            "label": "SadTalker",
+            "routingRole": "fallback",
+            "purpose": "talking-head style fallback for non-lip-sync head pose and expression motion",
+            "customNodeNamePatterns": [
+              "*SadTalker*",
+              "*ComfyUI-SadTalker*"
+            ]
+          }
+        ]
+      },
+      "adapterScript": "scripts\\teaching\\invoke-comfyui-motion-adapter.ps1",
+      "outputPolicy": "copy-to-local-archive-and-checksum"
+    },
+    {
+      "providerId": "local-comfyui-lipsync",
+      "type": "local",
+      "label": "Local ComfyUI Instructor Lip Sync Spike",
+      "integrationRepo": "ComfyUI-automation",
+      "localPath": "..\\ComfyUI-automation",
+      "capabilities": [
+        "lip-sync",
+        "audio-driven-mouth",
+        "face-crop-sync"
+      ],
+      "enabledByDefault": false,
+      "credentialEnvVars": [],
+      "qualityRequirements": [
+        "audio-driven mouth movement from the final instructor audio",
+        "active-recall pause silence must keep the mouth closed or neutral",
+        "face identity and generated instructor disclosure must remain valid",
+        "board readability and board close-up crop must be preserved",
+        "operator lip-sync review is required before publish promotion"
+      ],
+      "readiness": {
+        "endpointEnvVar": "LECTURE_COMFYUI_ENDPOINT",
+        "defaultEndpoint": "http://127.0.0.1:8188",
+        "approvedWorkflowMode": "audio-driven-lip-sync-spike",
+        "requireOperatorLipSyncReview": true,
+        "candidatePipelines": [
+          {
+            "pipelineId": "musetalk",
+            "label": "MuseTalk",
+            "routingRole": "preferred",
+            "purpose": "audio-driven mouth movement and face-region synchronization for the generated instructor",
+            "customNodeNamePatterns": [
+              "*MuseTalk*",
+              "*ComfyUI-MuseTalk*"
+            ]
+          },
+          {
+            "pipelineId": "wav2lip",
+            "label": "Wav2Lip",
+            "routingRole": "fallback",
+            "purpose": "audio-driven mouth-region fallback when MuseTalk is unavailable",
+            "customNodeNamePatterns": [
+              "*Wav2Lip*",
+              "*ComfyUI-Wav2Lip*",
+              "*Wav2Lip*"
+            ]
+          }
+        ]
+      },
+      "adapterScript": "scripts\\teaching\\invoke-comfyui-lipsync-adapter.ps1",
+      "outputPolicy": "copy-to-local-archive-and-checksum"
     },
     {
       "providerId": "cloud-avatar",
@@ -81,15 +239,17 @@
   "routing": [
     {
       "stage": "tts",
-      "preferredProviderId": "cloud-tts",
-      "fallbackProviderIds": [],
-      "publishRequirement": "audio must be copied or downloaded to var\\lecture-media with a SHA-256 checksum"
+      "preferredProviderId": "local-comfyui-tts",
+      "fallbackProviderIds": [
+        "cloud-tts"
+      ],
+      "publishRequirement": "natural neural audio must be rendered by local ComfyUI when available, copied to the subject repo generated-lectures folder, and recorded with a SHA-256 checksum; cloud-tts remains a fallback"
     },
     {
       "stage": "visuals",
       "preferredProviderId": "local-comfyui",
       "fallbackProviderIds": [],
-      "publishRequirement": "visual outputs must be original or licensed, copied to var\\lecture-media, and checksummed"
+      "publishRequirement": "visual outputs must be original or licensed, copied to the subject repo generated-lectures folder, and checksummed"
     },
     {
       "stage": "avatar",
@@ -98,6 +258,18 @@
         "cloud-avatar"
       ],
       "publishRequirement": "avatar output must use the approved persona disclosure, avoid real-person cloning without consent, and be archived with a checksum"
+    },
+    {
+      "stage": "motion",
+      "preferredProviderId": "local-comfyui-motion",
+      "fallbackProviderIds": [],
+      "publishRequirement": "pre-lip-sync instructor motion must be rendered locally when promoted, preserve board readability, copy output to the subject repo archive, and record a SHA-256 checksum"
+    },
+    {
+      "stage": "lipsync",
+      "preferredProviderId": "local-comfyui-lipsync",
+      "fallbackProviderIds": [],
+      "publishRequirement": "audio-driven instructor lip sync must be rendered locally when promoted, preserve pause silence and face identity, copy output to the subject repo archive, and record a SHA-256 checksum"
     },
     {
       "stage": "assembly",

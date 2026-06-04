@@ -27,6 +27,25 @@ function Get-MarkdownTitle {
     return [System.IO.Path]::GetFileNameWithoutExtension($Path)
 }
 
+function Get-JsonTitle {
+    param([string]$Path)
+
+    try {
+        $json = Get-Content -LiteralPath $Path -Raw | ConvertFrom-Json
+        if (-not [string]::IsNullOrWhiteSpace([string]$json.title)) {
+            return [string]$json.title
+        }
+        if (-not [string]::IsNullOrWhiteSpace([string]$json.packageId)) {
+            return [string]$json.packageId
+        }
+    }
+    catch {
+        return [System.IO.Path]::GetFileNameWithoutExtension($Path)
+    }
+
+    return [System.IO.Path]::GetFileNameWithoutExtension($Path)
+}
+
 function Get-RelativePath {
     param(
         [string]$BasePath,
@@ -129,14 +148,17 @@ foreach ($source in $registry.contentSources) {
 
     if ($sourceRoot -and $manifest -and $sourceErrors.Count -eq 0) {
         $declaredFolders = @(
-            @{ Type = 'study-plan'; Path = $manifest.paths.studyPlans },
-            @{ Type = 'resource'; Path = $manifest.paths.resources }
+            @{ Type = 'study-plan'; Path = $manifest.paths.studyPlans; Filter = '*.md'; TitleKind = 'markdown' },
+            @{ Type = 'resource'; Path = $manifest.paths.resources; Filter = '*.md'; TitleKind = 'markdown' }
         )
         if ($manifest.paths.objectives) {
-            $declaredFolders += @{ Type = 'objective'; Path = $manifest.paths.objectives }
+            $declaredFolders += @{ Type = 'objective'; Path = $manifest.paths.objectives; Filter = '*.md'; TitleKind = 'markdown' }
         }
         if ($manifest.paths.assessments) {
-            $declaredFolders += @{ Type = 'assessment'; Path = $manifest.paths.assessments }
+            $declaredFolders += @{ Type = 'assessment'; Path = $manifest.paths.assessments; Filter = '*.md'; TitleKind = 'markdown' }
+        }
+        if (($manifest.paths.PSObject.Properties.Name -contains 'generatedLectures') -and $manifest.paths.generatedLectures) {
+            $declaredFolders += @{ Type = 'generated-lecture'; Path = $manifest.paths.generatedLectures; Filter = 'lecture-video.json'; TitleKind = 'json' }
         }
 
         foreach ($folder in $declaredFolders) {
@@ -146,15 +168,21 @@ foreach ($source in $registry.contentSources) {
                 continue
             }
 
-            foreach ($file in Get-ChildItem -LiteralPath $folderPath -Recurse -File -Filter '*.md' | Sort-Object FullName) {
+            foreach ($file in Get-ChildItem -LiteralPath $folderPath -Recurse -File -Filter $folder.Filter | Sort-Object FullName) {
                 $relativePath = Get-RelativePath -BasePath $sourceRoot -FullPath $file.FullName
+                $title = if ($folder.TitleKind -eq 'json') {
+                    Get-JsonTitle -Path $file.FullName
+                }
+                else {
+                    Get-MarkdownTitle -Path $file.FullName
+                }
                 $objects += [ordered]@{
                     id = ('{0}:{1}' -f $source.id, $relativePath.Replace('\', '/'))
                     sourceId = $source.id
                     sourceRepo = Split-Path -Leaf $sourceRoot
                     sourcePath = $relativePath
                     type = $folder.Type
-                    title = Get-MarkdownTitle -Path $file.FullName
+                    title = $title
                     license = if ($manifest.license) { $manifest.license } else { 'UNSPECIFIED' }
                     attribution = if ($manifest.attribution) { $manifest.attribution } else { $manifest.title }
                 }

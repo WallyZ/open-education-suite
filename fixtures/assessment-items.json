@@ -1,5 +1,19 @@
 {
   "schemaVersion": 1,
+  "assessmentPolicy": {
+    "defaultHighRigorType": "essay",
+    "complexObjectivePreference": [
+      "essay",
+      "project-checkpoint-with-written-defense",
+      "oral-explained-answer-transcript",
+      "code-task-or-interactive-with-written-rationale",
+      "short-answer",
+      "multiple-choice",
+      "recall"
+    ],
+    "quizRole": "diagnostic, retrieval practice, and misconception checks only; quizzes are not sufficient evidence for synthesis-level mastery.",
+    "masteryRequirement": "Complex objectives require learners to synthesize ideas in writing, cite evidence from their work or sources, compare alternatives, explain tradeoffs, and transfer the idea to a new case."
+  },
   "items": [
     {
       "itemId": "debugging-mcq-001",
@@ -21,6 +35,64 @@
       "masteryEvidence": {
         "evidenceType": "quiz",
         "confidenceDelta": 0.08
+      }
+    },
+    {
+      "itemId": "gdev-synthesis-essay-001",
+      "objectiveId": "game-development:objectives/course/gdev-101/design-vocabulary",
+      "type": "essay",
+      "prompt": "Write an essay that argues how mechanics, dynamics, and aesthetics work together in a game you know. Use evidence from a specific play experience, compare at least two design alternatives, explain the tradeoffs, and transfer the lesson to a new prototype idea.",
+      "acceptedAnswers": [],
+      "scaffolds": [
+        { "level": "nudge", "text": "Start by naming the mechanic, the player behavior it creates, and the feeling or aesthetic result." },
+        { "level": "concept-reminder", "text": "Synthesis means connecting ideas, not listing definitions." },
+        { "level": "worked-example", "text": "For example, limited inventory can create tension because each pickup choice has opportunity cost; a larger inventory changes the dynamic and weakens that pressure." }
+      ],
+      "rigor": {
+        "rank": 1,
+        "role": "preferred summative assessment for synthesis-level mastery",
+        "preferredForSummative": true,
+        "synthesisRequired": true
+      },
+      "rubric": {
+        "minimumWordCount": 80,
+        "criteria": [
+          {
+            "id": "concept-connection",
+            "label": "Connects core concepts",
+            "requiredSignals": [ "mechanic", "dynamic", "aesthetic" ]
+          },
+          {
+            "id": "evidence",
+            "label": "Uses concrete evidence",
+            "requiredSignals": [ "evidence", "experience", "because" ]
+          },
+          {
+            "id": "comparison",
+            "label": "Compares alternatives",
+            "requiredSignals": [ "compare", "alternative", "different" ]
+          },
+          {
+            "id": "tradeoff",
+            "label": "Explains tradeoffs",
+            "requiredSignals": [ "tradeoff", "cost", "benefit" ]
+          },
+          {
+            "id": "transfer",
+            "label": "Transfers the lesson",
+            "requiredSignals": [ "prototype", "transfer", "lesson" ]
+          }
+        ]
+      },
+      "feedbackTemplates": {
+        "correct": "Strong synthesis. The essay connects concepts, uses evidence, compares alternatives, explains tradeoffs, and transfers the idea to a new design case.",
+        "partial": "Useful synthesis evidence, but the essay is missing one or more rubric moves. Revise by adding the missing comparison, evidence, tradeoff, or transfer.",
+        "incorrect": "This does not yet demonstrate synthesis. Move beyond definitions by connecting concepts, citing evidence, and defending a design judgment.",
+        "uncertain": "This essay needs reviewer or AI-assisted evaluation before mastery is updated."
+      },
+      "masteryEvidence": {
+        "evidenceType": "synthesis-essay",
+        "confidenceDelta": 0.18
       }
     },
     {

@@ -39,6 +39,31 @@
       "dimensionId": "assessment-handoff",
       "title": "Assessment Handoff",
       "publishExpectation": "The lecture ends with a practice or assessment artifact that can create evidence without counting watch completion as mastery."
+    },
+    {
+      "dimensionId": "learning-environment",
+      "title": "Learning Environment",
+      "publishExpectation": "The lecture prompts a low-distraction setup, pen-and-paper note taking, pausing for retrieval, and rewriting notes after the lecture."
+    },
+    {
+      "dimensionId": "board-clarity",
+      "title": "Board Clarity",
+      "publishExpectation": "Board work is legible, narrated, available as a close-up, and useful without relying on video alone."
+    },
+    {
+      "dimensionId": "instructor-realism",
+      "title": "Instructor Realism",
+      "publishExpectation": "The generated instructor has consistent identity, natural gaze and gestures, visible board-aware teaching moves, and no real-person cloning or undisclosed synthetic presence."
+    },
+    {
+      "dimensionId": "motion-lipsync-qa",
+      "title": "Motion and Lip-Sync QA",
+      "publishExpectation": "Rendered instructor video passes visual QA for lip-sync timing, gaze direction, head and hand motion naturalness, and board-writing gesture synchronization before publish promotion."
+    },
+    {
+      "dimensionId": "adaptive-continuity",
+      "title": "Adaptive Continuity",
+      "publishExpectation": "The lecture explains how checkpoint and assessment evidence will shape the next lecture while still covering the required material."
     }
   ],
   "fixtureScores": [
@@ -50,7 +75,12 @@
         "active-recall": 3,
         "misconception-checks": 3,
         "accessibility": 3,
-        "assessment-handoff": 3
+        "assessment-handoff": 3,
+        "learning-environment": 3,
+        "board-clarity": 3,
+        "instructor-realism": 3,
+        "motion-lipsync-qa": 3,
+        "adaptive-continuity": 3
       },
       "notes": "Deterministic fixture meets the publishable baseline for each video-specific teaching dimension."
     }

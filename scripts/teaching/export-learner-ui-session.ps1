@@ -2,13 +2,15 @@
 param(
     [string]$OutputPath = '.\ui\learner\session-data.js',
     [string]$StatePath = '',
-    [string]$LecturePackagePath = '.\fixtures\lecture-video.gdev-101-design-vocabulary.json',
+    [string]$LecturePackagePath = '..\open-education-game-development\generated-lectures\gdev-101-design-vocabulary\publish\lecture-video.publish-ready.json',
     [datetime]$Now = '2026-05-25T12:00:00Z',
     [switch]$KeepArtifacts
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+
+. .\scripts\teaching\lecture-paths.ps1
 
 function New-UiSessionTempRoot {
     $repo = (& git -C . rev-parse --show-toplevel).Trim()
@@ -178,6 +180,12 @@ try {
 
     $session = (& .\scripts\teaching\start-session.ps1 -StatePath $StatePath -NonInteractive -Now $Now | Out-String) | ConvertFrom-Json
     $lecturePackage = Get-Content -LiteralPath $resolvedLecturePath -Raw | ConvertFrom-Json
+    $lectureContentRoot = Get-LectureContentRoot -ManifestPath $resolvedLecturePath
+    $lectureContentRootUri = [System.Uri](([System.IO.Path]::GetFullPath($lectureContentRoot)).TrimEnd('\') + '\')
+    $lecturePackage | Add-Member -MemberType NoteProperty -Name contentRepoRoot -Value $lectureContentRoot -Force
+    $lecturePackage | Add-Member -MemberType NoteProperty -Name contentRepoWebRoot -Value $lectureContentRootUri.AbsoluteUri -Force
+    $lecturePackage | Add-Member -MemberType NoteProperty -Name contentRepoHttpRoot -Value '/content-repos/open-education-game-development/' -Force
+    $lecturePackage | Add-Member -MemberType NoteProperty -Name sourcePackagePath -Value (ConvertTo-LectureContentRelativePath -ContentRoot $lectureContentRoot -Path $resolvedLecturePath) -Force
     $scanReport = (& .\scripts\ingestion\scan-content-sources.ps1 | Out-String) | ConvertFrom-Json
     $contentCatalog = ConvertTo-LearnerContentCatalog -ScanReport $scanReport
 

@@ -15,6 +15,14 @@ from urllib.parse import unquote, urlparse
 
 FIXED_NOW = "2026-05-25T12:00:00Z"
 OBJECTIVE_ID = "game-development:objectives/course/gdev-101/design-vocabulary"
+GAME_DEVELOPMENT_LECTURE_PATH = (
+    "open-education-game-development",
+    "generated-lectures",
+    "gdev-101-design-vocabulary",
+    "publish",
+    "lecture-video.publish-ready.json",
+)
+GAME_DEVELOPMENT_CONTENT_ROUTE = "/content-repos/open-education-game-development/"
 
 
 def new_run_root(repo_root: Path, prefix: str) -> Path:
@@ -148,6 +156,17 @@ def build_content_catalog(repo_root: Path) -> dict:
     }
 
 
+def load_default_lecture_package(repo_root: Path) -> dict:
+    content_repo_root = repo_root.parent / GAME_DEVELOPMENT_LECTURE_PATH[0]
+    lecture_path = content_repo_root.joinpath(*GAME_DEVELOPMENT_LECTURE_PATH[1:])
+    lecture_package = json.loads(lecture_path.read_text(encoding="utf-8"))
+    lecture_package["contentRepoRoot"] = str(content_repo_root)
+    lecture_package["contentRepoWebRoot"] = content_repo_root.resolve().as_uri() + "/"
+    lecture_package["contentRepoHttpRoot"] = GAME_DEVELOPMENT_CONTENT_ROUTE
+    lecture_package["sourcePackagePath"] = str(lecture_path.relative_to(content_repo_root)).replace("/", "\\")
+    return lecture_package
+
+
 def run_session_turn(repo_root: Path) -> dict:
     run_root = new_run_root(repo_root, "learner_ui_bridge")
     run_root.mkdir(parents=True, exist_ok=True)
@@ -174,16 +193,11 @@ def run_session_turn(repo_root: Path) -> dict:
             text=True,
             encoding="utf-8",
         )
-        lecture_package = json.loads(
-            (repo_root / "fixtures" / "lecture-video.gdev-101-design-vocabulary.json").read_text(
-                encoding="utf-8"
-            )
-        )
         return {
             "schemaVersion": 1,
             "source": "scripts/teaching/start-session.ps1",
             "session": json.loads(completed.stdout),
-            "lecturePackage": lecture_package,
+            "lecturePackage": load_default_lecture_package(repo_root),
             "contentCatalog": build_content_catalog(repo_root),
         }
     finally:
@@ -261,6 +275,9 @@ class LearnerBridgeHandler(BaseHTTPRequestHandler):
             self.send_header("Location", "/ui/learner/index.html")
             self.end_headers()
             return
+        if parsed.path.startswith(GAME_DEVELOPMENT_CONTENT_ROUTE):
+            self.serve_game_development_content(parsed.path)
+            return
         self.serve_static(parsed.path)
 
     def do_POST(self) -> None:
@@ -299,6 +316,27 @@ class LearnerBridgeHandler(BaseHTTPRequestHandler):
         target = (self.server.repo_root / relative).resolve()
         repo_root = self.server.repo_root.resolve()
         if not str(target).startswith(str(repo_root)) or not target.is_file():
+            self.send_error(HTTPStatus.NOT_FOUND)
+            return
+
+        content_type = mimetypes.guess_type(target.name)[0] or "application/octet-stream"
+        data = target.read_bytes()
+        self.send_response(HTTPStatus.OK)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
+
+    def serve_game_development_content(self, request_path: str) -> None:
+        relative = unquote(request_path[len(GAME_DEVELOPMENT_CONTENT_ROUTE):]).lstrip("/")
+        content_root = (self.server.repo_root.parent / "open-education-game-development").resolve()
+        target = (content_root / relative).resolve()
+        try:
+            target.relative_to(content_root)
+        except ValueError:
+            self.send_error(HTTPStatus.NOT_FOUND)
+            return
+        if not target.is_file():
             self.send_error(HTTPStatus.NOT_FOUND)
             return
 

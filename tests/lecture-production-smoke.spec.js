@@ -12,11 +12,22 @@ test.describe("lecture production smoke", () => {
 
     await expect(page.locator("#lectureStatusPill")).toHaveText("rendered-fixture");
     await expect(page.locator("#lectureVideo")).toBeVisible();
-    await expect(page.locator("#lectureVideo")).toHaveAttribute("data-asset-id", "lecture-video-mp4");
-    await expect(page.locator("#lectureVideo source")).toHaveAttribute("src", /var\/lecture-media\/.*lecture-video-mp4\.mp4/);
+    await expect(page.locator("#lectureVideo")).toHaveAttribute("data-asset-id", "lecture-guided-camera-mp4");
+    await expect(page.locator("#lectureVideo")).toHaveAttribute("data-view-mode", "guided");
+    await expect(page.locator("#lectureVideo source")).toHaveAttribute("src", /open-education-game-development\/generated-lectures\/.*lecture-guided-camera-mp4\.mp4/);
+    await expect(page.getByRole("button", { name: "Guided camera" })).toHaveAttribute("aria-pressed", "true");
     await expect(page.getByText("Archived media SHA-256")).toBeVisible();
     await expect(page.locator("#lectureTranscript")).toContainText("A verb is what the player can do.");
+    await expect(page.locator("#learningEnvironmentList")).toContainText("Keep a paper notebook and pen available");
 
+    await page.getByRole("button", { name: "Classroom" }).click();
+    await expect(page.locator("#lectureVideo")).toHaveAttribute("data-asset-id", "lecture-video-mp4");
+    await page.getByRole("button", { name: "Guided camera" }).click();
+    await expect(page.locator("#lectureVideo")).toHaveAttribute("data-asset-id", "lecture-guided-camera-mp4");
+
+    await page.getByRole("button", { name: "Board close-up" }).click();
+    await expect(page.getByText("Board close-up is on.")).toBeVisible();
+    await expect(page.locator("#lectureVideo")).toHaveAttribute("data-asset-id", "lecture-board-close-up-mp4");
     await page.getByRole("button", { name: "Play lecture" }).click();
     await expect(page.getByRole("button", { name: "Pause lecture" })).toHaveAttribute("aria-pressed", "true");
 
@@ -25,11 +36,12 @@ test.describe("lecture production smoke", () => {
       sha256: video.dataset.sha256,
       source: video.querySelector("source")?.getAttribute("src") || ""
     }));
-    expect(mediaState.assetId).toBe("lecture-video-mp4");
+    expect(mediaState.assetId).toBe("lecture-board-close-up-mp4");
     expect(mediaState.sha256).toMatch(/^[a-f0-9]{64}$/);
-    expect(mediaState.source).toContain("lecture-video-mp4.mp4");
+    expect(mediaState.source).toContain("lecture-board-close-up-mp4.mp4");
 
-    await page.locator("#lectureProgress").fill("60");
+    await page.locator('.pause-prompt-button[data-pause-second="60"]').click();
     await expect(page.locator("#lecturePosition")).toHaveText("1:00 / 3:00");
+    await expect(page.locator("#lecturePauseOverlay")).toContainText("Pause and write: verb, goal, feedback");
   });
 });

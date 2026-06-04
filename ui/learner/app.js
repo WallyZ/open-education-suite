@@ -127,16 +127,25 @@ function isPlayableMedia(asset, type) {
   return asset &&
     asset.type === type &&
     ["rendered", "archived"].includes(asset.status) &&
-    path.startsWith("var\\lecture-media\\") &&
+    (path.startsWith("var\\lecture-media\\") || path.startsWith("generated-lectures\\")) &&
     /^[a-f0-9]{64}$/i.test(String(asset.sha256 || ""));
 }
 
-function mediaPathToUrl(path) {
+function mediaPathToUrl(path, lecturePackage) {
   const normalized = String(path || "").replace(/\\/g, "/");
-  return normalized.startsWith("var/lecture-media/") ? `../../${normalized}` : normalized;
+  if (normalized.startsWith("var/lecture-media/")) {
+    return `../../${normalized}`;
+  }
+  if (normalized.startsWith("generated-lectures/") && lecturePackage?.contentRepoWebRoot) {
+    const root = window.location.protocol.startsWith("http")
+      ? lecturePackage.contentRepoHttpRoot || lecturePackage.contentRepoWebRoot
+      : lecturePackage.contentRepoWebRoot;
+    return `${String(root).replace(/\/$/, "")}/${normalized}`;
+  }
+  return normalized;
 }
 
-function normalizeMediaAsset(asset) {
+function normalizeMediaAsset(asset, lecturePackage) {
   if (!asset) {
     return null;
   }
@@ -144,19 +153,85 @@ function normalizeMediaAsset(asset) {
     assetId: asset.assetId,
     type: asset.type,
     path: asset.path,
-    url: mediaPathToUrl(asset.path),
+    url: mediaPathToUrl(asset.path, lecturePackage),
     sha256: asset.sha256,
     status: asset.status,
     requiredForPublish: asset.requiredForPublish === true
   };
 }
 
+const lectureVideoViewDefinitions = [
+  {
+    viewMode: "guided",
+    assetId: "lecture-guided-camera-mp4",
+    label: "Guided camera",
+    description: "Guided camera alternates classroom and board close-up views."
+  },
+  {
+    viewMode: "classroom",
+    assetId: "lecture-video-mp4",
+    label: "Classroom",
+    description: "Full front-row classroom view with the instructor and board."
+  },
+  {
+    viewMode: "board",
+    assetId: "lecture-board-close-up-mp4",
+    label: "Board only",
+    description: "Close-up board view for reading chalk work."
+  }
+];
+
+function getLectureVideoViewDefinition(asset) {
+  const assetId = String(asset?.assetId || "");
+  return lectureVideoViewDefinitions.find((definition) => definition.assetId === assetId) || {
+    viewMode: assetId || "video",
+    assetId,
+    label: "Lecture video",
+    description: "Archived lecture video asset."
+  };
+}
+
+function normalizeLectureVideoAsset(asset, lecturePackage) {
+  const normalized = normalizeMediaAsset(asset, lecturePackage);
+  if (!normalized) {
+    return null;
+  }
+  const view = getLectureVideoViewDefinition(asset);
+  return {
+    ...normalized,
+    viewMode: view.viewMode,
+    label: view.label,
+    description: view.description,
+    visualSyncMode: asset.visualSyncMode || "",
+    sourceAssetId: asset.sourceAssetId || "",
+    sourceAssetIds: asset.sourceAssetIds || []
+  };
+}
+
+function normalizeLectureVideoVariants(media, lecturePackage) {
+  const playableVideos = media.filter((asset) => isPlayableMedia(asset, "video/mp4"));
+  const variants = lectureVideoViewDefinitions
+    .map((definition) => playableVideos.find((asset) => asset.assetId === definition.assetId))
+    .filter(Boolean)
+    .map((asset) => normalizeLectureVideoAsset(asset, lecturePackage));
+  playableVideos
+    .filter((asset) => !variants.some((variant) => variant.assetId === asset.assetId))
+    .forEach((asset) => variants.push(normalizeLectureVideoAsset(asset, lecturePackage)));
+  return variants.filter(Boolean);
+}
+
 function normalizeLecture(lecturePackage) {
   const instructor = lecturePackage.generatedInstructor || {};
   const transcript = lecturePackage.transcript || {};
   const adaptiveHooks = lecturePackage.adaptiveHooks || {};
+  const deliveryPlan = lecturePackage.deliveryPlan || {};
+  const boardPlan = deliveryPlan.boardPlan || {};
+  const performancePlan = lecturePackage.performancePlan || {};
+  const audioProfile = performancePlan.audioProfile || {};
+  const visualSync = performancePlan.visualSync || {};
   const media = Array.isArray(lecturePackage.media) ? lecturePackage.media : [];
-  const video = media.find((asset) => isPlayableMedia(asset, "video/mp4"));
+  const videoVariants = normalizeLectureVideoVariants(media, lecturePackage);
+  const video = videoVariants[0] || null;
   const audio = media.find((asset) => isPlayableMedia(asset, "audio/mp4"));
   return {
     packageId: lecturePackage.packageId,
@@ -168,9 +243,31 @@ function normalizeLecture(lecturePackage) {
     citations: lecturePackage.citations || [],
     chapters: lecturePackage.chapters || [],
     checkpoints: adaptiveHooks.checkpoints || [],
+    deliveryPlan: {
+      audienceMode: deliveryPlan.audienceMode || "",
+      learningEnvironmentPrompts: deliveryPlan.learningEnvironmentPrompts || [],
+      boardPlan: {
+        defaultView: boardPlan.defaultView || "",
+        closeUpAvailable: boardPlan.closeUpAvailable === true,
+        closeUpLabel: boardPlan.closeUpLabel || "Board close-up",
+        moments: boardPlan.moments || []
+      }
+    },
+    performancePlan: {
+      audioProfile: {
+        voiceStyle: audioProfile.voiceStyle || "",
+        emotionTargets: audioProfile.emotionTargets || [],
+        prosodyDirectives: audioProfile.prosodyDirectives || []
+      },
+      pausePrompts: performancePlan.pausePrompts || [],
+      visualSync: {
+        boardStates: visualSync.boardStates || []
+      }
+    },
     media: {
-      video: normalizeMediaAsset(video),
-      audio: normalizeMediaAsset(audio)
+      video,
+      videoVariants,
+      audio: normalizeMediaAsset(audio, lecturePackage)
     }
   };
 }
@@ -229,6 +326,9 @@ const state = {
   masteryBoosted: false,
   lecturePlaying: false,
   lecturePosition: 0,
+  lectureSeekUntil: 0,
+  boardCloseUp: false,
+  activeLectureView: session.lecture.media.video?.viewMode || "classroom",
   liveTeacherEnabled: false,
   activeAssessmentMode: "multiple-choice",
   activeSourceId: "",
@@ -280,6 +380,11 @@ const elements = {
   lectureStatusPill: document.getElementById("lectureStatusPill"),
   lectureDisclosure: document.getElementById("lectureDisclosure"),
   lecturePlayButton: document.getElementById("lecturePlayButton"),
+  boardCloseUpButton: document.getElementById("boardCloseUpButton"),
+  boardCloseUpStatus: document.getElementById("boardCloseUpStatus"),
+  boardMomentList: document.getElementById("boardMomentList"),
+  pausePromptList: document.getElementById("pausePromptList"),
+  learningEnvironmentList: document.getElementById("learningEnvironmentList"),
   lectureProgress: document.getElementById("lectureProgress"),
   lecturePosition: document.getElementById("lecturePosition"),
   chapterList: document.getElementById("chapterList"),
@@ -710,7 +815,63 @@ function getLectureVideo() {
   return document.getElementById("lectureVideo");
 }
 
-function setLecturePosition(nextPosition, shouldSave = true) {
+function getLectureVideoVariant(viewMode) {
+  return (session.lecture.media.videoVariants || []).find((variant) => variant.viewMode === viewMode) || null;
+}
+
+function getDefaultLectureView() {
+  const variants = session.lecture.media.videoVariants || [];
+  return variants[0]?.viewMode || "";
+}
+
+function getActiveLectureVideo() {
+  const activeVariant = getLectureVideoVariant(state.activeLectureView);
+  if (activeVariant) {
+    return activeVariant;
+  }
+  const defaultView = getDefaultLectureView();
+  state.activeLectureView = defaultView;
+  state.boardCloseUp = defaultView === "board";
+  return getLectureVideoVariant(defaultView) || session.lecture.media.video;
+}
+
+function resetLectureViewState() {
+  state.activeLectureView = getDefaultLectureView() || "classroom";
+  state.boardCloseUp = state.activeLectureView === "board";
+  state.lecturePlaying = false;
+}
+
+function getActivePausePrompt() {
+  return session.lecture.performancePlan.pausePrompts.find((prompt) => {
+    const start = Number(prompt.timeSecond) || 0;
+    const duration = Number(prompt.durationSeconds) || 0;
+    return state.lecturePosition >= start && state.lecturePosition < start + duration;
+  });
+}
+
+function renderLecturePauseOverlay() {
+  const overlay = document.getElementById("lecturePauseOverlay");
+  if (!overlay) {
+    return;
+  }
+
+  const pausePrompt = getActivePausePrompt();
+  if (!pausePrompt) {
+    overlay.hidden = true;
+    overlay.innerHTML = "";
+    return;
+  }
+
+  const duration = Number(pausePrompt.durationSeconds) || 0;
+  overlay.hidden = false;
+  overlay.innerHTML = `
+    <p class="eyebrow">Pause prompt</p>
+    <strong>${escapeHtml(pausePrompt.overlayText || pausePrompt.prompt || "Pause and write your answer.")}</strong>
+    <span>${escapeHtml(pausePrompt.resumeCue || "Resume when you are ready.")} ${formatTime(duration)}</span>
+  `;
+}
+
+function setLecturePosition(nextPosition, shouldSave = true, shouldSyncVideo = true) {
   state.lecturePosition = Math.max(
     0,
     Math.min(session.lecture.durationSeconds, Number(nextPosition) || 0)
@@ -718,7 +879,8 @@ function setLecturePosition(nextPosition, shouldSave = true) {
   elements.lectureProgress.value = String(state.lecturePosition);
   elements.lecturePosition.textContent = `${formatTime(state.lecturePosition)} / ${formatTime(session.lecture.durationSeconds)}`;
   const lectureVideo = getLectureVideo();
-  if (lectureVideo && Math.abs(lectureVideo.currentTime - state.lecturePosition) > 1) {
+  if (shouldSyncVideo && lectureVideo && Math.abs(lectureVideo.currentTime - state.lecturePosition) > 1) {
+    state.lectureSeekUntil = Date.now() + 750;
     lectureVideo.currentTime = state.lecturePosition;
   }
 
@@ -730,10 +892,30 @@ function setLecturePosition(nextPosition, shouldSave = true) {
       (!nextChapter || state.lecturePosition < nextChapter.startSecond);
     button.setAttribute("aria-current", isCurrent ? "true" : "false");
   });
+  elements.pausePromptList.querySelectorAll(".pause-prompt-button").forEach((button) => {
+    const start = Number(button.dataset.pauseSecond);
+    const duration = Number(button.dataset.pauseDuration);
+    const isCurrent =
+      state.lecturePosition >= start &&
+      state.lecturePosition < start + duration;
+    button.setAttribute("aria-current", isCurrent ? "true" : "false");
+  });
+  renderLecturePauseOverlay();
 
   if (shouldSave) {
     saveLectureResume();
   }
+}
+
+function updateLecturePositionFromVideo(lectureVideo) {
+  if (!state.lecturePlaying) {
+    return;
+  }
+  const videoPosition = Math.floor(lectureVideo.currentTime);
+  if (Date.now() < state.lectureSeekUntil && Math.abs(videoPosition - state.lecturePosition) > 1) {
+    return;
+  }
+  setLecturePosition(videoPosition, false, false);
 }
 
 function toggleLecturePlayback() {
@@ -752,6 +934,47 @@ function toggleLecturePlayback() {
   }
 }
 
+function setLectureView(viewMode) {
+  const variant = getLectureVideoVariant(viewMode);
+  if (!variant) {
+    return;
+  }
+
+  const lectureVideo = getLectureVideo();
+  const wasPlaying = state.lecturePlaying;
+  const nextPosition = lectureVideo ? Math.floor(lectureVideo.currentTime || state.lecturePosition) : state.lecturePosition;
+  if (lectureVideo) {
+    lectureVideo.pause();
+  }
+
+  state.activeLectureView = variant.viewMode;
+  state.boardCloseUp = variant.viewMode === "board";
+  state.lecturePlaying = false;
+  elements.lecturePlayButton.setAttribute("aria-pressed", "false");
+  elements.lecturePlayButton.textContent = "Play lecture";
+  renderLectureMediaFrame();
+  renderBoardSupport();
+  setLecturePosition(nextPosition, true);
+
+  if (wasPlaying) {
+    toggleLecturePlayback();
+  }
+}
+
+function toggleBoardCloseUp() {
+  const boardVariant = getLectureVideoVariant("board");
+  if (boardVariant) {
+    setLectureView(state.activeLectureView === "board" ? getDefaultLectureView() : "board");
+    return;
+  }
+  if (!session.lecture.deliveryPlan.boardPlan.closeUpAvailable) {
+    return;
+  }
+  state.boardCloseUp = !state.boardCloseUp;
+  renderLectureMediaFrame();
+  renderBoardSupport();
+}
+
 function renderLectureCitations() {
   elements.lectureCitations.innerHTML = session.lecture.citations
     .map(
@@ -767,14 +990,17 @@ function renderLectureCitations() {
 }
 
 function renderLectureMediaFrame() {
-  const video = session.lecture.media.video;
+  const video = getActiveLectureVideo();
+  const variants = session.lecture.media.videoVariants || [];
+  const usesLegacyBoardCrop = state.boardCloseUp && video?.viewMode !== "board";
+  const closeUpClass = usesLegacyBoardCrop ? " is-board-close-up" : "";
   if (!video) {
     elements.lectureFrame.setAttribute("role", "img");
-    elements.lectureFrame.setAttribute("aria-label", "Generated instructor beside a paper prototype labeled verb, goal, and feedback.");
+    elements.lectureFrame.setAttribute("aria-label", "Generated instructor beside a chalkboard labeled verb, goal, and feedback.");
     elements.lectureFrame.innerHTML = `
       <div>
         <p class="eyebrow">Instructor video</p>
-        <strong id="lectureFrameTitle">Synthetic instructor preview</strong>
+        <strong id="lectureFrameTitle">Synthetic instructor chalkboard preview</strong>
         <p id="lectureDisclosure">${escapeHtml(session.lecture.disclosure)}</p>
       </div>
     `;
@@ -783,22 +1009,110 @@ function renderLectureMediaFrame() {
   }
 
   elements.lectureFrame.removeAttribute("role");
-  elements.lectureFrame.setAttribute("aria-label", "Rendered generated lecture video.");
+  elements.lectureFrame.setAttribute(
+    "aria-label",
+    `${video.label}: ${video.description}`
+  );
+  const viewSwitcher = variants.length > 1 ? `
+    <div class="lecture-view-switcher" role="group" aria-label="Lecture camera view">
+      ${variants.map((variant) => `
+        <button class="secondary-button" type="button" data-lecture-view="${escapeHtml(variant.viewMode)}" aria-pressed="${variant.viewMode === video.viewMode ? "true" : "false"}">
+          ${escapeHtml(variant.label)}
+        </button>
+      `).join("")}
+    </div>
+  ` : "";
   elements.lectureFrame.innerHTML = `
-    <video id="lectureVideo" class="lecture-video" controls preload="metadata" data-asset-id="${escapeHtml(video.assetId)}" data-sha256="${escapeHtml(video.sha256)}">
-      <source src="${escapeHtml(video.url)}" type="${escapeHtml(video.type)}">
-    </video>
+    <div class="lecture-video-shell${closeUpClass}">
+      <video id="lectureVideo" class="lecture-video" controls preload="metadata" data-asset-id="${escapeHtml(video.assetId)}" data-view-mode="${escapeHtml(video.viewMode)}" data-sha256="${escapeHtml(video.sha256)}">
+        <source src="${escapeHtml(video.url)}" type="${escapeHtml(video.type)}">
+      </video>
+      <div id="lecturePauseOverlay" class="lecture-pause-overlay" hidden></div>
+    </div>
+    ${viewSwitcher}
     <p class="lecture-media-meta">
-      Archived media SHA-256 <code>${escapeHtml(video.sha256)}</code>
+      Playing ${escapeHtml(video.label)}. Archived media SHA-256 <code>${escapeHtml(video.sha256)}</code>
     </p>
     <p id="lectureDisclosure">${escapeHtml(session.lecture.disclosure)}</p>
   `;
   elements.lectureDisclosure = document.getElementById("lectureDisclosure");
+  const lectureVideo = getLectureVideo();
+  if (lectureVideo) {
+    lectureVideo.addEventListener("timeupdate", () => updateLecturePositionFromVideo(lectureVideo));
+    lectureVideo.addEventListener("seeked", () => {
+      state.lectureSeekUntil = 0;
+      updateLecturePositionFromVideo(lectureVideo);
+    });
+    lectureVideo.addEventListener("ended", () => {
+      state.lecturePlaying = false;
+      elements.lecturePlayButton.setAttribute("aria-pressed", "false");
+      elements.lecturePlayButton.textContent = "Play lecture";
+      saveLectureResume();
+    });
+  }
+  renderLecturePauseOverlay();
+}
+
+function renderBoardSupport() {
+  const plan = session.lecture.deliveryPlan;
+  const boardPlan = plan.boardPlan;
+  const boardStates = session.lecture.performancePlan.visualSync.boardStates;
+  const activeVideo = getActiveLectureVideo();
+  const boardVariant = getLectureVideoVariant("board");
+  elements.boardCloseUpButton.hidden = !(boardPlan.closeUpAvailable || boardVariant);
+  elements.boardCloseUpButton.textContent = activeVideo?.viewMode === "board"
+    ? `Return to ${getLectureVideoVariant("guided") ? "guided camera" : "classroom"}`
+    : boardPlan.closeUpLabel || "Board close-up";
+  elements.boardCloseUpButton.setAttribute("aria-pressed", String(state.boardCloseUp));
+  if (state.boardCloseUp) {
+    elements.boardCloseUpStatus.textContent = "Board close-up is on.";
+  } else if (activeVideo?.viewMode === "guided") {
+    elements.boardCloseUpStatus.textContent = "Guided camera view is on. Classroom and board-only views are available.";
+  } else {
+    elements.boardCloseUpStatus.textContent = "Board close-up is off.";
+  }
+  elements.learningEnvironmentList.innerHTML = plan.learningEnvironmentPrompts
+    .map((prompt) => `<li>${escapeHtml(prompt)}</li>`)
+    .join("");
+  elements.boardMomentList.innerHTML = boardPlan.moments
+    .map((moment) => {
+      const boardState = boardStates.find((state) => Number(state.startSecond) === Number(moment.timeSecond));
+      const boardText = boardState?.boardText?.length ? `Board: ${boardState.boardText.join(" | ")}` : "";
+      return `
+        <button type="button" class="board-moment" data-start-second="${Number(moment.timeSecond) || 0}">
+          <span>${escapeHtml(moment.label || "Board moment")}</span>
+          <small>${escapeHtml(moment.summary || "")}</small>
+          ${boardText ? `<small>${escapeHtml(boardText)}</small>` : ""}
+        </button>
+      `;
+    })
+    .join("");
+}
+
+function renderPausePromptList() {
+  const prompts = session.lecture.performancePlan.pausePrompts || [];
+  elements.pausePromptList.hidden = prompts.length === 0;
+  elements.pausePromptList.innerHTML = prompts
+    .map((prompt) => {
+      const start = Number(prompt.timeSecond) || 0;
+      const duration = Number(prompt.durationSeconds) || 0;
+      const promptText = prompt.prompt || prompt.resumeCue || "Take a thinking pause.";
+      return `
+        <button type="button" class="pause-prompt-button" data-pause-second="${start}" data-pause-duration="${duration}">
+          <span>Jump to ${formatTime(start)} pause</span>
+          <small>${escapeHtml(promptText)}</small>
+          <small>${formatTime(duration)} thinking window</small>
+        </button>
+      `;
+    })
+    .join("");
 }
 
 function renderLecture() {
   elements.lectureStatusPill.textContent = session.lecture.renderStatus;
   renderLectureMediaFrame();
+  renderBoardSupport();
+  renderPausePromptList();
   elements.lectureTranscript.textContent = session.lecture.transcript;
   elements.lectureProgress.max = String(session.lecture.durationSeconds);
 
@@ -1094,6 +1408,7 @@ async function runDeterministicSessionTurn() {
     session = buildSessionFromStartSession(currentSessionOutput, currentLecturePackage);
     state.hintIndex = 0;
     state.masteryBoosted = false;
+    resetLectureViewState();
     state.activeSourceId = "";
     state.activeCourseId = "";
     state.selectedObjectiveId = "";
@@ -1208,11 +1523,31 @@ function initialize() {
   elements.hintButton.addEventListener("click", showHint);
   elements.completeButton.addEventListener("click", markComplete);
   elements.lecturePlayButton.addEventListener("click", toggleLecturePlayback);
+  elements.boardCloseUpButton.addEventListener("click", toggleBoardCloseUp);
+  elements.lectureFrame.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-lecture-view]");
+    if (button) {
+      setLectureView(button.dataset.lectureView);
+    }
+  });
   elements.lectureProgress.addEventListener("input", () => setLecturePosition(elements.lectureProgress.value));
+  elements.lectureProgress.addEventListener("change", () => setLecturePosition(elements.lectureProgress.value));
   elements.chapterList.addEventListener("click", (event) => {
     const button = event.target.closest("[data-start-second]");
     if (button) {
       setLecturePosition(button.dataset.startSecond);
+    }
+  });
+  elements.boardMomentList.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-start-second]");
+    if (button) {
+      setLecturePosition(button.dataset.startSecond);
+    }
+  });
+  elements.pausePromptList.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-pause-second]");
+    if (button) {
+      setLecturePosition(button.dataset.pauseSecond);
     }
   });
   elements.lectureCheckpoints.addEventListener("click", (event) => {

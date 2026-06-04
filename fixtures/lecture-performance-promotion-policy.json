@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "policyId": "lecture-performance-promotion-v1",
+  "description": "Controls when deterministic instructor performance previews may be reviewed and when model-backed motion/lip-sync outputs may be promoted toward publish-grade lecture video.",
+  "deterministicPreviewPolicy": {
+    "canReplacePublishVideo": false,
+    "requiredStatus": "local-preview-renders-archived-pending-visual-qa",
+    "requiredPublishPromotion": "blocked-pending-operator-visual-qa",
+    "requiredVisualQaStatus": "pending-operator-review",
+    "requiredPreviewRenderIncluded": true,
+    "requiredModelRenderIncluded": false,
+    "requiredForPublish": false,
+    "requiredPreviewFields": [
+      "assetId",
+      "type",
+      "path",
+      "sha256",
+      "length",
+      "status",
+      "renderEngine",
+      "sourceAssetIds",
+      "previewDurationSeconds",
+      "previewRenderIncluded",
+      "modelRenderIncluded",
+      "requiredForPublish",
+      "publishPromotion",
+      "visualQaStatus"
+    ]
+  },
+  "modelBackedCandidatePolicy": {
+    "allowedPromotionStatus": "model-backed-publish-candidate",
+    "requiredRenderFields": [
+      "assetId",
+      "type",
+      "path",
+      "sha256",
+      "length",
+      "status",
+      "providerId",
+      "workflowPath",
+      "sourceAssetIds",
+      "seed",
+      "configHash",
+      "durationSeconds",
+      "modelRenderIncluded",
+      "requiredForPublish",
+      "publishPromotion",
+      "visualQaStatus",
+      "operatorReviewStatus"
+    ],
+    "requiredBeforePromotion": [
+      "subject-owned-path",
+      "checksum-verified",
+      "archive-manifest-refreshed",
+      "automated-visual-qa-passed",
+      "operator-visual-qa-approved",
+      "operator-publish-gate-approved"
+    ],
+    "requiredQaEvidence": [
+      "lip-sync-timing",
+      "gaze-direction",
+      "head-hand-motion-naturalness",
+      "board-writing-gesture-synchronization"
+    ],
+    "forbiddenWithoutOperatorApproval": [
+      "approved-for-publish",
+      "replace-publish-video",
+      "learner-default-video"
+    ]
+  },
+  "gesturePlanningPolicy": {
+    "requiredActions": [
+      "pointing",
+      "writing",
+      "gaze-shift",
+      "pause-posture",
+      "board-occlusion-avoidance"
+    ],
+    "requiredSources": [
+      "performancePlan.visualSync.boardStates",
+      "performancePlan.pausePrompts",
+      "visualSync.boardSurface"
+    ],
+    "requiredReviewEvidence": [
+      "gesture timing notes",
+      "board surface coordinates",
+      "pause posture review",
+      "board occlusion review"
+    ]
+  },
+  "sceneRealismPolicy": {
+    "requiredTargets": [
+      "lighting",
+      "contact-shadows",
+      "board-surface-integration",
+      "camera-depth",
+      "lens-motion",
+      "compositing-artifacts"
+    ],
+    "operatorReviewStatus": "required-before-publish"
+  },
+  "physicalChalkWritingPolicy": {
+    "requiredTargets": [
+      "chalk-texture",
+      "stroke-timing",
+      "erasing",
+      "hand-alignment",
+      "board-residue"
+    ],
+    "surfaceConstraint": "visualSync.boardSurface"
+  },
+  "automatedVisualComparisonPolicy": {
+    "requiredEvidenceTypes": [
+      "board-readability",
+      "mouth-open-timing",
+      "gaze-direction",
+      "instructor-occlusion",
+      "board-crop-correctness",
+      "shot-selection"
+    ],
+    "requiredStatus": "required-before-model-backed-promotion"
+  },
+  "shotDirectorPolicy": {
+    "requiredShots": [
+      "front-row",
+      "board-close-up",
+      "instructor-close-up"
+    ],
+    "selectionBasis": "teaching-purpose"
+  },
+  "promotionGate": {
+    "modelBackedCandidateOnlyAfter": [
+      "checksum-verified",
+      "archive-manifest-refreshed",
+      "automated-visual-qa-passed",
+      "operator-publish-gate-approved"
+    ],
+    "deterministicPreviewPublishPromotion": "blocked-pending-operator-visual-qa"
+  }
+}

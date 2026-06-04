@@ -5,10 +5,13 @@
       "schemaVersion",
       "packageId",
       "title",
+      "subjectOwnedAssetRoot",
       "contentSource",
       "objectiveIds",
       "durationSeconds",
       "lessonMode",
+      "deliveryPlan",
+      "performancePlan",
       "renderStatus",
       "generatedInstructor",
       "sourceReview",
@@ -38,11 +41,112 @@
     "generatedInstructor": {
       "required": [
         "personaId",
+        "gender",
         "disclosure",
         "voiceConsent",
         "likenessConsent",
         "realPersonClone",
-        "tone"
+        "voiceMatchPolicy",
+        "tone",
+        "realismProfile"
+      ]
+    },
+    "instructorRealismProfile": {
+      "required": [
+        "presentationStyle",
+        "renderReadiness",
+        "visualFidelityTargets",
+        "movementPlan",
+        "boardInteractionPlan"
+      ]
+    },
+    "deliveryPlan": {
+      "required": [
+        "audienceMode",
+        "baselineUse",
+        "adaptiveUse",
+        "fullLectureDuration",
+        "segmentCadence",
+        "learningEnvironmentPrompts",
+        "adaptationRequirements",
+        "boardPlan"
+      ]
+    },
+    "fullLectureDuration": {
+      "required": [
+        "targetSeconds",
+        "minimumSeconds",
+        "maximumSeconds",
+        "rationale"
+      ]
+    },
+    "segmentCadence": {
+      "required": [
+        "minimumSegmentSeconds",
+        "maximumSegmentSeconds",
+        "checkpointEverySeconds",
+        "practiceEverySeconds"
+      ]
+    },
+    "boardPlan": {
+      "required": [
+        "defaultView",
+        "closeUpAvailable",
+        "closeUpLabel",
+        "moments"
+      ]
+    },
+    "boardMoment": {
+      "required": [
+        "timeSecond",
+        "label",
+        "summary"
+      ]
+    },
+    "performancePlan": {
+      "required": [
+        "audioProfile",
+        "pausePrompts",
+        "visualSync"
+      ]
+    },
+    "audioProfile": {
+      "required": [
+        "voiceStyle",
+        "voiceMatchPolicy",
+        "targetInstructorGender",
+        "targetVoiceGender",
+        "targetVoiceRegister",
+        "emotionTargets",
+        "prosodyDirectives",
+        "ttsRequirements"
+      ]
+    },
+    "pausePrompt": {
+      "required": [
+        "promptId",
+        "timeSecond",
+        "durationSeconds",
+        "prompt",
+        "overlayText",
+        "resumeCue",
+        "boardState"
+      ]
+    },
+    "visualSync": {
+      "required": [
+        "boardStates",
+        "minimumBoardStateCoverage",
+        "staticFramePolicy"
+      ]
+    },
+    "boardState": {
+      "required": [
+        "stateId",
+        "startSecond",
+        "endSecond",
+        "boardText",
+        "instructorAction"
       ]
     },
     "sourceReview": {
@@ -137,6 +241,7 @@
         "media",
         "accessibility",
         "license-persona",
+        "instructor-realism",
         "final-package"
       ],
       "allowedStatuses": [

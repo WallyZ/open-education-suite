@@ -35,7 +35,7 @@
       ],
       "expect_exit_code": 0,
       "id": "lecture-video-check",
-      "timeout_seconds": 30
+      "timeout_seconds": 90
     }
   ],
   "preflight_requirements": [
@@ -57,7 +57,7 @@
     },
     {
       "id": "lecture-fixture",
-      "path": "fixtures\\lecture-video.gdev-101-design-vocabulary.json"
+      "path": "..\\open-education-game-development\\generated-lectures\\gdev-101-design-vocabulary\\lecture-video.json"
     },
     {
       "id": "node-playwright-package",

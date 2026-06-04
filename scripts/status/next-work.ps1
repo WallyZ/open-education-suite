@@ -13,6 +13,8 @@ if (-not (Test-Path -LiteralPath $TodoRoot -PathType Container)) {
 
 $firstOpen = $null
 $files = Get-ChildItem -LiteralPath $TodoRoot -File -Filter 'TODO_*.md' | Sort-Object Name
+$openItemCount = 0
+$completedItemCount = 0
 
 foreach ($file in $files) {
     $heading = ''
@@ -23,19 +25,29 @@ foreach ($file in $files) {
             $heading = $Matches[1]
         }
         if ($line -match '^- \[ \]\s+(.+)$') {
-            $firstOpen = [ordered]@{
-                status = 'open'
-                file = $file.FullName
-                line = $lineNumber
-                heading = $heading
-                task = $Matches[1]
+            $openItemCount++
+            if (-not $firstOpen) {
+                $firstOpen = [ordered]@{
+                    status = 'open'
+                    file = $file.FullName
+                    line = $lineNumber
+                    heading = $heading
+                    task = $Matches[1]
+                }
             }
-            break
+        }
+        elseif ($line -match '^- \[x\]\s+(.+)$') {
+            $completedItemCount++
         }
     }
-    if ($firstOpen) {
-        break
-    }
+}
+
+$todoSummary = [ordered]@{
+    todoRoot = (Resolve-Path -LiteralPath $TodoRoot).Path
+    todoFileCount = @($files).Count
+    checkedItemCount = $openItemCount + $completedItemCount
+    openItemCount = $openItemCount
+    completedItemCount = $completedItemCount
 }
 
 if (-not $firstOpen) {
@@ -48,14 +60,20 @@ if (-not $firstOpen) {
     }
 }
 
+foreach ($key in $todoSummary.Keys) {
+    $firstOpen[$key] = $todoSummary[$key]
+}
+
 if ($Markdown) {
     if ($firstOpen.status -eq 'open') {
         Write-Output ("Next open TODO: {0}" -f $firstOpen.task)
         Write-Output ("File: {0}:{1}" -f $firstOpen.file, $firstOpen.line)
         Write-Output ("Section: {0}" -f $firstOpen.heading)
+        Write-Output ("Backlog: {0} open / {1} checked items across {2} files" -f $firstOpen.openItemCount, $firstOpen.checkedItemCount, $firstOpen.todoFileCount)
     }
     else {
         Write-Output $firstOpen.task
+        Write-Output ("Backlog complete: {0} checked items across {1} files" -f $firstOpen.checkedItemCount, $firstOpen.todoFileCount)
     }
 }
 else {

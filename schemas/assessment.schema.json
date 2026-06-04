@@ -1,6 +1,15 @@
 {
   "schemaVersion": 1,
   "definitions": {
+    "assessmentPolicy": {
+      "required": [ "defaultHighRigorType", "complexObjectivePreference", "quizRole" ],
+      "properties": {
+        "defaultHighRigorType": { "enum": [ "essay" ] },
+        "complexObjectivePreference": { "type": "array" },
+        "quizRole": { "type": "string" },
+        "masteryRequirement": { "type": "string" }
+      }
+    },
     "assessmentItem": {
       "required": [
         "itemId",
@@ -18,6 +27,7 @@
             "recall",
             "multiple-choice",
             "short-answer",
+            "essay",
             "code-task",
             "project-checkpoint",
             "reflection",
@@ -27,6 +37,20 @@
         "prompt": { "type": "string" },
         "acceptedAnswers": { "type": "array" },
         "scaffolds": { "type": "array" },
+        "rigor": {
+          "properties": {
+            "rank": { "type": "integer" },
+            "role": { "type": "string" },
+            "preferredForSummative": { "type": "boolean" },
+            "synthesisRequired": { "type": "boolean" }
+          }
+        },
+        "rubric": {
+          "properties": {
+            "minimumWordCount": { "type": "integer", "minimum": 1 },
+            "criteria": { "type": "array" }
+          }
+        },
         "feedbackTemplates": {
           "required": [ "correct", "partial", "incorrect", "uncertain" ],
           "properties": {

@@ -38,6 +38,39 @@ content-package/
 - `license`
 - `attribution`
 
+Course and study-plan objects may also include source-review metadata when the subject repo links external courseware for learner reference or authoring inspiration:
+
+- `externalSourceLinks[]`
+  - `provider`
+  - `title`
+  - `url`
+  - `license`
+  - `useBoundary`
+  - `lastReviewed`
+  - `whyUseful`
+  - `borrowedPattern`
+- `courseDesignReview`
+  - `prerequisitesPresent`
+  - `outcomesPresent`
+  - `moduleMapPresent`
+  - `videosPresent`
+  - `readingsPresent`
+  - `practicePresent`
+  - `quizzesPresent`
+  - `projectsPresent`
+  - `testsPresent`
+  - `rubricsPresent`
+  - `supportAndPoliciesPresent`
+  - `adaptiveHooksPresent`
+- `courseStructure`
+  - `level`
+  - `estimatedHours`
+  - `moduleCount`
+  - `finalDeliverable`
+  - `completionEvidence`
+
+External source links are provenance and learning aids, not permission to copy course assets. Subject repos should link to external courseware, explain why each source is useful, and define original or properly licensed local assessments, projects, quizzes, and lectures.
+
 The first implementation may emit a single JSON report from `scripts/ingestion/scan-content-sources.ps1`. A later packaging command can split that report into the package shape above.
 
 ## Storage Rules
