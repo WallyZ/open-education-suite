@@ -1,86 +1,39 @@
-Format for documents:
-🏆 The Best All‑Around Format: Markdown (.md)
-Markdown is the sweet spot for:
-cross‑platform compatibility
-ease of editing
-clean formatting
-GitHub‑friendly rendering
-version‑control friendliness
-low friction for contributors
-It works perfectly on:
-Windows
-macOS
-Linux
-GitHub
-Git clients
-Static site generators
-Documentation tools
-And unlike Word or PDF, Markdown is:
-lightweight
-human‑readable
-diff‑friendly
-merge‑friendly
-future‑proof
-This is why nearly all modern open‑source projects use Markdown for their documentation.
+# DECISIONS
 
-🧩 When to Use Other Formats
-Markdown covers 90% of needs, but there are a few cases where another format shines.
-1. For printable or shareable documents → PDF
-Use PDF when you need:
-polished presentation
-fixed layout
-professional distribution
-But PDF is not ideal for editing or version control.
-2. For rich, collaborative editing → Word (.docx)
-Use Word only when:
-multiple non‑technical collaborators need to edit
-tracked changes are important
-formatting must be very specific
-But Word files are:
-heavy
-not diff‑friendly
-not ideal for Git repos
-3. For structured technical docs → Markdown + Mermaid + frontmatter
-This is the modern “developer documentation stack.”
-You can embed:
-diagrams
-tables
-code blocks
-callouts
-All in plain text.
+Permanent technical decisions for `open-education-suite`.
 
-🧭 Recommended Format for Each Document Type
-Here’s a quick guide you can reuse across projects.
-Document 		Type		Best Format	Why
-README			Markdown	universally readable
-CONTRIBUTING	Markdown	GitHub auto‑renders
-CODE_OF_CONDUCT	Markdown	standard convention
-SECURITY		Markdown	simple + clear
-CHANGELOG		Markdown	diff‑friendly
-USAGE			Markdown	easy to update
-WORKFLOW		Markdown	diagrams + steps
-ROADMAP			Markdown	easy to maintain
-Architecture Docs	Markdown + Mermaid	diagrams in plain text
-Lore / Guild Documents	Markdown	thematic + readable
-API Docs	Markdown	structured + searchable
-Printable Guides	PDF (generated from Markdown)	polished output
-🧱 Why Markdown Is Ideal for Your Guild‑Style Suite
-Markdown supports:
-thematic headers
-scroll‑like formatting
-code blocks for rituals or commands
-tables for virtues or roles
-links between halls, scrolls, and codices
-It also keeps your repo:
-clean
-lightweight
-easy to navigate
-easy to contribute to
-And it aligns perfectly with your emphasis on operational clarity and future‑proof modularity.
-🧭 Final Recommendation
-Use Markdown for everything, and generate PDFs only when you need polished, distributable artifacts.
-This gives you:
-the flexibility of a living codex
-the readability of a modern documentation system
-the maintainability of plain text
-the cross‑platform reliability you want
+## Markdown is the canonical docs format
+
+- Decision: Use Markdown for repo documentation, runbooks, task packs, and backlog files.
+- Rationale: Markdown is plain text, diff-friendly, GitHub-rendered, and easy for agents and humans to edit.
+- Exceptions: Generate PDFs or rich documents only as release artifacts or user-facing distribution formats, not as the editable source of truth.
+
+## Keep this repo content-agnostic
+
+- Decision: `open-education-suite` owns ingestion, learner state, assessment, AI-teacher orchestration, quality gates, UI/runtime contracts, and teaching workflows.
+- Rationale: Subject study plans, resources, generated lectures, and domain-specific course content belong in sibling `open-education-*` repos so the core platform remains reusable.
+- Verification: `scripts/codex-verify.ps1` rejects domain study plans and resources in the core repo and verifies declared sibling content sources through `content-sources.json`.
+
+## Preserve essay-first high-rigor assessment
+
+- Decision: Essays are the default high-rigor summative assessment type; quizzes remain diagnostic, retrieval, and misconception-check tools.
+- Rationale: Synthesis evidence is stronger than multiple-choice correctness when judging durable mastery.
+- Verification: `scripts/codex-verify.ps1` checks `fixtures/assessment-items.json` for essay-first policy, synthesis essay fixtures, and higher mastery weight for synthesis evidence.
+
+## Adopt repo-kit standards with local overrides
+
+- Decision: Reusable process/tooling assets come from `F:\dev\00-repo-kit`, but this repo keeps local authority over `AGENTS.md`, `.codex-cache/task-pack.md`, `docs/TODO.md`, and `scripts/codex-verify.ps1`.
+- Rationale: Repo-kit standards should improve consistency without weakening education-suite behavior gates or replacing platform-specific workflow details.
+- Verification: The canonical verifier runs repo-kit TODO lifecycle checks and the existing education-suite checks through one entrypoint.
+
+## Keep QA Live adjacent and contract-driven
+
+- Decision: This repo owns QA Live specs and workflow contracts under `qa-live/` and invokes the adjacent `qa-live-test-system`; it does not vendor QA harness code.
+- Rationale: QA Live should be reusable across repos while each repo remains independent and explicit about its runtime validation needs.
+- Verification: `scripts/codex-verify.ps1` runs the learner UI QA Live workflow through `scripts/testing/run-qa-live-learner-ui.ps1`.
+
+## Default workflow is solo-owner direct-main
+
+- Decision: Commit and push completed verified work to `main` by default.
+- Rationale: This matches the owner-operated repo workflow and avoids unnecessary PR overhead.
+- Exception: Add `.repo-kit/workflow_policy.local.json` if hosted branch protection or team collaboration requires PR flow.

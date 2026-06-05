@@ -1,0 +1,12 @@
+# repo-kit gitignore fragment: python
+# Source: repo-standards/gitignore/gitignore_matrix.json
+# Updated: 2026-06-03
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+htmlcov/
+dist/
+build/
+*.egg-info/

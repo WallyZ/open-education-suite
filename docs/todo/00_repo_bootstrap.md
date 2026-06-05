@@ -1,0 +1,73 @@
+# 00_repo_bootstrap
+
+Repo-kit adoption lane for keeping this repository aligned with `F:\dev\00-repo-kit` while preserving `open-education-suite` as a content-agnostic adaptive education platform.
+
+## Tasks
+
+- [x] Install repo-kit standards assets in existing-repo safe mode [PH1] <!-- ms:evidence id=OES_REPO_KIT_INSTALL_001 path=.repo-kit/exchange.json symbols=repo.id strings="open-education-suite,privacy_classification,imports,exports,exclusions" -->
+  - Evidence (2026-06-05): Ran the repo-kit standards installer from `F:\dev\00-repo-kit` in existing-repo mode and added the safe import surfaces for exchange, memory-bank, TODO audit, lint, logging, lifecycle scripts, and repo standards without replacing education-suite domain code.
+  - What: Add repo-kit reusable process/tooling surfaces while preserving local platform behavior.
+  - Acceptance:
+    - `.repo-kit/exchange.json`, `repo-standards/`, `scripts/lifecycle/`, `scripts/todo_audit/`, `scripts/lint/`, `scripts/memory/`, `scripts/exchange/`, and `memory-bank/` exist.
+- [x] Preserve open-education-suite local overrides for agent instructions, verifier, TODO hub, and content boundaries [PH1] <!-- ms:evidence id=OES_REPO_KIT_OVERRIDES_001 path=scripts/codex-verify.ps1 symbols=Test-TodoLifecycle,Assert-FileExists strings="content-sources.json,open-education-game-development,Assessment policy must prefer essays" -->
+  - Evidence (2026-06-05): Kept the existing `AGENTS.md`, task pack contract, `docs/TODO.md` backlog hub, and `scripts/codex-verify.ps1` education-suite checks as the repo-local authority; added repo-kit lifecycle checks into the existing verifier instead of replacing it.
+  - What: Adopt shared standards without weakening the platform-specific gates for content ingestion, learner state, assessment policy, QA Live, and sibling content repos.
+  - Acceptance:
+    - `scripts/codex-verify.ps1` still checks education-suite fixtures, sibling content-source boundaries, essay-first assessment policy, learner UI, and QA Live learner workflow.
+- [x] Tailor TODO process and audit documentation for this repo [PH1] <!-- ms:evidence id=OES_TODO_AUDIT_INSTALLED_001 path=docs/TODO_AUDIT.md symbols=Canonical,Commands strings="python -m scripts.todo_audit.cli,ms:id,ms:evidence,check_todo_ready_queue.py" -->
+  - Evidence (2026-06-05): Updated `docs/TODO_AUDIT.md` and `docs/TODO_PROCESS.md` usage to point at installed module/script paths and the `ms:*` namespace used by this repo.
+  - What: Make TODO repair, lint, and ready-queue commands executable without knowing repo-kit internals.
+  - Acceptance:
+    - Docs reference `python -m scripts.todo_audit.cli`, `scripts/lifecycle/check_todo_format.py`, and `scripts/lifecycle/check_todo_ready_queue.py`.
+- [x] Add stable audit IDs to historical completed TODO items [PH1] <!-- ms:evidence id=OES_TODO_COMPLETED_IDS_001 path=docs/todo/TODO_01_content_ingestion_and_packaging.md strings="ms:id" -->
+  - Evidence (2026-06-05): Ran deterministic TODO repair with `--repair-namespace ms` across `docs/todo/*.md`; historical completed items now carry stable `ms:id` tags so the strict TODO format gate can audit them without retroactive evidence reconstruction.
+  - What: Preserve the completed backlog while making completion state machine-checkable.
+  - Acceptance:
+    - `scripts/lifecycle/check_todo_format.py` reports zero errors for completed TODO auditability.
+- [x] Wire TODO lifecycle checks through the canonical verifier [PH1] <!-- ms:evidence id=OES_TODO_LIFECYCLE_CHECKS_001 path=scripts/codex-verify.ps1 symbols=Test-TodoLifecycle,Invoke-PythonCheck strings="check_todo_format.py,check_todo_ready_queue.py,--fail-on,error" -->
+  - Evidence (2026-06-05): Added verifier calls for TODO format and ready-queue validation before the existing platform checks, using bytecode suppression so verification does not leave `__pycache__` artifacts.
+  - What: Fail the normal verification entrypoint on broken TODO metadata, broken ready-queue structure, or stale open-item execution metadata.
+  - Acceptance:
+    - `pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\codex-verify.ps1` runs the TODO lifecycle gates.
+- [x] Review agent compatibility and keep optional projections out by default [PH1] <!-- ms:evidence id=OES_AGENT_COMPAT_001 path=docs/AGENT_INSTRUCTIONS_COMPATIBILITY.md strings="AGENTS.md,Default downstream install,Cline assets are installed only when requested" -->
+  - Evidence (2026-06-05): Installed the compatibility model and kept `AGENTS.md` as the canonical local contract; optional Cline, Claude Code, Cursor, and Copilot projections remain documentation-only until explicitly requested.
+  - What: Keep Codex plus memory-bank as the default agent path and avoid unused Cline noise.
+  - Acceptance:
+    - No optional projection file is added unless the repo owner requests that agent surface.
+- [x] Bootstrap memory-bank and repo-kit catalog [PH1] <!-- ms:evidence id=OES_MEMORY_BANK_BOOTSTRAP_001 path=memory-bank/context-pack.md strings="adaptive AI teaching platform,content-agnostic,sibling content repos,verification" -->
+  - Evidence (2026-06-05): Filled memory-bank starter files with repo-specific platform context, boundaries, reusable solution candidates, pitfalls, and handoff guidance; synced `memory-bank/repoKitCatalog.md` from `F:\dev\00-repo-kit`.
+  - What: Reduce future context load for Codex and local AI runs while retaining the key platform constraints.
+  - Acceptance:
+    - `memory-bank/context-pack.md`, `memory-bank/activeContext.md`, `memory-bank/progress.md`, and `memory-bank/repoKitCatalog.md` are populated with current repo context.
+- [x] Configure cross-repo exchange imports, exports, exclusions, and ledger path [PH1] <!-- ms:evidence id=OES_EXCHANGE_CONFIG_001 path=.repo-kit/exchange.json symbols=imports,exports,exclusions strings="content-source-registry,essay-first-assessment-policy,qa-live-learner-ui-contract" -->
+  - Evidence (2026-06-05): Tailored `.repo-kit/exchange.json` and `docs/CROSS_REPO_EXCHANGE.md` for this repo's imports from `00-repo-kit`, reusable export candidates, privacy boundaries, generated artifact exclusions, and proposal-first exchange loop.
+  - What: Make cross-repo reuse explicit without exporting private learner data, generated artifacts, or subject content.
+  - Acceptance:
+    - Manifest records imported repo-kit standards and reusable education-suite candidates with privacy classifications.
+- [ ] Review docs terminology lint for education-suite vocabulary [PH2] <!-- ms:evidence id=OES_DOCS_TERMINOLOGY_LINT_001 path=repo-standards/lint/cspell.json strings="words,ignorePaths" --> <!-- ms:meta priority=p2 owner=@owner stale-days=30 automation-level=assisted human-checkpoint=review rollout-scope=single validation-profile=cloud safe-autofix=review updated=2026-06-05 -->
+  - Deliverables: repo-specific allowlist updates or a decision to keep terminology lint report-only.
+  - Files: `repo-standards/lint/cspell.json`, `repo-standards/lint/docs_terminology_allowlist.txt`, `docs/TODO.md`, `docs/todo/00_repo_bootstrap.md`.
+  - Verification: `pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\codex-verify.ps1`.
+  - QA Live automation: Not required; this is static docs/lint configuration covered by the verifier.
+  - Drift guard: The language lint matrix remains the source for optional terminology enforcement.
+  - Downstream rollout: Keep repo-specific vocabulary local unless a term is broadly useful across repos.
+  - Acceptance:
+    - False-positive education terms are either accepted into a local allowlist or documented as intentionally report-only.
+- [ ] Review security and supply-chain scanner profiles for local education data boundaries [PH2] <!-- ms:evidence id=OES_SECURITY_PROFILE_REVIEW_001 path=repo-standards/security/security_scanner_profiles.json strings="osv,trivy,scorecard,sbom" --> <!-- ms:meta priority=p2 owner=@owner stale-days=30 automation-level=assisted human-checkpoint=review rollout-scope=single validation-profile=cloud safe-autofix=review updated=2026-06-05 -->
+  - Deliverables: decision note for which scanner profiles are enabled locally and which remain opt-in.
+  - Files: `repo-standards/security/security_scanner_profiles.json`, `docs/decisions.md`, `docs/RELEASE_CHECKLIST.md`, `docs/todo/00_repo_bootstrap.md`.
+  - Verification: `pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\codex-verify.ps1`.
+  - QA Live automation: Not required; scanner policy is static governance and verifier-covered.
+  - Drift guard: Revisit when package dependencies, hosted CI, or public release posture changes.
+  - Downstream rollout: Keep owner-approved scanner policy explicit before enabling hosted checks in other education repos.
+  - Acceptance:
+    - Scanner profile decisions distinguish local/offline checks from hosted or networked security scans.
+- [ ] Add hosted workflow callers only if this repo needs GitHub CI enforcement [PH2] <!-- ms:evidence id=OES_REUSABLE_WORKFLOW_CALLERS_001 path=docs/RELEASE_CHECKLIST.md strings="hosted workflow,branch protection,owner decision" --> <!-- ms:meta priority=p3 owner=@owner stale-days=45 automation-level=assisted human-checkpoint=review rollout-scope=single validation-profile=cloud safe-autofix=manual updated=2026-06-05 -->
+  - Deliverables: owner decision plus workflow caller files if hosted CI becomes required.
+  - Files: `docs/decisions.md`, `docs/RELEASE_CHECKLIST.md`, `docs/todo/00_repo_bootstrap.md`.
+  - Verification: `pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\codex-verify.ps1` plus hosted workflow run if enabled.
+  - QA Live automation: Not required for static workflow configuration; hosted Actions status is external and owner-gated.
+  - Drift guard: Hosted branch protection and workflow requirements must be recorded before enabling required checks.
+  - Downstream rollout: Use `00-repo-kit` reusable workflow policy docs if this becomes a multi-contributor repo.
+  - Acceptance:
+    - Either no hosted workflow caller is needed, or the workflow exists with documented branch-protection expectations.

@@ -1,0 +1,164 @@
+{
+  "$schema": "./standards_migrations.schema.json",
+  "schema_version": 1,
+  "manifest_id": "repo-kit.standards-migrations",
+  "standards_version": "1.2.0",
+  "updated": "2026-06-04",
+  "answer_file": {
+    "default_path": ".repo-kit/migration_answers.json",
+    "template_path": "docs/templates/repo-kit/migration_answers.json",
+    "local_owned": true
+  },
+  "hook_policy": {
+    "execution": {
+      "mode": "plan-first",
+      "requires_approval_token": "APPROVED",
+      "mutation_default": "disabled",
+      "notes": "Plan reports are read-only. Applying migration changes requires explicit operator approval and target-repo verification."
+    },
+    "pre": [
+      {
+        "id": "capture-git-status",
+        "description": "Capture target repo working-tree state before applying a reviewed migration.",
+        "command_preview": "git status --short"
+      },
+      {
+        "id": "write-upgrade-plan",
+        "description": "Generate a fresh repo upgrade plan immediately before mutation.",
+        "command_preview": "pwsh -NoProfile -ExecutionPolicy Bypass -File <repo-kit>/scripts/rollout/plan_repo_upgrade.ps1 -TargetRepo <target> -RepoKitRoot <repo-kit> -OutputJson <target>/archive/local-reports/repo_upgrade_plan.json -OutputMarkdown <target>/archive/local-reports/repo_upgrade_plan.md"
+      }
+    ],
+    "post": [
+      {
+        "id": "run-target-verifier",
+        "description": "Run the target repo verifier after reviewed migration changes are applied.",
+        "command_preview": "pwsh -NoProfile -ExecutionPolicy Bypass -File <target>/scripts/codex-verify.ps1 -RepoRoot <target> -ContextProfile cloud -Mode changed -IncludeUntracked"
+      },
+      {
+        "id": "record-migration-answer",
+        "description": "Record the applied migration id and verification evidence in .repo-kit/migration_answers.json.",
+        "command_preview": "Update .repo-kit/migration_answers.json after verification passes."
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "id": "2026-06-03-repo-consistency-policy",
+      "standards_version": "1.1.0",
+      "title": "Install declarative repo consistency policy",
+      "description": "Move hardcoded repo consistency expectations into managed policy files while preserving downstream local overlays.",
+      "from_versions": ["unknown", "<1.1.0"],
+      "to_version": "1.1.0",
+      "required_answers": [
+        "adopt_repo_consistency_policy",
+        "preserve_local_policy_overrides"
+      ],
+      "changes": [
+        {
+          "action": "copy",
+          "source_path": "repo-standards/policies/repo_consistency_policy.json",
+          "target_path": "repo-standards/policies/repo_consistency_policy.json",
+          "bucket": "copy",
+          "description": "Install the managed default policy."
+        },
+        {
+          "action": "copy",
+          "source_path": "repo-standards/policies/repo_consistency_policy.schema.json",
+          "target_path": "repo-standards/policies/repo_consistency_policy.schema.json",
+          "bucket": "copy",
+          "description": "Install the policy schema used by review tools."
+        }
+      ],
+      "pre_hooks": ["capture-git-status", "write-upgrade-plan"],
+      "post_hooks": ["run-target-verifier", "record-migration-answer"],
+      "manual_review": [
+        "Confirm any repo-standards/policies/local_repo_consistency_policy.json overlay remains local-owned.",
+        "Confirm downstream consistency checks still match the repo type before marking the migration applied."
+      ]
+    },
+    {
+      "id": "2026-06-03-standards-migration-contracts",
+      "standards_version": "1.1.0",
+      "title": "Install standards migration manifest and replay answers contract",
+      "description": "Add the neutral migration manifest and local-owned answer replay file so future standards updates can be planned without manual file-by-file audit.",
+      "from_versions": ["unknown", "<1.1.0"],
+      "to_version": "1.1.0",
+      "required_answers": [
+        "adopt_migration_manifest",
+        "create_or_preserve_answer_replay_file"
+      ],
+      "changes": [
+        {
+          "action": "copy",
+          "source_path": "repo-standards/migrations/standards_migrations.json",
+          "target_path": "repo-standards/migrations/standards_migrations.json",
+          "bucket": "copy",
+          "description": "Install the managed standards migration manifest."
+        },
+        {
+          "action": "copy",
+          "source_path": "repo-standards/migrations/standards_migrations.schema.json",
+          "target_path": "repo-standards/migrations/standards_migrations.schema.json",
+          "bucket": "copy",
+          "description": "Install the migration manifest schema."
+        },
+        {
+          "action": "merge",
+          "source_path": "docs/templates/repo-kit/migration_answers.json",
+          "target_path": ".repo-kit/migration_answers.json",
+          "bucket": "manual_review",
+          "description": "Create missing answer replay file or preserve existing local decisions."
+        }
+      ],
+      "pre_hooks": ["capture-git-status", "write-upgrade-plan"],
+      "post_hooks": ["run-target-verifier", "record-migration-answer"],
+      "manual_review": [
+        "Do not overwrite an existing .repo-kit/migration_answers.json file without explicit operator review.",
+        "Keep false or deferred answers as manual-review blockers instead of converting them to applied state."
+      ]
+    },
+    {
+      "id": "2026-06-04-agent-surface-defaults",
+      "standards_version": "1.2.0",
+      "title": "Adopt Codex/memory-bank as default agent surface",
+      "description": "Demote Cline from default repo infrastructure to an optional compatibility pack while preserving explicit downstream choices.",
+      "from_versions": ["unknown", "<1.2.0"],
+      "to_version": "1.2.0",
+      "required_answers": [
+        "adopt_codex_memory_default",
+        "include_optional_cline_pack",
+        "preserve_existing_cline_assets"
+      ],
+      "changes": [
+        {
+          "action": "copy",
+          "source_path": "docs/AGENT_INSTRUCTIONS_COMPATIBILITY.md",
+          "target_path": "docs/AGENT_INSTRUCTIONS_COMPATIBILITY.md",
+          "bucket": "copy",
+          "description": "Install the updated agent-surface policy that makes Cline optional."
+        },
+        {
+          "action": "copy",
+          "source_path": "repo-standards/agents/agent_instruction_compatibility.json",
+          "target_path": "repo-standards/agents/agent_instruction_compatibility.json",
+          "bucket": "copy",
+          "description": "Install the machine-readable default/optional agent surface contract."
+        },
+        {
+          "action": "merge",
+          "source_path": "docs/templates/repo-kit/migration_answers.json",
+          "target_path": ".repo-kit/migration_answers.json",
+          "bucket": "manual_review",
+          "description": "Record whether the downstream repo opts into optional Cline assets."
+        }
+      ],
+      "pre_hooks": ["capture-git-status", "write-upgrade-plan"],
+      "post_hooks": ["run-target-verifier", "record-migration-answer"],
+      "manual_review": [
+        "If the repo actively uses Cline, rerun install_repo_standards.ps1 with -IncludeCline and record include_optional_cline_pack=true.",
+        "If existing Cline files are present but no longer used, preserve them until a separate removal/archive wave is approved.",
+        "Do not delete .clineignore, .clinerules, docs/CLINE_GUIDE.md, or docs/CLINE_TASK_CURRENT.md from downstream repos as part of the default standards install."
+      ]
+    }
+  ]
+}

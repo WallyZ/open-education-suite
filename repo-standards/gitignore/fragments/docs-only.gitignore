@@ -1,0 +1,6 @@
+# repo-kit gitignore fragment: docs-only
+# Source: repo-standards/gitignore/gitignore_matrix.json
+# Updated: 2026-06-03
+site/
+.markdownlint-cache/
+.cspellcache

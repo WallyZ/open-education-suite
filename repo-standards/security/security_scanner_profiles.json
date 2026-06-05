@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "id": "repo-kit.security-scanner-profiles.v1",
+  "updated": "2026-06-03",
+  "default_verifier_behavior": "capability-report-only",
+  "offline_default": true,
+  "policy": {
+    "external_scanners_are_opt_in": true,
+    "no_live_network_calls_from_default_verification": true,
+    "missing_scanner_tools_are_warnings": true,
+    "reports_before_mutation": true,
+    "store_generated_reports_under": [
+      "archive/local-reports/",
+      ".codex-cache/tmp/<run-id>/"
+    ]
+  },
+  "profiles": [
+    {
+      "id": "ossf-scorecard",
+      "name": "OSSF Scorecard",
+      "default_enabled": false,
+      "network_required": true,
+      "required_tools": [
+        "scorecard"
+      ],
+      "optional_tools": [],
+      "host_capability_check": "Get-Command scorecard",
+      "command_examples": [
+        "scorecard --repo=<repo-url> --format=json --show-details"
+      ],
+      "report_artifact": "archive/local-reports/ossf_scorecard.json",
+      "local_fallback": "Run the local supply-chain pack checker and review workflow action pinning, branch protection policy, dependency policy, and CODEOWNERS without calling the hosted repo.",
+      "downstream_applicability": [
+        "public-repo",
+        "release-repo",
+        "security-conscious-repo"
+      ],
+      "risk_notes": [
+        "Requires a hosted repository URL and network access.",
+        "May inspect GitHub-hosted repo state; do not run from default local verification."
+      ]
+    },
+    {
+      "id": "osv-scanner",
+      "name": "OSV Scanner",
+      "default_enabled": false,
+      "network_required": true,
+      "required_tools": [
+        "osv-scanner"
+      ],
+      "optional_tools": [],
+      "host_capability_check": "Get-Command osv-scanner",
+      "command_examples": [
+        "osv-scanner --recursive --format json --output archive/local-reports/osv_scanner.json ."
+      ],
+      "report_artifact": "archive/local-reports/osv_scanner.json",
+      "local_fallback": "Keep dependency update policy/dashboard current and run repo-native lockfile or package-manager audit commands only when approved by the downstream repo.",
+      "downstream_applicability": [
+        "python",
+        "web-js-ts",
+        "go",
+        "java",
+        "release-repo"
+      ],
+      "risk_notes": [
+        "Vulnerability lookups require external advisory data.",
+        "Do not fail default verification when the scanner is not installed."
+      ]
+    },
+    {
+      "id": "trivy",
+      "name": "Trivy filesystem scan",
+      "default_enabled": false,
+      "network_required": true,
+      "required_tools": [
+        "trivy"
+      ],
+      "optional_tools": [],
+      "host_capability_check": "Get-Command trivy",
+      "command_examples": [
+        "trivy fs --scanners vuln,secret,misconfig --format json --output archive/local-reports/trivy_fs.json ."
+      ],
+      "report_artifact": "archive/local-reports/trivy_fs.json",
+      "local_fallback": "Run repo-kit secret policy checks, workflow pinning checks, and generated-artifact ignore checks; defer vulnerability database scans until Trivy cache/network access is approved.",
+      "downstream_applicability": [
+        "container",
+        "infra",
+        "web-js-ts",
+        "python",
+        "release-repo"
+      ],
+      "risk_notes": [
+        "Scanner database updates usually need network access.",
+        "Secret findings require manual review before broad sharing."
+      ]
+    },
+    {
+      "id": "sbom-generation",
+      "name": "SBOM generation",
+      "default_enabled": false,
+      "network_required": false,
+      "required_tools": [],
+      "optional_tools": [
+        "syft",
+        "cyclonedx-py",
+        "cyclonedx-gomod",
+        "cyclonedx-npm"
+      ],
+      "host_capability_check": "Get-Command syft, cyclonedx-py, cyclonedx-gomod, or cyclonedx-npm",
+      "command_examples": [
+        "syft dir:. -o spdx-json=archive/local-reports/sbom.spdx.json",
+        "syft dir:. -o cyclonedx-json=archive/local-reports/sbom.cdx.json"
+      ],
+      "report_artifact": "archive/local-reports/sbom.spdx.json",
+      "local_fallback": "Document SBOM intent in docs/SECURITY_SUPPLY_CHAIN_PACK.md and track missing generator adoption as an upgrade-plan warning.",
+      "downstream_applicability": [
+        "release-repo",
+        "package-repo",
+        "security-conscious-repo"
+      ],
+      "risk_notes": [
+        "Generated SBOM outputs can be large; store under archive/local-reports or release artifacts unless intentionally tracked.",
+        "Tool-specific package coverage varies by language ecosystem."
+      ]
+    }
+  ]
+}

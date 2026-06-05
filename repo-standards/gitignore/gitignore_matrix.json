@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "id": "repo-kit.gitignore-matrix.v1",
+  "updated": "2026-06-03",
+  "source_benchmark": "github/gitignore",
+  "local_override_boundary": "Preserve repo-local .gitignore rules. Merge missing repo-kit fragments only after review; never replace the whole file automatically.",
+  "fragments": [
+    {
+      "id": "base-runtime",
+      "source_path": "repo-standards/gitignore/fragments/base-runtime.gitignore",
+      "applies_to": [
+        "all"
+      ],
+      "description": "OS/editor noise, local verification caches, package exports, and local report outputs.",
+      "patterns": [
+        "__pycache__/",
+        "**/__pycache__/",
+        "*.pyc",
+        ".codex-cache/",
+        "*.bak",
+        "/*.zip",
+        ".DS_Store",
+        "Thumbs.db"
+      ]
+    },
+    {
+      "id": "repo-kit-archive",
+      "source_path": "repo-standards/gitignore/fragments/repo-kit-archive.gitignore",
+      "applies_to": [
+        "all"
+      ],
+      "description": "Repo-kit archive and local-report boundaries that keep audit schemas tracked while ignoring generated payloads.",
+      "patterns": [
+        "archive/lifecycle/*/removed/",
+        "archive/lifecycle/*/deprecated/",
+        "archive/local-reports/**",
+        "!archive/local-reports/.gitkeep",
+        "docs/wavekit/_archive/**",
+        "!docs/wavekit/_archive/.gitkeep"
+      ]
+    },
+    {
+      "id": "python",
+      "source_path": "repo-standards/gitignore/fragments/python.gitignore",
+      "applies_to": [
+        "python",
+        "mixed"
+      ],
+      "description": "Python environments, package build output, and local analysis caches.",
+      "patterns": [
+        ".venv/",
+        "venv/",
+        ".pytest_cache/",
+        ".ruff_cache/",
+        ".mypy_cache/",
+        "htmlcov/",
+        "dist/",
+        "build/",
+        "*.egg-info/"
+      ]
+    },
+    {
+      "id": "web-js-ts",
+      "source_path": "repo-standards/gitignore/fragments/web-js-ts.gitignore",
+      "applies_to": [
+        "web-js-ts",
+        "mixed"
+      ],
+      "description": "Node/web dependencies, build output, and coverage artifacts.",
+      "patterns": [
+        "node_modules/",
+        "npm-debug.log*",
+        "yarn-debug.log*",
+        "yarn-error.log*",
+        "coverage/",
+        ".next/",
+        ".vite/",
+        "dist/"
+      ]
+    },
+    {
+      "id": "cpp",
+      "source_path": "repo-standards/gitignore/fragments/cpp.gitignore",
+      "applies_to": [
+        "cpp",
+        "mixed"
+      ],
+      "description": "Native build directories and generated compile outputs.",
+      "patterns": [
+        "CMakeFiles/",
+        "CMakeCache.txt",
+        "cmake-build-*/",
+        "out/",
+        "build/",
+        "*.obj",
+        "*.pdb"
+      ]
+    },
+    {
+      "id": "unreal",
+      "source_path": "repo-standards/gitignore/fragments/unreal.gitignore",
+      "applies_to": [
+        "unreal",
+        "mixed"
+      ],
+      "description": "Unreal generated folders and local editor/build artifacts.",
+      "patterns": [
+        "Binaries/",
+        "DerivedDataCache/",
+        "Intermediate/",
+        "Saved/",
+        ".vs/",
+        "*.sln",
+        "*.opensdf",
+        "*.suo"
+      ]
+    },
+    {
+      "id": "qa-live-artifacts",
+      "source_path": "repo-standards/gitignore/fragments/qa-live-artifacts.gitignore",
+      "applies_to": [
+        "unreal",
+        "web-js-ts",
+        "mixed"
+      ],
+      "description": "QA Live local output folders, screenshots, recordings, browser traces, and VM run artifacts.",
+      "patterns": [
+        ".qa-live/",
+        "qa-live-output/",
+        "qa-live-artifacts/",
+        "test-results/",
+        "playwright-report/",
+        "recordings/",
+        "screenshots/",
+        "traces/"
+      ]
+    },
+    {
+      "id": "docs-only",
+      "source_path": "repo-standards/gitignore/fragments/docs-only.gitignore",
+      "applies_to": [
+        "docs-only"
+      ],
+      "description": "Docs-only generated previews and local export artifacts.",
+      "patterns": [
+        "site/",
+        ".markdownlint-cache/",
+        ".cspellcache"
+      ]
+    }
+  ]
+}

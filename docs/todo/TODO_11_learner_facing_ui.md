@@ -10,24 +10,24 @@ The CLI proves the teaching engine works, but learners need a real workspace: ne
 
 ## Tasks
 
-- [x] Add a first static learner workspace that can open locally without installing dependencies.
-- [x] Show the current next action, why it was selected, the active objective, and source provenance.
-- [x] Include a teacher interaction panel with learner response, hint, journal, and completion controls.
-- [x] Show mastery, review queue, evidence, learner preferences, accommodations, and local-only privacy status.
-- [x] Add accessibility foundations: semantic landmarks, skip link, keyboard focus, live region, reduced-motion handling, and responsive layout.
-- [x] Add deterministic verification for required learner UI files and accessibility/product markers.
-- [x] Install Playwright and add a learner UI browser smoke test for load, source provenance, keyboard flow, core interactions, and responsive overflow.
-- [x] Integrate `qa-live-test-system` for a local learner UI live workflow with browser actions, HTTP evidence capture, and teardown.
-- [x] Connect the UI to `scripts/teaching/start-session.ps1` output instead of embedded demo state.
-- [x] Add a local session API or file bridge that can run the deterministic teaching turn from the UI.
-- [x] Add live AI teacher invocation behind an explicit operator-controlled setting.
-- [x] Add durable learner-state save, export, import, and conflict-safe sync preview.
-- [x] Add assessment rendering for multiple choice, short answer, project rubric, and oral/explained-answer modes.
-- [x] Add course navigation across ingested content sources and objectives.
-- [x] Add learner analytics views that show evidence without surveillance-style framing.
-- [x] Add instructor/operator handoff views for blockers, interventions, and content health.
-- [x] Add visual regression and keyboard-flow checks once a browser test harness exists.
-- [x] Add localization scaffolding for UI labels, dates, objective names, and feedback.
+- [x] Add a first static learner workspace that can open locally without installing dependencies. <!-- ms:id e5c2ab3b49c4 -->
+- [x] Show the current next action, why it was selected, the active objective, and source provenance. <!-- ms:id e8116ce742e5 -->
+- [x] Include a teacher interaction panel with learner response, hint, journal, and completion controls. <!-- ms:id 38bb1d1f3143 -->
+- [x] Show mastery, review queue, evidence, learner preferences, accommodations, and local-only privacy status. <!-- ms:id 333578cb61e9 -->
+- [x] Add accessibility foundations: semantic landmarks, skip link, keyboard focus, live region, reduced-motion handling, and responsive layout. <!-- ms:id a570339717fd -->
+- [x] Add deterministic verification for required learner UI files and accessibility/product markers. <!-- ms:id 55fe8d3b08f6 -->
+- [x] Install Playwright and add a learner UI browser smoke test for load, source provenance, keyboard flow, core interactions, and responsive overflow. <!-- ms:id 8e885e7ddb21 -->
+- [x] Integrate `qa-live-test-system` for a local learner UI live workflow with browser actions, HTTP evidence capture, and teardown. <!-- ms:id e89c0fdc1fae -->
+- [x] Connect the UI to `scripts/teaching/start-session.ps1` output instead of embedded demo state. <!-- ms:id 4be7737fc3ef -->
+- [x] Add a local session API or file bridge that can run the deterministic teaching turn from the UI. <!-- ms:id a13e0edb3ee8 -->
+- [x] Add live AI teacher invocation behind an explicit operator-controlled setting. <!-- ms:id 3b8d331d5c7a -->
+- [x] Add durable learner-state save, export, import, and conflict-safe sync preview. <!-- ms:id bfcd52334991 -->
+- [x] Add assessment rendering for multiple choice, short answer, project rubric, and oral/explained-answer modes. <!-- ms:id 6458306cca46 -->
+- [x] Add course navigation across ingested content sources and objectives. <!-- ms:id 46eb31b3154f -->
+- [x] Add learner analytics views that show evidence without surveillance-style framing. <!-- ms:id 67bc65453fb9 -->
+- [x] Add instructor/operator handoff views for blockers, interventions, and content health. <!-- ms:id 92018bdba1e3 -->
+- [x] Add visual regression and keyboard-flow checks once a browser test harness exists. <!-- ms:id 7d5062247e50 -->
+- [x] Add localization scaffolding for UI labels, dates, objective names, and feedback. <!-- ms:id 3368c844c1b3 -->
 
 ## Acceptance Notes
 

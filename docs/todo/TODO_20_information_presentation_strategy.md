@@ -15,8 +15,8 @@ Goal: make the teacher choose presentation styles from the type of information, 
 
 ## Work Items
 
-- [x] Add an information-type pattern library covering facts, concepts, procedures, processes, causal systems, spatial structures, quantitative data, code, design critique, lab workflows, cases, and creative work.
-- [x] Add subject-aware presentation profiles for math, science, programming, game development, cybersecurity, data science, humanities, language, art/design, and professional practice.
-- [x] Add adaptive presentation selection rules that account for prior knowledge, misconceptions, learner evidence, accessibility, cognitive load, and practice outcome.
-- [x] Add modality quality requirements so presentation choices include explanation, worked examples, interaction, retrieval, practice artifacts, and alternate accessible forms.
-- [x] Add a verification gate that keeps the presentation strategy content-agnostic and covered by `scripts/codex-verify.ps1`.
+- [x] Add an information-type pattern library covering facts, concepts, procedures, processes, causal systems, spatial structures, quantitative data, code, design critique, lab workflows, cases, and creative work. <!-- ms:id ecb464a99c6b -->
+- [x] Add subject-aware presentation profiles for math, science, programming, game development, cybersecurity, data science, humanities, language, art/design, and professional practice. <!-- ms:id a9e33e4640e6 -->
+- [x] Add adaptive presentation selection rules that account for prior knowledge, misconceptions, learner evidence, accessibility, cognitive load, and practice outcome. <!-- ms:id 7379357a0fca -->
+- [x] Add modality quality requirements so presentation choices include explanation, worked examples, interaction, retrieval, practice artifacts, and alternate accessible forms. <!-- ms:id 97f284404662 -->
+- [x] Add a verification gate that keeps the presentation strategy content-agnostic and covered by `scripts/codex-verify.ps1`. <!-- ms:id c66ae6558b22 -->

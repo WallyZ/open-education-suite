@@ -4,6 +4,8 @@ This is the index for platform backlog items. Each detailed backlog file lives u
 
 ## Split Backlog
 
+- [00_repo_bootstrap.md](todo/00_repo_bootstrap.md) - repo-kit standards adoption, TODO lifecycle, memory-bank, and exchange wiring
+
 - [TODO_01_content_ingestion_and_packaging.md](todo/TODO_01_content_ingestion_and_packaging.md) - content repo ingestion, packaging, provenance, and local/offline delivery
 - [TODO_02_adaptive_teacher_and_mastery.md](todo/TODO_02_adaptive_teacher_and_mastery.md) - learner model, mastery tracking, adaptation, and review scheduling
 - [TODO_03_assessment_practice_and_feedback.md](todo/TODO_03_assessment_practice_and_feedback.md) - quizzes, projects, hints, scaffolds, grading, and feedback loops

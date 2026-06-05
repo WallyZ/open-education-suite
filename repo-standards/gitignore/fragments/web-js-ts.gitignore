@@ -1,0 +1,11 @@
+# repo-kit gitignore fragment: web-js-ts
+# Source: repo-standards/gitignore/gitignore_matrix.json
+# Updated: 2026-06-03
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+coverage/
+.next/
+.vite/
+dist/

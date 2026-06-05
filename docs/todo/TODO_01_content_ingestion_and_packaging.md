@@ -13,13 +13,13 @@ Build a read-only ingestion path that lets the suite teach from separate content
 
 ## Tasks
 
-- [x] Implement a read-only content source scanner for `content-sources.json`.
-- [x] Validate each content repo's `content-repo.json` schema before ingesting files.
-- [x] Index Markdown files under declared `study-plans` and `resources` paths.
-- [x] Preserve source repo id, source path, title, license, and attribution for each imported object.
-- [x] Emit an ingestion report with imported files, skipped files, and validation errors.
-- [x] Define a content package format for local/offline use without mutating source repos.
-- [x] Add checks that prevent domain content from being added back into the core repo.
+- [x] Implement a read-only content source scanner for `content-sources.json`. <!-- ms:id e3d11bf6e8ae -->
+- [x] Validate each content repo's `content-repo.json` schema before ingesting files. <!-- ms:id d89aa5adcd20 -->
+- [x] Index Markdown files under declared `study-plans` and `resources` paths. <!-- ms:id fedee688b4cb -->
+- [x] Preserve source repo id, source path, title, license, and attribution for each imported object. <!-- ms:id ec53778b2f12 -->
+- [x] Emit an ingestion report with imported files, skipped files, and validation errors. <!-- ms:id 158fd8ce8af0 -->
+- [x] Define a content package format for local/offline use without mutating source repos. <!-- ms:id 582960ca1832 -->
+- [x] Add checks that prevent domain content from being added back into the core repo. <!-- ms:id 48a6dd256296 -->
 
 ## Acceptance Notes
 

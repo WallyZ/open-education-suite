@@ -1,0 +1,11 @@
+# repo-kit gitignore fragment: qa-live-artifacts
+# Source: repo-standards/gitignore/gitignore_matrix.json
+# Updated: 2026-06-03
+.qa-live/
+qa-live-output/
+qa-live-artifacts/
+test-results/
+playwright-report/
+recordings/
+screenshots/
+traces/

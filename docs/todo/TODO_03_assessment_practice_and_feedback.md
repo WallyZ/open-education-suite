@@ -13,13 +13,13 @@ Build assessment and practice primitives that let the teacher gather evidence, p
 
 ## Tasks
 
-- [x] Define platform-neutral assessment item types: recall, multiple choice, short answer, code/task, project checkpoint, and reflection.
-- [x] Define a hint/scaffold schema with escalating levels from nudge to worked example.
-- [x] Add answer-evaluation hooks that can be deterministic first and AI-assisted later.
-- [x] Support project checkpoints that produce mastery evidence without requiring a traditional quiz.
-- [x] Add feedback templates for correct, partially correct, incorrect, and uncertain answers.
-- [x] Track hint usage as mastery evidence instead of treating hints as invisible help.
-- [x] Define how content repos can contribute reusable interactive exercises without coupling to the core UI.
+- [x] Define platform-neutral assessment item types: recall, multiple choice, short answer, code/task, project checkpoint, and reflection. <!-- ms:id 000bac487bb5 -->
+- [x] Define a hint/scaffold schema with escalating levels from nudge to worked example. <!-- ms:id c69f39c21da4 -->
+- [x] Add answer-evaluation hooks that can be deterministic first and AI-assisted later. <!-- ms:id 0b50b3c07f12 -->
+- [x] Support project checkpoints that produce mastery evidence without requiring a traditional quiz. <!-- ms:id 47d565f19cd7 -->
+- [x] Add feedback templates for correct, partially correct, incorrect, and uncertain answers. <!-- ms:id 7f5f35a3860b -->
+- [x] Track hint usage as mastery evidence instead of treating hints as invisible help. <!-- ms:id d412313c5534 -->
+- [x] Define how content repos can contribute reusable interactive exercises without coupling to the core UI. <!-- ms:id 6c457bffe171 -->
 
 ## Acceptance Notes
 

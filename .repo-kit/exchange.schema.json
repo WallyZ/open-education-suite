@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://repo-kit.local/schemas/exchange.schema.json",
+  "title": "Repo-Kit Exchange Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "repo", "cadence", "imports", "exports", "exclusions", "ledger"],
+  "properties": {
+    "version": { "type": "integer", "const": 1 },
+    "repo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "owner", "privacy_classification"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": { "type": "string", "minLength": 1 },
+        "owner": { "type": "string", "minLength": 1 },
+        "privacy_classification": {
+          "type": "string",
+          "enum": ["public", "internal", "private", "secret", "local_only"]
+        },
+        "notes": { "type": "string" }
+      }
+    },
+    "cadence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["interval_days", "idle_required", "last_prompt_utc", "last_catalog_utc"],
+      "properties": {
+        "interval_days": { "type": "integer", "minimum": 1 },
+        "idle_required": { "type": "boolean" },
+        "last_prompt_utc": { "type": "string" },
+        "last_catalog_utc": { "type": "string" },
+        "allowed_dirty_globs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "imports": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/import_item" }
+    },
+    "exports": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/export_item" }
+    },
+    "exclusions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/exclusion" }
+    },
+    "ledger": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 }
+      }
+    }
+  },
+  "$defs": {
+    "import_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "source_path", "target_path", "source_ref", "source_hash", "status"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "source_path": { "type": "string", "minLength": 1 },
+        "target_path": { "type": "string", "minLength": 1 },
+        "source_ref": { "type": "string" },
+        "source_hash": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["current", "missing", "stale", "local_override", "rejected", "pending"]
+        },
+        "override_reason": { "type": "string" },
+        "last_checked_utc": { "type": "string" }
+      }
+    },
+    "export_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "local_path", "proposed_destination", "category", "privacy_classification", "status"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "local_path": { "type": "string", "minLength": 1 },
+        "proposed_destination": { "type": "string" },
+        "category": { "type": "string", "minLength": 1 },
+        "privacy_classification": {
+          "type": "string",
+          "enum": ["public", "internal", "private", "secret", "local_only"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["candidate", "proposed", "exported", "rejected"]
+        },
+        "evidence": { "type": "string" },
+        "last_reviewed_utc": { "type": "string" }
+      }
+    },
+    "exclusion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["glob", "reason"],
+      "properties": {
+        "glob": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

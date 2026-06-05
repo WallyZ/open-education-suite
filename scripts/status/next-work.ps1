@@ -12,7 +12,7 @@ if (-not (Test-Path -LiteralPath $TodoRoot -PathType Container)) {
 }
 
 $firstOpen = $null
-$files = Get-ChildItem -LiteralPath $TodoRoot -File -Filter 'TODO_*.md' | Sort-Object Name
+$files = Get-ChildItem -LiteralPath $TodoRoot -File -Filter '*.md' | Sort-Object Name
 $openItemCount = 0
 $completedItemCount = 0
 

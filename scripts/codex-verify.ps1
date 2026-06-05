@@ -47,6 +47,78 @@ function Assert-DirectoryExists {
     Write-VerifyLog "ok dir  $Path"
 }
 
+function Invoke-PythonCheck {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Label,
+        [Parameter(Mandatory = $true)]
+        [string[]]$Arguments
+    )
+
+    $python = Get-Command py -ErrorAction SilentlyContinue
+    if ($python) {
+        $fullArgs = @('-3', '-B') + $Arguments
+        & $python.Source @fullArgs 2>&1 | Tee-Object -FilePath $logPath -Append
+    }
+    else {
+        $python = Get-Command python -ErrorAction SilentlyContinue
+        if (-not $python) {
+            throw "Python is required for $Label."
+        }
+        $fullArgs = @('-B') + $Arguments
+        & $python.Source @fullArgs 2>&1 | Tee-Object -FilePath $logPath -Append
+    }
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "$Label failed with exit code $LASTEXITCODE."
+    }
+}
+
+function Test-TodoLifecycle {
+    $previousDontWriteBytecode = $env:PYTHONDONTWRITEBYTECODE
+    try {
+        $env:PYTHONDONTWRITEBYTECODE = '1'
+
+        Invoke-PythonCheck -Label 'TODO format check' -Arguments @(
+            '.\scripts\lifecycle\check_todo_format.py',
+            '--repo-root', '.',
+            '--todo-root', 'docs/todo',
+            '--min-severity', 'info',
+            '--fail-on', 'error'
+        )
+
+        Invoke-PythonCheck -Label 'TODO ready-queue check' -Arguments @(
+            '.\scripts\lifecycle\check_todo_ready_queue.py',
+            '--repo-root', '.',
+            '--todo-root', 'docs/todo',
+            '--min-severity', 'info',
+            '--fail-on', 'error',
+            '--report', '-'
+        )
+    }
+    finally {
+        $env:PYTHONDONTWRITEBYTECODE = $previousDontWriteBytecode
+    }
+}
+
+function Test-MemoryBank {
+    $previousDontWriteBytecode = $env:PYTHONDONTWRITEBYTECODE
+    try {
+        $env:PYTHONDONTWRITEBYTECODE = '1'
+
+        Invoke-PythonCheck -Label 'Memory-bank check' -Arguments @(
+            '.\scripts\lifecycle\check_memory_bank.py',
+            '--repo-root', '.',
+            '--memory-dir', 'memory-bank',
+            '--profile', 'cloud',
+            '--require-memory-bank'
+        )
+    }
+    finally {
+        $env:PYTHONDONTWRITEBYTECODE = $previousDontWriteBytecode
+    }
+}
+
 try {
     $env:TEMP = $tmpRoot
     $env:TMP = $tmpRoot
@@ -67,6 +139,15 @@ try {
     Assert-FileExists '.\qa-live\feature_spec.learner_ui_lecture.json'
     Assert-FileExists '.\qa-live\capture.learner_ui_static.json'
     Assert-FileExists '.\docs\TODO.md'
+    Assert-FileExists '.\docs\TODO_AUDIT.md'
+    Assert-FileExists '.\docs\TODO_PROCESS.md'
+    Assert-FileExists '.\docs\todo\00_repo_bootstrap.md'
+    Assert-FileExists '.\scripts\lifecycle\check_todo_format.py'
+    Assert-FileExists '.\scripts\lifecycle\check_todo_ready_queue.py'
+    Test-TodoLifecycle
+    Assert-FileExists '.\scripts\lifecycle\check_memory_bank.py'
+    Assert-DirectoryExists '.\memory-bank'
+    Test-MemoryBank
     Assert-FileExists '.\docs\codex-runbook.md'
     Assert-FileExists '.\docs\content-ingestion.md'
     Assert-FileExists '.\docs\content-package-format.md'

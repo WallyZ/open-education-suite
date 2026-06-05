@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://repo-kit.local/schemas/standards_migrations.schema.json",
+  "title": "Repo-Kit Standards Migrations",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "manifest_id",
+    "standards_version",
+    "updated",
+    "answer_file",
+    "hook_policy",
+    "migrations"
+  ],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "manifest_id": { "type": "string", "minLength": 1 },
+    "standards_version": { "type": "string", "minLength": 1 },
+    "updated": { "type": "string", "minLength": 1 },
+    "answer_file": {
+      "type": "object",
+      "required": ["default_path", "template_path", "local_owned"],
+      "properties": {
+        "default_path": { "type": "string", "minLength": 1 },
+        "template_path": { "type": "string", "minLength": 1 },
+        "local_owned": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "hook_policy": {
+      "type": "object",
+      "required": ["execution", "pre", "post"],
+      "properties": {
+        "execution": {
+          "type": "object",
+          "required": ["mode", "requires_approval_token", "mutation_default"],
+          "properties": {
+            "mode": { "type": "string", "enum": ["plan-first"] },
+            "requires_approval_token": { "type": "string", "minLength": 1 },
+            "mutation_default": { "type": "string", "enum": ["disabled"] }
+          },
+          "additionalProperties": true
+        },
+        "pre": { "type": "array", "items": { "$ref": "#/$defs/hook" } },
+        "post": { "type": "array", "items": { "$ref": "#/$defs/hook" } }
+      },
+      "additionalProperties": true
+    },
+    "migrations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/migration" }
+    }
+  },
+  "$defs": {
+    "hook": {
+      "type": "object",
+      "required": ["id", "description", "command_preview"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 },
+        "command_preview": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "migration": {
+      "type": "object",
+      "required": [
+        "id",
+        "standards_version",
+        "title",
+        "description",
+        "from_versions",
+        "to_version",
+        "required_answers",
+        "changes",
+        "pre_hooks",
+        "post_hooks",
+        "manual_review"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "standards_version": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 },
+        "from_versions": { "type": "array", "items": { "type": "string" } },
+        "to_version": { "type": "string", "minLength": 1 },
+        "required_answers": { "type": "array", "items": { "type": "string" } },
+        "changes": { "type": "array", "items": { "$ref": "#/$defs/change" } },
+        "pre_hooks": { "type": "array", "items": { "type": "string" } },
+        "post_hooks": { "type": "array", "items": { "type": "string" } },
+        "manual_review": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "change": {
+      "type": "object",
+      "required": ["action", "source_path", "target_path", "bucket"],
+      "properties": {
+        "action": { "type": "string", "enum": ["copy", "update", "merge", "review"] },
+        "source_path": { "type": "string" },
+        "target_path": { "type": "string" },
+        "bucket": { "type": "string", "enum": ["copy", "update", "manual_review", "do_not_touch"] },
+        "description": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,264 @@
+{
+  "schema_version": 1,
+  "id": "repo-kit.language-lint-matrix.v1",
+  "updated": "2026-06-03",
+  "default_command": "pwsh -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\lint\\run_language_lint.ps1 -RepoRoot .",
+  "report_artifacts": {
+    "json": ".codex-cache/tmp/<run-id>/language_lint.json",
+    "markdown": ".codex-cache/tmp/<run-id>/language_lint.md"
+  },
+  "qa_live_automation": "Not required for default lint validation. UI/game/Unreal repos may add QA Live host-capability checks, but the default verifier must not launch live VM/browser automation.",
+  "profiles": [
+    {
+      "id": "markdown",
+      "language": "Markdown",
+      "detect": {
+        "extensions": [
+          ".md"
+        ]
+      },
+      "required_tools": [
+        "python"
+      ],
+      "optional_tools": [
+        "markdownlint",
+        "cspell"
+      ],
+      "local_fallback": "Run scripts/lifecycle/check_markdown_paths.py when present; otherwise treat markdown lint as skipped.",
+      "run_command": "python scripts/lifecycle/check_markdown_paths.py --repo-root .",
+      "report_artifact": ".codex-cache/tmp/<run-id>/language_lint.md",
+      "downstream_applicability": "Any repo with Markdown docs, task docs, or README files."
+    },
+    {
+      "id": "docs-terminology",
+      "language": "Docs spelling and terminology",
+      "detect": {
+        "extensions": [
+          ".md"
+        ],
+        "paths": [
+          "repo-standards/lint/cspell.json",
+          ".cspell.json",
+          "cspell.json"
+        ]
+      },
+      "required_tools": [],
+      "optional_tools": [
+        "cspell"
+      ],
+      "local_fallback": "Report-only by default. Use repo-standards/lint/docs_terminology_allowlist.txt for shared terms and promote to failure only with -EnforceDocsTerminology.",
+      "run_command": "pwsh -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\lint\\run_language_lint.ps1 -RepoRoot . -EnforceDocsTerminology",
+      "report_artifact": ".codex-cache/tmp/<run-id>/language_lint.json",
+      "downstream_applicability": "Docs-heavy repos that want typo drift detection without blocking generated, vendor, archive, or domain-specific vocabulary by default."
+    },
+    {
+      "id": "python",
+      "language": "Python",
+      "detect": {
+        "extensions": [
+          ".py"
+        ],
+        "paths": [
+          "pyproject.toml",
+          "requirements.txt",
+          "requirements-dev.txt"
+        ]
+      },
+      "required_tools": [
+        "python"
+      ],
+      "optional_tools": [
+        "ruff",
+        "black --check",
+        "mypy",
+        "pytest"
+      ],
+      "local_fallback": "Compile Python files with python -m py_compile and redirect bytecode cache to the verifier temp directory.",
+      "run_command": "python -m py_compile <changed-or-discovered-files>",
+      "report_artifact": ".codex-cache/tmp/<run-id>/language_lint.json",
+      "downstream_applicability": "Python package, script, automation, or mixed repos with Python files."
+    },
+    {
+      "id": "powershell",
+      "language": "PowerShell",
+      "detect": {
+        "extensions": [
+          ".ps1",
+          ".psm1",
+          ".psd1"
+        ]
+      },
+      "required_tools": [
+        "pwsh"
+      ],
+      "optional_tools": [
+        "PSScriptAnalyzer"
+      ],
+      "local_fallback": "Parse PowerShell files with System.Management.Automation.Language.Parser before optional analyzer checks.",
+      "run_command": "pwsh -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\lint\\run_language_lint.ps1 -RepoRoot .",
+      "report_artifact": ".codex-cache/tmp/<run-id>/language_lint.json",
+      "downstream_applicability": "Repos with PowerShell scripts, modules, bootstrap scripts, or verifier entrypoints."
+    },
+    {
+      "id": "json",
+      "language": "JSON",
+      "detect": {
+        "extensions": [
+          ".json"
+        ]
+      },
+      "required_tools": [
+        "pwsh"
+      ],
+      "optional_tools": [
+        "jsonschema"
+      ],
+      "local_fallback": "Parse JSON with ConvertFrom-Json; apply repo-owned schemas only when configured.",
+      "run_command": "ConvertFrom-Json over discovered .json files",
+      "report_artifact": ".codex-cache/tmp/<run-id>/language_lint.json",
+      "downstream_applicability": "Repos with manifests, schemas, package files, game descriptors, or generated reports."
+    },
+    {
+      "id": "yaml",
+      "language": "YAML",
+      "detect": {
+        "extensions": [
+          ".yml",
+          ".yaml"
+        ]
+      },
+      "required_tools": [],
+      "optional_tools": [
+        "yamllint"
+      ],
+      "local_fallback": "Skip by default unless yamllint is available or -RequireExternalTools is set.",
+      "run_command": "yamllint .",
+      "report_artifact": ".codex-cache/tmp/<run-id>/language_lint.json",
+      "downstream_applicability": "Repos with GitHub Actions, CI, Kubernetes, or other YAML configuration."
+    },
+    {
+      "id": "javascript-typescript",
+      "language": "JavaScript / TypeScript",
+      "detect": {
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx",
+          ".mjs",
+          ".cjs"
+        ],
+        "paths": [
+          "package.json"
+        ]
+      },
+      "required_tools": [],
+      "optional_tools": [
+        "npm",
+        "eslint",
+        "tsc",
+        "prettier --check"
+      ],
+      "local_fallback": "Run npm run lint --if-present only when package.json defines a lint script and npm exists.",
+      "run_command": "npm run lint --if-present",
+      "report_artifact": ".codex-cache/tmp/<run-id>/language_lint.json",
+      "downstream_applicability": "Web, Node, frontend, docs-site, or mixed repos with package.json or JS/TS source."
+    },
+    {
+      "id": "cpp",
+      "language": "C / C++",
+      "detect": {
+        "extensions": [
+          ".c",
+          ".cc",
+          ".cpp",
+          ".cxx",
+          ".h",
+          ".hh",
+          ".hpp",
+          ".hxx",
+          ".ixx"
+        ],
+        "paths": [
+          "compile_commands.json",
+          "CMakeLists.txt"
+        ]
+      },
+      "required_tools": [],
+      "optional_tools": [
+        "clang-tidy",
+        "clang-format --check",
+        "cppcheck"
+      ],
+      "local_fallback": "Skip by default unless clang-tidy and compile_commands.json are available; fail under -RequireExternalTools.",
+      "run_command": "clang-tidy <sampled-translation-units> --quiet",
+      "report_artifact": ".codex-cache/tmp/<run-id>/language_lint.json",
+      "downstream_applicability": "C, C++, native plugin, game, Unreal module, and toolchain repos."
+    },
+    {
+      "id": "csharp",
+      "language": "C# / Unreal build scripts",
+      "detect": {
+        "extensions": [
+          ".cs",
+          ".csproj",
+          ".sln"
+        ]
+      },
+      "required_tools": [],
+      "optional_tools": [
+        "dotnet format --verify-no-changes"
+      ],
+      "local_fallback": "Treat as repo-specific until the downstream repo owns a .NET SDK/tooling contract.",
+      "run_command": "dotnet format --verify-no-changes",
+      "report_artifact": ".codex-cache/tmp/<run-id>/language_lint.json",
+      "downstream_applicability": "C# repos and Unreal Build Tool .Build.cs/.Target.cs surfaces."
+    },
+    {
+      "id": "unreal-blueprints",
+      "language": "Unreal Blueprints",
+      "detect": {
+        "extensions": [
+          ".uproject",
+          ".uplugin",
+          ".uasset",
+          ".umap"
+        ],
+        "paths": [
+          "Content",
+          "Plugins"
+        ]
+      },
+      "required_tools": [],
+      "optional_tools": [
+        "UnrealEditor-Cmd.exe",
+        "qa-live-test-system capability manifest"
+      ],
+      "local_fallback": "Skip by default unless UE_EDITOR_CMD points to UnrealEditor-Cmd.exe; never launch live editor automation from default verification.",
+      "run_command": "$env:UE_EDITOR_CMD <project>.uproject -run=CompileAllBlueprints -unattended -nop4 -nosplash -log",
+      "report_artifact": ".codex-cache/tmp/<run-id>/language_lint.json",
+      "downstream_applicability": "Unreal game/plugin repos with Blueprint assets or editor automation needs."
+    }
+  ],
+  "optional_projections": {
+    "pre_commit": [
+      {
+        "id": "repo-kit-language-lint",
+        "name": "repo-kit-language-lint",
+        "entry": "pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/lint/run_language_lint.ps1 -RepoRoot .",
+        "language": "system",
+        "pass_filenames": false
+      }
+    ],
+    "taskfile": [
+      {
+        "task": "lint:language",
+        "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File ./scripts/lint/run_language_lint.ps1 -RepoRoot ."
+      },
+      {
+        "task": "lint:language:strict",
+        "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File ./scripts/lint/run_language_lint.ps1 -RepoRoot . -RequireExternalTools"
+      }
+    ]
+  }
+}

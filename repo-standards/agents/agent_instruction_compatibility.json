@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "id": "repo-kit.agent-instruction-compatibility.v1",
+  "updated": "2026-06-04",
+  "source_of_truth": {
+    "primary_contract": "AGENTS.md",
+    "task_pack": ".codex-cache/task-pack.md",
+    "memory_bank": "memory-bank/",
+    "verification_entrypoint": "scripts/codex-verify.ps1",
+    "todo_process": "docs/TODO_PROCESS.md"
+  },
+  "canonical_requirements": [
+    "Read AGENTS.md first.",
+    "Read .codex-cache/task-pack.md when present.",
+    "Use memory-bank files to keep context bounded.",
+    "Open only the smallest relevant file set.",
+    "Use scripts/codex-verify.ps1 as the verifier entrypoint.",
+    "Read TODO QA Live automation instructions before testing UI, game, Unreal, runtime, or live workflows.",
+    "Run every automatable QA Live check; if QA Live cannot cover automatable behavior, add or update the repo-owned QA Live spec or adjacent qa-live-test-system capability before calling it manual.",
+    "Follow solo-owner direct-main by default: commit on main and push to origin/main unless .repo-kit/workflow_policy.local.json or hosted branch protection requires team/PR flow.",
+    "After completing TODO-scoped work, update TODO evidence, add follow-up gap/improvement TODOs, update docs and decisions, refresh memory, commit/push, recommend QA Live-first validation, and list user-only checks only when automation or QA Live cannot prove the behavior.",
+    "Preserve repo-local overrides and do not overwrite local agent instructions without review."
+  ],
+  "repo_workflow_policy": {
+    "default_mode": "solo_owner_direct_main",
+    "default_branch": "main",
+    "default_remote": "origin",
+    "commit_push_default": "commit on main and push to origin/main",
+    "override_file": ".repo-kit/workflow_policy.local.json",
+    "team_mode": "team_pr",
+    "override_rule": "When the override exists or hosted branch protection requires PR flow, follow the override and state why the work was not pushed directly to main."
+  },
+  "default_agent_surfaces": [
+    "codex",
+    "memory-bank"
+  ],
+  "optional_agent_surfaces": [
+    "cline",
+    "claude-code",
+    "cursor",
+    "github-copilot"
+  ],
+  "installer_policy": {
+    "default": "Install Codex, memory-bank, verifier, TODO, logging, exchange, lint, lifecycle, and standards assets.",
+    "cline": "Install only when scripts/bootstrap/install_repo_standards.ps1 is run with -IncludeCline or -InstallHooksProfile.",
+    "preservation": "Existing optional agent projection files are preserved in existing repos unless reviewed and forced by the repo owner."
+  },
+  "profiles": [
+    {
+      "agent": "codex",
+      "projection": "AGENTS.md",
+      "mode": "managed-copy",
+      "status": "installed",
+      "local_override": "Repo-specific details stay in nested AGENTS.override.md or task-pack files."
+    },
+    {
+      "agent": "cline",
+      "projection": "docs/CLINE_GUIDES_INDEX.md + docs/CLINE_TASK_CURRENT.md + .clinerules/",
+      "mode": "optional-pack",
+      "status": "not-installed-by-default",
+      "install_flag": "-IncludeCline",
+      "local_override": "Repo-specific .clinerules files may extend but should not contradict AGENTS.md."
+    },
+    {
+      "agent": "claude-code",
+      "projection": "CLAUDE.md",
+      "mode": "proposed",
+      "status": "not-installed-by-default",
+      "local_override": "Create or update manually from docs/AGENT_INSTRUCTIONS_COMPATIBILITY.md after reviewing existing CLAUDE.md."
+    },
+    {
+      "agent": "cursor",
+      "projection": ".cursor/rules/repo-kit.mdc",
+      "mode": "proposed",
+      "status": "not-installed-by-default",
+      "local_override": "Create or update manually after reviewing existing Cursor rules."
+    },
+    {
+      "agent": "github-copilot",
+      "projection": ".github/copilot-instructions.md",
+      "mode": "proposed",
+      "status": "not-installed-by-default",
+      "local_override": "Create or update manually after reviewing existing GitHub Copilot instructions."
+    }
+  ],
+  "projection_header_contract": {
+    "required_fields": [
+      "Source",
+      "Updated",
+      "Supported agent",
+      "Repo-local override boundary"
+    ],
+    "source": "AGENTS.md + repo-standards/agents/agent_instruction_compatibility.json"
+  },
+  "qa_live_rule": "If a TODO or task pack has QA Live automation instructions, follow them before any UI/game/Unreal/runtime/live verification. Use qa-live-test-system dry-run or capability-manifest mode before live execution. If a needed check is automatable but unsupported, add or update the repo-owned QA Live spec/contract or adjacent qa-live-test-system capability before treating the gap as manual.",
+  "post_todo_completion_rule": "After any TODO completion, mark only verified TODOs complete, add new TODOs for discovered gaps or broad follow-up work, update affected docs and durable decisions, run the canonical verifier plus all automatable QA Live/artifact gates, update qa-live-test-system when required to cover automatable behavior and push that repo to main, refresh memory-bank, record reusable pitfalls or solution harvests, commit with a related message, push to main by default unless .repo-kit/workflow_policy.local.json or hosted branch protection requires team/PR flow, recommend QA Live-first validation for real functionality, and list user-only checks only when automation or QA Live cannot prove the behavior.",
+  "context_profiles": {
+    "32k": "Local AI; aggressively condense, summarize, and cut context.",
+    "64k": "Local AI; still aggressively condense and prefer memory-bank over raw files.",
+    "cloud": "Hosted AI; allow richer context for speed/confirmation but keep cost bounded."
+  }
+}

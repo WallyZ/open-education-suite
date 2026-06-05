@@ -1,0 +1,10 @@
+# repo-kit gitignore fragment: cpp
+# Source: repo-standards/gitignore/gitignore_matrix.json
+# Updated: 2026-06-03
+CMakeFiles/
+CMakeCache.txt
+cmake-build-*/
+out/
+build/
+*.obj
+*.pdb

@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "ue_warning_category",
+      "source": "ue_editor",
+      "line": "LogAssetPipeline: Warning: Failed to load texture /Game/Textures/T_Stone",
+      "expected_level": "WARN",
+      "expected_component": "LogAssetPipeline",
+      "expected_event": "ue.editor.issue",
+      "expected_message": "Failed to load texture /Game/Textures/T_Stone"
+    },
+    {
+      "id": "ue_error_with_timestamp_prefix",
+      "source": "ue_editor",
+      "line": "[2026.03.09-01.22.33:444][123]LogCook: Error: Cook failed for /Game/Maps/TestMap",
+      "expected_level": "ERROR",
+      "expected_component": "LogCook",
+      "expected_event": "ue.editor.issue",
+      "expected_message": "Cook failed for /Game/Maps/TestMap"
+    },
+    {
+      "id": "ue_verbose_maps_to_debug",
+      "source": "ue_editor",
+      "line": "LogStreaming: Verbose: Async loading 5 packages",
+      "expected_level": "DEBUG",
+      "expected_component": "LogStreaming",
+      "expected_event": "ue.editor.line",
+      "expected_message": "Async loading 5 packages"
+    },
+    {
+      "id": "uat_generic_error",
+      "source": "uat",
+      "line": "ERROR: AutomationTool terminated with exception",
+      "expected_level": "ERROR",
+      "expected_component": "uat",
+      "expected_event": "ue.uat.issue",
+      "expected_message": "AutomationTool terminated with exception"
+    },
+    {
+      "id": "uat_info_line",
+      "source": "uat",
+      "line": "INFO: Build command completed successfully",
+      "expected_level": "INFO",
+      "expected_component": "uat",
+      "expected_event": "ue.uat.line",
+      "expected_message": "Build command completed successfully"
+    },
+    {
+      "id": "ubt_warning_line",
+      "source": "ubt",
+      "line": "Warning: SharedPCH.Engine.ShadowErrors.h is stale",
+      "expected_level": "WARN",
+      "expected_component": "ubt",
+      "expected_event": "ue.ubt.issue",
+      "expected_message": "SharedPCH.Engine.ShadowErrors.h is stale"
+    },
+    {
+      "id": "fallback_plain_line",
+      "source": "ue_editor",
+      "line": "Random line without severity marker",
+      "expected_level": "INFO",
+      "expected_component": "ue_editor",
+      "expected_event": "ue.editor.line",
+      "expected_message": "Random line without severity marker"
+    },
+    {
+      "id": "ue_fatal_line",
+      "source": "ue_editor",
+      "line": "LogWindows: Fatal: Fatal error in game thread",
+      "expected_level": "FATAL",
+      "expected_component": "LogWindows",
+      "expected_event": "ue.editor.issue",
+      "expected_message": "Fatal error in game thread"
+    }
+  ]
+}

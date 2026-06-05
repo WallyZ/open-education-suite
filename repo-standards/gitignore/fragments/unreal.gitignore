@@ -1,0 +1,11 @@
+# repo-kit gitignore fragment: unreal
+# Source: repo-standards/gitignore/gitignore_matrix.json
+# Updated: 2026-06-03
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+.vs/
+*.sln
+*.opensdf
+*.suo

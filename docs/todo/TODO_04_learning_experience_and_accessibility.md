@@ -13,13 +13,13 @@ Design the learner and instructor/operator experience around adaptive teaching, 
 
 ## Tasks
 
-- [x] Define core roles: learner, instructor/operator, content author, and reviewer.
-- [x] Sketch the learner home view around next action, mastery map, review queue, and active goals.
-- [x] Sketch the instructor/operator view around learner progress, blockers, content health, and intervention needs.
-- [x] Add accessibility requirements for generated lessons, quizzes, hints, and dashboards.
-- [x] Add localization/i18n requirements for content titles, objective names, prompts, and feedback.
-- [x] Define offline/low-connectivity behavior for locally packaged content.
-- [x] Keep dashboards as views over durable learner/content state, not the source of truth.
+- [x] Define core roles: learner, instructor/operator, content author, and reviewer. <!-- ms:id a2335adf9577 -->
+- [x] Sketch the learner home view around next action, mastery map, review queue, and active goals. <!-- ms:id 45123ed30e41 -->
+- [x] Sketch the instructor/operator view around learner progress, blockers, content health, and intervention needs. <!-- ms:id 8ea3873b749e -->
+- [x] Add accessibility requirements for generated lessons, quizzes, hints, and dashboards. <!-- ms:id e8d489d05f97 -->
+- [x] Add localization/i18n requirements for content titles, objective names, prompts, and feedback. <!-- ms:id dbd3acc8b7e6 -->
+- [x] Define offline/low-connectivity behavior for locally packaged content. <!-- ms:id 7f112ab184fd -->
+- [x] Keep dashboards as views over durable learner/content state, not the source of truth. <!-- ms:id 9af6618eff50 -->
 
 ## Acceptance Notes
 

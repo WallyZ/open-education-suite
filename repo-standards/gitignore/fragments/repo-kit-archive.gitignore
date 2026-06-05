@@ -1,0 +1,10 @@
+# repo-kit gitignore fragment: repo-kit-archive
+# Source: repo-standards/gitignore/gitignore_matrix.json
+# Updated: 2026-06-03
+# Keep lifecycle manifests and schema contracts tracked; ignore generated payloads.
+archive/lifecycle/*/removed/
+archive/lifecycle/*/deprecated/
+archive/local-reports/**
+!archive/local-reports/.gitkeep
+docs/wavekit/_archive/**
+!docs/wavekit/_archive/.gitkeep

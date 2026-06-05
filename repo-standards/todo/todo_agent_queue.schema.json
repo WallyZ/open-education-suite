@@ -1,0 +1,406 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "repo-kit.todo-agent-queue.v1",
+  "title": "Repo Kit TODO Agent Queue",
+  "description": "Machine-readable queue exported from scripts/lifecycle/check_todo_ready_queue.py for Codex, Cline, and other agents.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "schema_id",
+    "schema_path",
+    "generated_at",
+    "summary",
+    "issues",
+    "items"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "schema_id": {
+      "const": "repo-kit.todo-agent-queue.v1"
+    },
+    "schema_path": {
+      "const": "repo-standards/todo/todo_agent_queue.schema.json"
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "open_total",
+        "blocked_total",
+        "ready_auto",
+        "ready_human",
+        "stale_total",
+        "agent_ready_total",
+        "agent_not_ready_total",
+        "issues"
+      ],
+      "properties": {
+        "open_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "blocked_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ready_auto": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ready_human": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stale_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "agent_ready_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "agent_not_ready_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "issues": {
+          "$ref": "#/$defs/issueCounts"
+        }
+      }
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/issue"
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/item"
+      }
+    }
+  },
+  "$defs": {
+    "issueCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "error",
+        "warn",
+        "info"
+      ],
+      "properties": {
+        "error": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "warn": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "info": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "severity",
+        "code",
+        "message",
+        "todo_id",
+        "file",
+        "line"
+      ],
+      "properties": {
+        "severity": {
+          "enum": [
+            "info",
+            "warn",
+            "error"
+          ]
+        },
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "todo_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "file": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "line": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      }
+    },
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "todo_id",
+        "text",
+        "file",
+        "line",
+        "phase",
+        "priority",
+        "priority_rank",
+        "owner",
+        "target_repo",
+        "validation_profile",
+        "automation_level",
+        "safe_autofix",
+        "human_checkpoint",
+        "depends_on",
+        "blocked_by",
+        "blocked_reasons",
+        "stale_days",
+        "age_days",
+        "stale",
+        "auto_eligible",
+        "agent_ready",
+        "agent_ready_missing",
+        "agent"
+      ],
+      "properties": {
+        "todo_id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "file": {
+          "type": "string"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "phase": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "priority": {
+          "type": "string"
+        },
+        "priority_rank": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "owner": {
+          "type": "string"
+        },
+        "target_repo": {
+          "type": "string"
+        },
+        "validation_profile": {
+          "type": "string"
+        },
+        "automation_level": {
+          "type": "string"
+        },
+        "safe_autofix": {
+          "type": "string"
+        },
+        "human_checkpoint": {
+          "type": "string"
+        },
+        "depends_on": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "blocked_by": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "blocked_reasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "stale_days": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "age_days": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stale": {
+          "type": "boolean"
+        },
+        "auto_eligible": {
+          "type": "boolean"
+        },
+        "agent_ready": {
+          "type": "boolean"
+        },
+        "agent_ready_missing": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "agent": {
+          "$ref": "#/$defs/agentItem"
+        }
+      }
+    },
+    "agentItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id",
+        "phase",
+        "priority",
+        "files",
+        "files_raw",
+        "file_refs",
+        "verification",
+        "qa_live_automation",
+        "acceptance",
+        "drift_guard",
+        "downstream_rollout",
+        "dependencies",
+        "blocked_by",
+        "stale_threshold_days",
+        "validation_profile",
+        "deliverables"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "phase": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "priority": {
+          "type": "string"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "files_raw": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "file_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fileRef"
+          }
+        },
+        "verification": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "qa_live_automation": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "acceptance": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "drift_guard": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "downstream_rollout": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "blocked_by": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "stale_threshold_days": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "validation_profile": {
+          "type": "string"
+        },
+        "deliverables": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "fileRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "exists"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "exists": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

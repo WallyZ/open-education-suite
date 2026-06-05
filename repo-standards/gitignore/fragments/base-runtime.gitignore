@@ -1,0 +1,12 @@
+# repo-kit gitignore fragment: base-runtime
+# Source: repo-standards/gitignore/gitignore_matrix.json
+# Updated: 2026-06-03
+# Local override boundary: append repo-specific ignores outside this block.
+__pycache__/
+**/__pycache__/
+*.pyc
+.codex-cache/
+*.bak
+/*.zip
+.DS_Store
+Thumbs.db

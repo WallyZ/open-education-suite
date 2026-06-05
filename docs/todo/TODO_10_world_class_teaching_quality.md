@@ -19,18 +19,18 @@ The teacher should behave like a top human tutor:
 
 ## Tasks
 
-- [x] Define a teaching quality rubric covering clarity, correctness, diagnosis, scaffolding, feedback, motivation, rigor, accessibility, and learner agency.
-- [x] Add benchmark learner scenarios for bored, anxious, overconfident, confused, advanced, returning, and time-constrained learners.
-- [x] Add misconception libraries per content repo so the teacher can diagnose common failure modes.
-- [x] Add mastery calibration checks that compare predicted mastery against later assessment evidence.
-- [x] Add adaptive difficulty rules that choose easier, equivalent, harder, or transfer tasks based on evidence.
-- [x] Add deliberate-practice loops: attempt, feedback, retry, reflection, spacing, and transfer.
-- [x] Add metacognitive coaching prompts: planning, self-explanation, confidence rating, and reflection.
-- [x] Add motivation and persistence supports without false praise or lowered standards.
-- [x] Add teacher self-checks before responding: groundedness, objective alignment, accessibility, and next-step quality.
-- [x] Add human review workflows for teacher behavior regressions and questionable advice.
-- [x] Add longitudinal evaluation metrics: retention, transfer, remediation success, time to mastery, and learner trust.
-- [x] Compare the suite against OATutor, Open edX, Moodle, Kolibri, OpenStax Tutor, Canvas, Sakai, H5P, and INGInious for gaps worth adopting.
+- [x] Define a teaching quality rubric covering clarity, correctness, diagnosis, scaffolding, feedback, motivation, rigor, accessibility, and learner agency. <!-- ms:id ce265b8bd833 -->
+- [x] Add benchmark learner scenarios for bored, anxious, overconfident, confused, advanced, returning, and time-constrained learners. <!-- ms:id 2b4742c7711f -->
+- [x] Add misconception libraries per content repo so the teacher can diagnose common failure modes. <!-- ms:id a4109cb05791 -->
+- [x] Add mastery calibration checks that compare predicted mastery against later assessment evidence. <!-- ms:id 6522d4060ab4 -->
+- [x] Add adaptive difficulty rules that choose easier, equivalent, harder, or transfer tasks based on evidence. <!-- ms:id de8b13351e0b -->
+- [x] Add deliberate-practice loops: attempt, feedback, retry, reflection, spacing, and transfer. <!-- ms:id c8141cd1bc6c -->
+- [x] Add metacognitive coaching prompts: planning, self-explanation, confidence rating, and reflection. <!-- ms:id 9195cfaea2a0 -->
+- [x] Add motivation and persistence supports without false praise or lowered standards. <!-- ms:id 021f6dd4650e -->
+- [x] Add teacher self-checks before responding: groundedness, objective alignment, accessibility, and next-step quality. <!-- ms:id 95cf18aaf7a3 -->
+- [x] Add human review workflows for teacher behavior regressions and questionable advice. <!-- ms:id 1c42644af3ae -->
+- [x] Add longitudinal evaluation metrics: retention, transfer, remediation success, time to mastery, and learner trust. <!-- ms:id d477dc00d03a -->
+- [x] Compare the suite against OATutor, Open edX, Moodle, Kolibri, OpenStax Tutor, Canvas, Sakai, H5P, and INGInious for gaps worth adopting. <!-- ms:id b23cf0ef37ee -->
 
 ## Acceptance Notes
 

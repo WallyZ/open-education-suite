@@ -1,0 +1,187 @@
+{
+  "version": 1,
+  "repo": {
+    "id": "open-education-suite",
+    "kind": "adaptive-education-platform-core",
+    "owner": "WallyZ",
+    "privacy_classification": "internal",
+    "notes": "Content-agnostic adaptive education platform core. Keep learner private data, generated media, and subject content out of automated exports."
+  },
+  "cadence": {
+    "interval_days": 7,
+    "idle_required": true,
+    "last_prompt_utc": "2026-06-05T00:00:00Z",
+    "last_catalog_utc": "2026-06-05T00:00:00Z",
+    "allowed_dirty_globs": []
+  },
+  "imports": [
+    {
+      "id": "repo-kit-exchange-baseline",
+      "source_path": "docs/templates/repo-kit/exchange.json",
+      "target_path": ".repo-kit/exchange.json",
+      "source_ref": "main",
+      "source_hash": "installed-2026-06-05",
+      "status": "local_override",
+      "override_reason": "Tailored repo identity, reusable education-suite exports, and private/generated artifact exclusions."
+    },
+    {
+      "id": "repo-kit-todo-lifecycle",
+      "source_path": "scripts/lifecycle/",
+      "target_path": "scripts/lifecycle/",
+      "source_ref": "main",
+      "source_hash": "installed-2026-06-05",
+      "status": "local_override",
+      "override_reason": "check_memory_bank.py ignores repoKitCatalog.md local-link validation because the catalog snapshots external 00-repo-kit assets."
+    },
+    {
+      "id": "repo-kit-todo-audit",
+      "source_path": "scripts/todo_audit/",
+      "target_path": "scripts/todo_audit/",
+      "source_ref": "main",
+      "source_hash": "installed-2026-06-05",
+      "status": "current"
+    },
+    {
+      "id": "repo-kit-memory-bank",
+      "source_path": "docs/templates/memory-bank/",
+      "target_path": "memory-bank/",
+      "source_ref": "main",
+      "source_hash": "installed-2026-06-05",
+      "status": "local_override",
+      "override_reason": "Starter memory files are filled with open-education-suite platform context and boundaries."
+    },
+    {
+      "id": "repo-kit-agent-compatibility",
+      "source_path": "docs/AGENT_INSTRUCTIONS_COMPATIBILITY.md",
+      "target_path": "docs/AGENT_INSTRUCTIONS_COMPATIBILITY.md",
+      "source_ref": "main",
+      "source_hash": "installed-2026-06-05",
+      "status": "current"
+    },
+    {
+      "id": "repo-kit-logging-adapters",
+      "source_path": "scripts/logging/",
+      "target_path": "scripts/logging/",
+      "source_ref": "main",
+      "source_hash": "installed-2026-06-05",
+      "status": "current"
+    },
+    {
+      "id": "repo-kit-lint-and-standards",
+      "source_path": "repo-standards/",
+      "target_path": "repo-standards/",
+      "source_ref": "main",
+      "source_hash": "installed-2026-06-05",
+      "status": "current"
+    },
+    {
+      "id": "repo-kit-verifier-contract",
+      "source_path": "scripts/codex-verify.ps1",
+      "target_path": "scripts/codex-verify.ps1",
+      "source_ref": "main",
+      "source_hash": "installed-2026-06-05",
+      "status": "local_override",
+      "override_reason": "This repo's verifier is platform-specific and now calls repo-kit lifecycle gates instead of being replaced."
+    }
+  ],
+  "exports": [
+    {
+      "id": "content-source-registry-contract",
+      "local_path": "content-sources.json",
+      "proposed_destination": "repo-standards/education/content-sources.example.json",
+      "category": "contract",
+      "privacy_classification": "internal",
+      "status": "candidate",
+      "evidence": "Read-only sibling content repo ingestion and provenance registry pattern."
+    },
+    {
+      "id": "essay-first-assessment-policy",
+      "local_path": "docs/assessment-feedback.md",
+      "proposed_destination": "docs/solutions/essay_first_assessment_policy.md",
+      "category": "policy",
+      "privacy_classification": "internal",
+      "status": "candidate",
+      "evidence": "Verifier-backed policy that essays are high-rigor summative evidence while quizzes remain diagnostic."
+    },
+    {
+      "id": "learner-state-privacy-audit-pattern",
+      "local_path": "docs/learner-state-privacy.md",
+      "proposed_destination": "docs/solutions/learner_state_privacy_audit.md",
+      "category": "policy",
+      "privacy_classification": "internal",
+      "status": "candidate",
+      "evidence": "Local-only learner state, audit explanations, and export/redaction boundaries."
+    },
+    {
+      "id": "qa-live-learner-ui-contract",
+      "local_path": "qa-live/workflow.learner_ui_live.json",
+      "proposed_destination": "repo-standards/qa-live/examples/learner_ui_live.workflow.json",
+      "category": "qa-live-contract",
+      "privacy_classification": "internal",
+      "status": "candidate",
+      "evidence": "Repo-owned QA Live workflow contract for local learner UI validation without vendoring the QA harness."
+    },
+    {
+      "id": "content-package-generator-pattern",
+      "local_path": "scripts/ingestion/build-content-package.ps1",
+      "proposed_destination": "docs/solutions/content_package_generator_pattern.md",
+      "category": "script-pattern",
+      "privacy_classification": "internal",
+      "status": "candidate",
+      "evidence": "Deterministic package builder that preserves source provenance and avoids mutating content repos."
+    }
+  ],
+  "exclusions": [
+    {
+      "glob": ".codex-cache/**",
+      "reason": "Task-local cache, logs, pending pitfalls, and temp artifacts are not reusable source assets."
+    },
+    {
+      "glob": ".env*",
+      "reason": "Secrets and local environment files must never be exported."
+    },
+    {
+      "glob": "node_modules/**",
+      "reason": "Installed dependencies are reproducible from package manifests."
+    },
+    {
+      "glob": "var/**",
+      "reason": "Local generated media and runtime artifacts are private/local."
+    },
+    {
+      "glob": "logs/**",
+      "reason": "Runtime logs can contain local paths, learner data, or host state."
+    },
+    {
+      "glob": "playwright-report/**",
+      "reason": "Browser test reports are generated artifacts."
+    },
+    {
+      "glob": "test-results/**",
+      "reason": "Browser/runtime test output is generated."
+    },
+    {
+      "glob": "*.trace.zip",
+      "reason": "Browser traces can contain private/local state and are generated artifacts."
+    },
+    {
+      "glob": "*.har",
+      "reason": "Network captures can contain credentials or private payloads."
+    },
+    {
+      "glob": "generated-lectures/**",
+      "reason": "Generated lecture media belongs in subject repos or ignored local media locations, not repo-kit exports."
+    },
+    {
+      "glob": "learner-data/**",
+      "reason": "Learner data is private and must not be exported by automation."
+    },
+    {
+      "glob": "reports/**",
+      "reason": "Local reports need review before any reusable summary is proposed."
+    }
+  ],
+  "ledger": {
+    "path": ".repo-kit/exchange-ledger.jsonl"
+  }
+}

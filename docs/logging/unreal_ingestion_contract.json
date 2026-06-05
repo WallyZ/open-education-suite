@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "sources": [
+    "ue_editor",
+    "uat",
+    "ubt"
+  ],
+  "required_output_fields": [
+    "ts",
+    "level",
+    "component",
+    "event",
+    "msg",
+    "run_id",
+    "trace_id",
+    "source",
+    "tool"
+  ],
+  "severity_map": {
+    "VeryVerbose": "TRACE",
+    "Verbose": "DEBUG",
+    "Display": "INFO",
+    "Log": "INFO",
+    "Warning": "WARN",
+    "Error": "ERROR",
+    "Fatal": "FATAL",
+    "INFO": "INFO",
+    "WARN": "WARN",
+    "ERROR": "ERROR",
+    "FATAL": "FATAL"
+  },
+  "source_defaults": {
+    "ue_editor": {
+      "event_prefix": "ue.editor",
+      "component": "ue_editor"
+    },
+    "uat": {
+      "event_prefix": "ue.uat",
+      "component": "uat"
+    },
+    "ubt": {
+      "event_prefix": "ue.ubt",
+      "component": "ubt"
+    }
+  }
+}

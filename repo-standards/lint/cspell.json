@@ -1,0 +1,42 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "useGitignore": true,
+  "ignorePaths": [
+    ".git/**",
+    ".codex-cache/**",
+    ".venv/**",
+    "venv/**",
+    "archive/**",
+    "docs/wavekit/_archive/**",
+    "docs/wavekit/queue/**",
+    "node_modules/**",
+    "dist/**",
+    "build/**",
+    "Binaries/**",
+    "DerivedDataCache/**",
+    "Intermediate/**",
+    "Saved/**",
+    "**/__pycache__/**",
+    "*.min.js",
+    "*.lock",
+    "*.sln",
+    "*.uasset",
+    "*.umap"
+  ],
+  "dictionaryDefinitions": [
+    {
+      "name": "repo-kit-terminology",
+      "path": "./docs_terminology_allowlist.txt",
+      "addWords": true
+    }
+  ],
+  "dictionaries": [
+    "repo-kit-terminology"
+  ],
+  "ignoreRegExpList": [
+    "/`[^`]+`/g",
+    "/https?:\\/\\/[^\\s)]+/g",
+    "/[A-Fa-f0-9]{7,40}/g"
+  ]
+}

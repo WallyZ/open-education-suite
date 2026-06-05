@@ -17,12 +17,12 @@ Learn from MIT OpenCourseWare and similar open courseware sites without copying 
 
 ## Tasks
 
-- [x] Compile a curated courseware source review with representative MIT OCW and similar course links, setup notes, resources provided, use boundaries, and borrowable patterns.
-- [x] Add course-source metadata guidance to the content package/course-object format so external references can be linked, reviewed, licensed, and mapped without copying content.
-- [x] Add a subject-repo course authoring template that requires overview, prerequisites, outcomes, module/week map, videos, readings, practice, quizzes, projects, tests, rubrics, support, policies, and adaptive hooks.
-- [x] Build a read-only source-link audit that checks courseware URLs, last-reviewed dates, provider names, license/use-boundary notes, and broken links without downloading course assets.
-- [x] Apply the courseware audit to `open-education-game-development` starting with GDEV-101 and record gaps against MIT OCW, CS50 Games, Stanford SEE, OpenStax, and Nand2Tetris patterns.
-- [x] Add a course-design quality gate that fails when a course lacks objectives, practice, assessment, project work, citations/source links, accessibility notes, or adaptive remediation metadata.
+- [x] Compile a curated courseware source review with representative MIT OCW and similar course links, setup notes, resources provided, use boundaries, and borrowable patterns. <!-- ms:id 01ad673cb9d5 -->
+- [x] Add course-source metadata guidance to the content package/course-object format so external references can be linked, reviewed, licensed, and mapped without copying content. <!-- ms:id 755efb8cc7c5 -->
+- [x] Add a subject-repo course authoring template that requires overview, prerequisites, outcomes, module/week map, videos, readings, practice, quizzes, projects, tests, rubrics, support, policies, and adaptive hooks. <!-- ms:id ba24b6efa879 -->
+- [x] Build a read-only source-link audit that checks courseware URLs, last-reviewed dates, provider names, license/use-boundary notes, and broken links without downloading course assets. <!-- ms:id 2b30a2794988 -->
+- [x] Apply the courseware audit to `open-education-game-development` starting with GDEV-101 and record gaps against MIT OCW, CS50 Games, Stanford SEE, OpenStax, and Nand2Tetris patterns. <!-- ms:id 84bcb7564218 -->
+- [x] Add a course-design quality gate that fails when a course lacks objectives, practice, assessment, project work, citations/source links, accessibility notes, or adaptive remediation metadata. <!-- ms:id e6026678fbe3 -->
 
 ## Acceptance Notes
 

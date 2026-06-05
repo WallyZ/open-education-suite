@@ -14,13 +14,13 @@ Keep the suite compatible with education ecosystems while building repeatable qu
 
 ## Tasks
 
-- [x] Document an interoperability target list: xAPI first, LTI later, import/export formats as needed.
-- [x] Add an event vocabulary for lesson viewed, practice attempted, hint used, mastery updated, review scheduled, and remediation assigned.
-- [x] Create deterministic fixtures for adaptive-teacher regression tests.
-- [x] Add golden-path learner workflow tests once a UI or CLI teaching loop exists.
-- [x] Define content quality checks for broken links, missing attribution, missing objective mappings, and malformed assessments.
-- [x] Add evaluation metrics for mastery accuracy, time-to-remediation, hint usefulness, and learner retention.
-- [x] Maintain a reviewed-projects section with source links and decisions borrowed or rejected.
+- [x] Document an interoperability target list: xAPI first, LTI later, import/export formats as needed. <!-- ms:id 7271f84a55cb -->
+- [x] Add an event vocabulary for lesson viewed, practice attempted, hint used, mastery updated, review scheduled, and remediation assigned. <!-- ms:id 757326a7406a -->
+- [x] Create deterministic fixtures for adaptive-teacher regression tests. <!-- ms:id 6b20c3101058 -->
+- [x] Add golden-path learner workflow tests once a UI or CLI teaching loop exists. <!-- ms:id ace1b57a8033 -->
+- [x] Define content quality checks for broken links, missing attribution, missing objective mappings, and malformed assessments. <!-- ms:id 51b8e6e1aae0 -->
+- [x] Add evaluation metrics for mastery accuracy, time-to-remediation, hint usefulness, and learner retention. <!-- ms:id 93314ac69856 -->
+- [x] Maintain a reviewed-projects section with source links and decisions borrowed or rejected. <!-- ms:id adbfe8b79f43 -->
 
 ## Acceptance Notes
 

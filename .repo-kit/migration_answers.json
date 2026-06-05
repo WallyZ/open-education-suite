@@ -1,0 +1,25 @@
+{
+  "$schema": "https://repo-kit.local/schemas/migration_answers.schema.json",
+  "schema_version": 1,
+  "repo_id": "open-education-suite",
+  "updated_utc": "",
+  "applied_migrations": [],
+  "answers": {
+    "2026-06-03-repo-consistency-policy": {
+      "adopt_repo_consistency_policy": null,
+      "preserve_local_policy_overrides": true,
+      "notes": ""
+    },
+    "2026-06-03-standards-migration-contracts": {
+      "adopt_migration_manifest": null,
+      "create_or_preserve_answer_replay_file": true,
+      "notes": ""
+    },
+    "2026-06-04-agent-surface-defaults": {
+      "adopt_codex_memory_default": null,
+      "include_optional_cline_pack": false,
+      "preserve_existing_cline_assets": true,
+      "notes": ""
+    }
+  }
+}

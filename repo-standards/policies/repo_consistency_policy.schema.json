@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/00-repo-kit/repo_consistency_policy.schema.json",
+  "title": "Repo consistency policy",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "policy_id",
+    "description",
+    "updated",
+    "rules"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "policy_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "updated": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "local_override_files": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/rule"
+      }
+    }
+  },
+  "$defs": {
+    "rule": {
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "description",
+        "severity",
+        "applies_to",
+        "remediation",
+        "downstream_override"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9.-]*$"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "required_paths",
+            "required_text"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warn",
+            "info"
+          ]
+        },
+        "applies_to": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "remediation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "downstream_override": {
+          "type": "object",
+          "required": [
+            "allowed",
+            "mode",
+            "notes"
+          ],
+          "properties": {
+            "allowed": {
+              "type": "boolean"
+            },
+            "mode": {
+              "type": "string",
+              "minLength": 1
+            },
+            "notes": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": true
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contains": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "required_paths"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "paths"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "required_text"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "path",
+              "contains"
+            ]
+          }
+        }
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
