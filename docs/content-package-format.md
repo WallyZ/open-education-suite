@@ -73,6 +73,17 @@ External source links are provenance and learning aids, not permission to copy c
 
 The first implementation may emit a single JSON report from `scripts/ingestion/scan-content-sources.ps1`. A later packaging command can split that report into the package shape above.
 
+## Courseware Kit Metadata Adapter
+
+`scripts/ingestion/export-courseware-metadata.ps1` exports a public-safe `content-courseware/course/v1` payload from a generated content package:
+
+```powershell
+.\scripts\ingestion\build-content-package.ps1 -OutputRoot .\.codex-cache\tmp\content-package
+.\scripts\ingestion\export-courseware-metadata.ps1 -PackageRoot .\.codex-cache\tmp\content-package -OutputPath .\.codex-cache\tmp\courseware-metadata.json
+```
+
+The adapter emits course metadata, learning outcome summaries, module refs, assessment policy, packaging targets, and a privacy boundary only. Lesson bodies, learner PII, generated media, private drafts, and absolute local paths are not included. Downstream repos that consume the standalone Content Courseware Kit must resolve lesson bodies from their own content repos or approved package snapshots.
+
 ## Storage Rules
 
 - Temporary package builds belong under `.codex-cache\tmp\<run-id>\`.

@@ -185,6 +185,7 @@ try {
     Assert-FileExists '.\scripts\ingestion\scan-content-sources.ps1'
     Assert-FileExists '.\scripts\ingestion\build-content-package.ps1'
     Assert-FileExists '.\scripts\ingestion\test-content-package.ps1'
+    Assert-FileExists '.\scripts\ingestion\export-courseware-metadata.ps1'
     Assert-FileExists '.\scripts\teaching\select-next-action.ps1'
     Assert-FileExists '.\scripts\teaching\start-session.ps1'
     Assert-FileExists '.\scripts\teaching\export-learner-ui-session.ps1'
@@ -458,6 +459,26 @@ try {
     $packageCheck = $packageCheckOutput | ConvertFrom-Json
     if ($packageCheck.errorCount -ne 0) {
         throw 'Content package validation reported errors.'
+    }
+    $coursewareMetadataPath = Join-Path $tmpRoot 'courseware-metadata.json'
+    $coursewareMetadataOutput = & .\scripts\ingestion\export-courseware-metadata.ps1 -PackageRoot $packageRoot -OutputPath $coursewareMetadataPath 2>&1
+    $coursewareMetadataOutput | Tee-Object -FilePath $logPath -Append
+    if ($LASTEXITCODE -ne 0) {
+        throw "Courseware metadata export failed with exit code $LASTEXITCODE."
+    }
+    Assert-FileExists $coursewareMetadataPath
+    $coursewareMetadata = Get-Content -LiteralPath $coursewareMetadataPath -Raw | ConvertFrom-Json
+    if ($coursewareMetadata.schema_version -ne 'content-courseware/course/v1') {
+        throw 'Courseware metadata export must use content-courseware/course/v1.'
+    }
+    if ($coursewareMetadata.privacy_boundary.contains_learner_pii -ne $false) {
+        throw 'Courseware metadata export must not contain learner PII.'
+    }
+    if ($coursewareMetadata.privacy_boundary.contains_private_course_content -ne $false) {
+        throw 'Courseware metadata export must not contain private course content.'
+    }
+    if (@($coursewareMetadata.learning_outcomes).Count -lt 1 -or @($coursewareMetadata.modules).Count -lt 1) {
+        throw 'Courseware metadata export must include outcomes and modules.'
     }
 
     $qualityOutput = & .\scripts\quality\check-content-quality.ps1 2>&1

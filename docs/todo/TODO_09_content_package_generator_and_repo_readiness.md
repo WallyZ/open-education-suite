@@ -21,6 +21,8 @@ The core suite can only be content agnostic if content repos are strong, license
 - [x] Normalize the game-development imported content into package-friendly objectives, resources, and assessments. <!-- ms:id a8f3ffccbd83 -->
 - [x] Add content quality checks for minimum viable content: objectives, resources, assessments, attribution, and broken links. <!-- ms:id 7eb2b664d278 -->
 - [x] Define how content repos should add interactive exercise metadata without depending on the core UI. <!-- ms:id e5bd06015b89 -->
+- [x] Export a public-safe Content Courseware Kit consumer metadata adapter. <!-- ms:id 09-courseware-kit-metadata-adapter -->
+  - Evidence (2026-06-10): Added `scripts/ingestion/export-courseware-metadata.ps1` to emit `content-courseware/course/v1` metadata from generated content packages without lesson bodies, learner PII, generated media, private drafts, or absolute local paths. Wired `scripts/codex-verify.ps1` to build a package, export the adapter payload into `.codex-cache\tmp`, and assert schema version, privacy flags, outcomes, and modules. Documented operator usage in `docs/content-package-format.md`.
 
 ## Acceptance Notes
 
