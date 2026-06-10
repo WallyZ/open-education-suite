@@ -23,6 +23,13 @@
       "status": "seeded-from-suite"
     },
     {
+      "id": "performing-arts",
+      "title": "Open Education Performing Arts",
+      "localPath": "../open-education-performing-arts",
+      "contentManifest": "content-repo.json",
+      "status": "seeded-performance-curriculum"
+    },
+    {
       "id": "software-development",
       "title": "Open Education Software Development",
       "localPath": "../open-education-software-development",

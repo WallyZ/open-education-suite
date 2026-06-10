@@ -652,7 +652,7 @@ window.openEducationContentCatalog =
 {
   "schemaVersion": 1,
   "generatedFrom": "scripts/ingestion/scan-content-sources.ps1",
-  "sourceCount": 4,
+  "sourceCount": 5,
   "sources": [
     {
       "sourceId": "cybersecurity",
@@ -1147,6 +1147,106 @@ window.openEducationContentCatalog =
         {
           "objectiveId": "game-development:objectives/vr-comfort-basics",
           "label": "Vr Comfort Basics"
+        }
+      ]
+    },
+    {
+      "sourceId": "performing-arts",
+      "title": "Open Education Performing Arts",
+      "sourceRepo": "open-education-performing-arts",
+      "objectCount": 16,
+      "courses": [
+        {
+          "id": "performing-arts:study-plans/courses/PERF-010-performance-onboarding-studio.md",
+          "title": "PERF-010 - Performance Onboarding Studio",
+          "sourceRepo": "open-education-performing-arts",
+          "sourcePath": "study-plans\\courses\\PERF-010-performance-onboarding-studio.md",
+          "objectives": []
+        },
+        {
+          "id": "performing-arts:study-plans/courses/PERF-101-voice-foundations.md",
+          "title": "PERF-101 - Voice Foundations",
+          "sourceRepo": "open-education-performing-arts",
+          "sourcePath": "study-plans\\courses\\PERF-101-voice-foundations.md",
+          "objectives": []
+        },
+        {
+          "id": "performing-arts:study-plans/courses/PERF-102-acting-foundations.md",
+          "title": "PERF-102 - Acting Foundations",
+          "sourceRepo": "open-education-performing-arts",
+          "sourcePath": "study-plans\\courses\\PERF-102-acting-foundations.md",
+          "objectives": []
+        },
+        {
+          "id": "performing-arts:study-plans/courses/PERF-201-voice-acting-and-character-performance.md",
+          "title": "PERF-201 - Voice Acting and Character Performance",
+          "sourceRepo": "open-education-performing-arts",
+          "sourcePath": "study-plans\\courses\\PERF-201-voice-acting-and-character-performance.md",
+          "objectives": []
+        },
+        {
+          "id": "performing-arts:study-plans/courses/PERF-301-camera-and-content-performance.md",
+          "title": "PERF-301 - Camera and Content Performance",
+          "sourceRepo": "open-education-performing-arts",
+          "sourcePath": "study-plans\\courses\\PERF-301-camera-and-content-performance.md",
+          "objectives": []
+        },
+        {
+          "id": "performing-arts:study-plans/courses/PERF-499-capstone-performance-portfolio.md",
+          "title": "PERF-499 - Capstone Performance Portfolio",
+          "sourceRepo": "open-education-performing-arts",
+          "sourcePath": "study-plans\\courses\\PERF-499-capstone-performance-portfolio.md",
+          "objectives": []
+        }
+      ],
+      "objectives": [
+        {
+          "objectiveId": "performing-arts:objectives/course/perf-010/baseline-performance-map",
+          "label": "Baseline Performance Map"
+        },
+        {
+          "objectiveId": "performing-arts:objectives/course/perf-010/deliberate-practice-plan",
+          "label": "Deliberate Practice Plan"
+        },
+        {
+          "objectiveId": "performing-arts:objectives/course/perf-101/healthy-resonant-voice",
+          "label": "Healthy Resonant Voice"
+        },
+        {
+          "objectiveId": "performing-arts:objectives/course/perf-101/listenable-pacing-and-articulation",
+          "label": "Listenable Pacing And Articulation"
+        },
+        {
+          "objectiveId": "performing-arts:objectives/course/perf-102/objective-tactic-listening",
+          "label": "Objective Tactic Listening"
+        },
+        {
+          "objectiveId": "performing-arts:objectives/course/perf-102/truthful-adjustment-under-direction",
+          "label": "Truthful Adjustment Under Direction"
+        },
+        {
+          "objectiveId": "performing-arts:objectives/course/perf-201/character-contrast-and-vocal-choice",
+          "label": "Character Contrast And Vocal Choice"
+        },
+        {
+          "objectiveId": "performing-arts:objectives/course/perf-201/microphone-performance-and-direction",
+          "label": "Microphone Performance And Direction"
+        },
+        {
+          "objectiveId": "performing-arts:objectives/course/perf-301/camera-presence-and-eyeline",
+          "label": "Camera Presence And Eyeline"
+        },
+        {
+          "objectiveId": "performing-arts:objectives/course/perf-301/teaching-and-creator-performance",
+          "label": "Teaching And Creator Performance"
+        },
+        {
+          "objectiveId": "performing-arts:objectives/course/perf-499/multi-format-performance-reel",
+          "label": "Multi Format Performance Reel"
+        },
+        {
+          "objectiveId": "performing-arts:objectives/course/perf-499/review-driven-professional-growth",
+          "label": "Review Driven Professional Growth"
         }
       ]
     },
