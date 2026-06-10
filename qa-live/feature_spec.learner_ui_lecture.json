@@ -1,7 +1,14 @@
 {
   "browser_diagnostics": {
     "fail_on_console_errors": true,
-    "fail_on_network_failures": true
+    "fail_on_network_failures": true,
+    "ignored_network_failures": [
+      {
+        "url_contains": "/media/video/",
+        "failure_contains": "ERR_ABORTED",
+        "reason": "Browser may abort local media fetches when playback state changes or the page reloads after assertions pass."
+      }
+    ]
   },
   "feature_id": "open-education-learner-ui-lecture",
   "name": "Open Education learner UI lecture flow",

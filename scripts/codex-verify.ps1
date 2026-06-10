@@ -182,6 +182,75 @@ function Test-LocalAppLauncherManifest {
     }
 }
 
+function Test-VoiceStudioSessionContract {
+    $sessionPath = Join-Path $tmpRoot 'voice-studio-session.json'
+    & .\scripts\teaching\export-voice-session-contract.ps1 -OutputPath $sessionPath 2>&1 | Tee-Object -FilePath $logPath -Append
+
+    Assert-FileExists $sessionPath
+    $sessionText = Get-Content -LiteralPath $sessionPath -Raw
+    $session = $sessionText | ConvertFrom-Json
+
+    if ($session.schema_version -ne 'voice-studio/session/v1') {
+        throw 'Voice Studio session contract must use voice-studio/session/v1.'
+    }
+    if ($session.session_id -notmatch '^[a-z0-9][a-z0-9._-]*$') {
+        throw 'Voice Studio session_id must be sanitized.'
+    }
+    if ([string]::IsNullOrWhiteSpace([string]$session.speaker_ref)) {
+        throw 'Voice Studio session must include speaker_ref.'
+    }
+    if ([string]::IsNullOrWhiteSpace([string]$session.script_ref)) {
+        throw 'Voice Studio session must include script_ref.'
+    }
+    if ($session.recording_plan.mode -ne 'practice') {
+        throw 'Open Education Voice Studio adapter must default to practice mode.'
+    }
+    if ([int]$session.recording_plan.target_wpm -lt 80 -or [int]$session.recording_plan.target_wpm -gt 220) {
+        throw 'Voice Studio target_wpm must stay within the shared contract range.'
+    }
+    if (@($session.recording_plan.segments).Count -lt 2) {
+        throw 'Voice Studio session must expose multiple logical lecture/practice segments.'
+    }
+    foreach ($segment in @($session.recording_plan.segments)) {
+        if ([string]$segment.segment_id -notmatch '^[a-z0-9][a-z0-9._-]*$') {
+            throw "Voice Studio segment_id is not sanitized: $($segment.segment_id)"
+        }
+        if ([double]$segment.estimated_seconds -le 0) {
+            throw "Voice Studio segment estimated_seconds must be positive: $($segment.segment_id)"
+        }
+        if ([string]$segment.text_ref -match '(?i)verb = player action|quiet space|pause here') {
+            throw 'Voice Studio segment text_ref must not contain raw lecture text.'
+        }
+    }
+    if ($session.privacy_boundary.contains_raw_audio -ne $false) {
+        throw 'Voice Studio session must not contain raw audio.'
+    }
+    if ($session.privacy_boundary.contains_voiceprint -ne $false) {
+        throw 'Voice Studio session must not contain voiceprints.'
+    }
+    if ($session.privacy_boundary.contains_model_artifact -ne $false) {
+        throw 'Voice Studio session must not contain model artifacts.'
+    }
+    if ($session.privacy_boundary.private_artifacts_required -ne $false) {
+        throw 'Open Education Voice Studio adapter should not require private artifacts.'
+    }
+    if (@($session.privacy_boundary.allowed_artifact_refs).Count -lt 1) {
+        throw 'Voice Studio session must include at least one logical artifact ref.'
+    }
+    if ([int]$session.qa_targets.sample_rate_hz -ne 48000) {
+        throw 'Voice Studio QA target sample rate should be 48000 Hz for production-quality capture.'
+    }
+    if ([string]::IsNullOrWhiteSpace([string]$session.outputs.metadata_ref) -or [string]::IsNullOrWhiteSpace([string]$session.outputs.qa_report_ref)) {
+        throw 'Voice Studio session must include logical output refs.'
+    }
+    if ($sessionText -match '[A-Za-z]:\\') {
+        throw 'Voice Studio session must not contain absolute Windows paths.'
+    }
+    if ($sessionText -match '(?i)generated-lectures\\|media\\audio|\.wav|\.mp3|\.flac|sha256|youtube-automation-private|api[_-]?key|bearer\s|secret\s*[:=]|token\s*[:=]') {
+        throw 'Voice Studio session must not leak media paths, file names, hashes, private repos, or credential material.'
+    }
+}
+
 try {
     $env:TEMP = $tmpRoot
     $env:TMP = $tmpRoot
@@ -254,6 +323,7 @@ try {
     Assert-FileExists '.\scripts\teaching\export-learner-ui-session.ps1'
     Assert-FileExists '.\scripts\teaching\lecture-paths.ps1'
     Assert-FileExists '.\scripts\teaching\learner_ui_bridge_server.py'
+    Assert-FileExists '.\scripts\teaching\export-voice-session-contract.ps1'
     Assert-FileExists '.\scripts\start_learner_ui_bridge.ps1'
     Assert-FileExists '.\scripts\manage_learner_ui_launcher.ps1'
     Assert-FileExists '.\scripts\export_local_app_launcher_manifest.ps1'
@@ -287,6 +357,7 @@ try {
     Assert-FileExists '.\tests\learner-ui.spec.js'
     Assert-FileExists '.\tests\lecture-production-smoke.spec.js'
     Test-LocalAppLauncherManifest
+    Test-VoiceStudioSessionContract
 
     $registry = Get-Content -LiteralPath '.\content-sources.json' -Raw | ConvertFrom-Json
     if ($registry.schemaVersion -ne 1) {

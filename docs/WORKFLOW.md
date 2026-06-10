@@ -67,3 +67,21 @@ Disable or remove startup with:
 .\scripts\manage_learner_ui_launcher.ps1 -Action DisableStartup
 .\scripts\manage_learner_ui_launcher.ps1 -Action UninstallStartup
 ```
+
+## 7. Export Voice Studio Session Metadata
+
+The suite can export public-safe lecture/practice audio metadata to the shared `voice-studio/session/v1` contract without copying raw audio, voiceprints, model artifacts, hashes, generated media paths, or private file paths.
+
+Export the default GDEV lecture voice session contract:
+
+```powershell
+.\scripts\teaching\export-voice-session-contract.ps1 -OutputPath .codex-cache\tmp\voice-studio-session.json
+```
+
+The export maps lecture board sections and active-recall pauses into logical `recording_plan.segments`. It uses sanitized `speaker_ref`, `script_ref`, and logical artifact refs only. Raw/generated audio remains in the owning subject repo or ignored runtime storage; the contract is metadata for reusable Voice Studio and education-progress adapters.
+
+The canonical verifier checks this contract through:
+
+```powershell
+.\scripts\codex-verify.ps1
+```
