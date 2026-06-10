@@ -119,6 +119,69 @@ function Test-MemoryBank {
     }
 }
 
+function Test-LocalAppLauncherManifest {
+    $manifestPath = Join-Path $tmpRoot 'local-app-launcher.json'
+    & .\scripts\export_local_app_launcher_manifest.ps1 -OutputPath $manifestPath -Json 2>&1 | Tee-Object -FilePath $logPath -Append
+    if ($LASTEXITCODE -ne 0) {
+        throw "Local app launcher manifest export failed with exit code $LASTEXITCODE."
+    }
+
+    Assert-FileExists $manifestPath
+    $manifestText = Get-Content -LiteralPath $manifestPath -Raw
+    $manifest = $manifestText | ConvertFrom-Json
+
+    if ($manifest.schema_version -ne 'local-app-launcher/v1') {
+        throw 'Local app launcher manifest must use local-app-launcher/v1.'
+    }
+    if ($manifest.launcher_id -ne 'open-education-learner-ui-bridge') {
+        throw 'Local app launcher manifest has the wrong launcher_id.'
+    }
+    if ($manifest.app.repo_id -ne 'open-education-suite') {
+        throw 'Local app launcher manifest has the wrong app.repo_id.'
+    }
+    if ($manifest.app.privacy_boundary.contains_private_paths -ne $false) {
+        throw 'Local app launcher manifest must not contain private paths.'
+    }
+    if ($manifest.app.privacy_boundary.contains_credentials -ne $false) {
+        throw 'Local app launcher manifest must not contain credentials.'
+    }
+    if (-not (@($manifest.runtime.command) -contains 'scripts/start_learner_ui_bridge.ps1')) {
+        throw 'Local app launcher runtime must start scripts/start_learner_ui_bridge.ps1.'
+    }
+    if ([int]$manifest.ports.live.preferred_port -ne 8786) {
+        throw 'Local app launcher live port must default to 8786.'
+    }
+    if ([int]$manifest.ports.test.preferred_port -ne 8787) {
+        throw 'Local app launcher test port must default to 8787.'
+    }
+    if ([int]$manifest.ports.live.preferred_port -eq [int]$manifest.ports.test.preferred_port) {
+        throw 'Local app launcher live and test ports must be distinct.'
+    }
+    if ($manifest.health.url_template -ne 'http://127.0.0.1:{port}/ui/learner/index.html') {
+        throw 'Local app launcher health URL must target the learner UI page.'
+    }
+    if ($manifest.windows_startup.autostart_default -ne $false) {
+        throw 'Open Education learner UI launcher must not autostart by default.'
+    }
+
+    foreach ($operationName in @('start', 'stop', 'restart', 'status', 'monitor')) {
+        $operation = $manifest.operations.$operationName
+        if ($null -eq $operation) {
+            throw "Local app launcher manifest is missing operation: $operationName"
+        }
+        if ($operation.requires_elevation -ne $false) {
+            throw "Local app launcher operation $operationName must not require elevation."
+        }
+    }
+
+    if ($manifestText -match '[A-Za-z]:\\') {
+        throw 'Local app launcher manifest must not contain absolute Windows paths.'
+    }
+    if ($manifestText -match '(?i)youtube-automation-private|open-education-[a-z0-9_-]*private|api[_-]?key|bearer\s|secret\s*[:=]|token\s*[:=]') {
+        throw 'Local app launcher manifest must not contain private repo names or credential material.'
+    }
+}
+
 try {
     $env:TEMP = $tmpRoot
     $env:TMP = $tmpRoot
@@ -191,6 +254,9 @@ try {
     Assert-FileExists '.\scripts\teaching\export-learner-ui-session.ps1'
     Assert-FileExists '.\scripts\teaching\lecture-paths.ps1'
     Assert-FileExists '.\scripts\teaching\learner_ui_bridge_server.py'
+    Assert-FileExists '.\scripts\start_learner_ui_bridge.ps1'
+    Assert-FileExists '.\scripts\manage_learner_ui_launcher.ps1'
+    Assert-FileExists '.\scripts\export_local_app_launcher_manifest.ps1'
     Assert-FileExists '.\scripts\assessment\evaluate-answer.ps1'
     Assert-FileExists '.\scripts\testing\run-golden-workflows.ps1'
     Assert-FileExists '.\scripts\testing\run-golden-session.ps1'
@@ -220,6 +286,7 @@ try {
     Assert-FileExists '.\ui\learner\app.js'
     Assert-FileExists '.\tests\learner-ui.spec.js'
     Assert-FileExists '.\tests\lecture-production-smoke.spec.js'
+    Test-LocalAppLauncherManifest
 
     $registry = Get-Content -LiteralPath '.\content-sources.json' -Raw | ConvertFrom-Json
     if ($registry.schemaVersion -ne 1) {

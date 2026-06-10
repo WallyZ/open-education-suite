@@ -28,9 +28,11 @@ The CLI proves the teaching engine works, but learners need a real workspace: ne
 - [x] Add instructor/operator handoff views for blockers, interventions, and content health. <!-- ms:id 92018bdba1e3 -->
 - [x] Add visual regression and keyboard-flow checks once a browser test harness exists. <!-- ms:id 7d5062247e50 -->
 - [x] Add localization scaffolding for UI labels, dates, objective names, and feedback. <!-- ms:id 3368c844c1b3 -->
+- [x] Add a `local-app-launcher/v1` consumer adapter for the learner UI bridge with dynamic live/test ports, watchdog delegation, and manifest verification. <!-- ms:id 5f0f48c8f16d -->
 
 ## Acceptance Notes
 
 - The learner should always know what to do next, why the system chose it, and what source it is using.
 - The UI must remain a view over learner state and content packages, not a second source of truth.
 - The first static slice should be useful as a design target and smoke-test surface even before a server is introduced.
+- Launcher adapter evidence: `scripts/export_local_app_launcher_manifest.ps1`, `scripts/start_learner_ui_bridge.ps1`, `scripts/manage_learner_ui_launcher.ps1`, `docs/WORKFLOW.md`, and `.\scripts\codex-verify.ps1`.
