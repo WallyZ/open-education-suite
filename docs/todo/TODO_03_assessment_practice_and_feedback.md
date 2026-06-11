@@ -20,6 +20,8 @@ Build assessment and practice primitives that let the teacher gather evidence, p
 - [x] Add feedback templates for correct, partially correct, incorrect, and uncertain answers. <!-- ms:id 7f5f35a3860b -->
 - [x] Track hint usage as mastery evidence instead of treating hints as invisible help. <!-- ms:id d412313c5534 -->
 - [x] Define how content repos can contribute reusable interactive exercises without coupling to the core UI. <!-- ms:id 6c457bffe171 -->
+- [x] Export public-safe Assessment Mastery pack metadata. <!-- ms:evidence id=OES_ASSESSMENT_MASTERY_ADAPTER_001 paths="scripts/assessment/export-assessment-mastery-contract.ps1,scripts/codex-verify.ps1,docs/assessment-feedback.md,docs/todo/TODO_03_assessment_practice_and_feedback.md" strings="assessment-mastery/assessment/v1,export-assessment-mastery-contract.ps1,logical_refs_only" -->
+  - Evidence (2026-06-10): Added `scripts/assessment/export-assessment-mastery-contract.ps1` to emit sanitized `assessment-mastery/assessment/v1` metadata from fixture-backed assessment items, wired the export into `scripts/codex-verify.ps1`, and documented the handoff command in `docs/assessment-feedback.md`.
 
 ## Acceptance Notes
 

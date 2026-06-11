@@ -251,6 +251,88 @@ function Test-VoiceStudioSessionContract {
     }
 }
 
+function Test-AssessmentMasteryContract {
+    $contractPath = Join-Path $tmpRoot 'assessment-mastery-contract.json'
+    & .\scripts\assessment\export-assessment-mastery-contract.ps1 -OutputPath $contractPath 2>&1 | Tee-Object -FilePath $logPath -Append
+
+    Assert-FileExists $contractPath
+    $contractText = Get-Content -LiteralPath $contractPath -Raw
+    $contract = $contractText | ConvertFrom-Json
+
+    if ($contract.schema_version -ne 'assessment-mastery/assessment/v1') {
+        throw 'Assessment Mastery contract must use assessment-mastery/assessment/v1.'
+    }
+    if ($contract.assessment_id -notmatch '^[a-z0-9][a-z0-9._-]*$') {
+        throw 'Assessment Mastery assessment_id must be sanitized.'
+    }
+    if ([string]$contract.course_ref -notmatch '^course:[a-z0-9._:-]+$') {
+        throw 'Assessment Mastery contract must include a logical course_ref.'
+    }
+    if ($contract.assessment_type -ne 'essay') {
+        throw 'Default Assessment Mastery export must use the essay synthesis fixture.'
+    }
+    if (@($contract.rubric.criteria).Count -lt 1) {
+        throw 'Assessment Mastery contract must include rubric criteria.'
+    }
+    $weightTotal = 0.0
+    foreach ($criterion in @($contract.rubric.criteria)) {
+        if ([string]$criterion.criterion_id -notmatch '^[a-z0-9][a-z0-9._-]*$') {
+            throw "Assessment Mastery criterion_id is not sanitized: $($criterion.criterion_id)"
+        }
+        if ([double]$criterion.max_score -le [double]$criterion.min_score) {
+            throw "Assessment Mastery criterion score bounds are invalid: $($criterion.criterion_id)"
+        }
+        $weightTotal += [double]$criterion.mastery_weight
+    }
+    if ([Math]::Abs($weightTotal - 1.0) -gt 0.01) {
+        throw "Assessment Mastery rubric weights must sum to 1.0, got $weightTotal."
+    }
+    if (@($contract.tasks).Count -lt 1) {
+        throw 'Assessment Mastery contract must include at least one task.'
+    }
+    foreach ($task in @($contract.tasks)) {
+        if ([string]$task.prompt_ref -notmatch '^prompt:[a-z0-9._:-]+$') {
+            throw 'Assessment Mastery task must use prompt_ref instead of prompt body.'
+        }
+        if (@($task.expected_evidence_refs).Count -lt 1) {
+            throw 'Assessment Mastery task must include expected evidence refs.'
+        }
+    }
+    if ([double]$contract.mastery_model.mastery_threshold_percent -lt 1 -or [double]$contract.mastery_model.mastery_threshold_percent -gt 100) {
+        throw 'Assessment Mastery mastery_threshold_percent must be between 1 and 100.'
+    }
+    if (@($contract.mastery_model.competency_refs).Count -lt 1) {
+        throw 'Assessment Mastery contract must include competency refs.'
+    }
+    if ([string]$contract.feedback_policy.feedback_template_ref -notmatch '^feedback-template:[a-z0-9._:-]+$') {
+        throw 'Assessment Mastery contract must use feedback_template_ref instead of feedback body.'
+    }
+    if ($contract.privacy_boundary.contains_learner_pii -ne $false) {
+        throw 'Assessment Mastery contract must not contain learner PII.'
+    }
+    if ($contract.privacy_boundary.contains_submission_body -ne $false) {
+        throw 'Assessment Mastery contract must not contain submission bodies.'
+    }
+    if ($contract.privacy_boundary.contains_private_feedback_body -ne $false) {
+        throw 'Assessment Mastery contract must not contain private feedback bodies.'
+    }
+    if ($contract.privacy_boundary.contains_private_course_content -ne $false) {
+        throw 'Assessment Mastery contract must not contain private course content.'
+    }
+    if ($contract.privacy_boundary.contains_absolute_path -ne $false) {
+        throw 'Assessment Mastery contract must not contain absolute paths.'
+    }
+    if ($contract.privacy_boundary.logical_refs_only -ne $true) {
+        throw 'Assessment Mastery contract must be logical refs only.'
+    }
+    if ($contractText -match '[A-Za-z]:\\') {
+        throw 'Assessment Mastery contract must not contain absolute Windows paths.'
+    }
+    if ($contractText -match '(?i)Write an essay|full private essay|student@example.com|open-education-suite-private|api[_-]?key|bearer\s|secret\s*[:=]|token\s*[:=]') {
+        throw 'Assessment Mastery contract leaked prompt text, private learner data, private paths, or credentials.'
+    }
+}
+
 try {
     $env:TEMP = $tmpRoot
     $env:TMP = $tmpRoot
@@ -328,6 +410,7 @@ try {
     Assert-FileExists '.\scripts\manage_learner_ui_launcher.ps1'
     Assert-FileExists '.\scripts\export_local_app_launcher_manifest.ps1'
     Assert-FileExists '.\scripts\assessment\evaluate-answer.ps1'
+    Assert-FileExists '.\scripts\assessment\export-assessment-mastery-contract.ps1'
     Assert-FileExists '.\scripts\testing\run-golden-workflows.ps1'
     Assert-FileExists '.\scripts\testing\run-golden-session.ps1'
     Assert-FileExists '.\scripts\testing\run-gdev-course-session.ps1'
@@ -358,6 +441,7 @@ try {
     Assert-FileExists '.\tests\lecture-production-smoke.spec.js'
     Test-LocalAppLauncherManifest
     Test-VoiceStudioSessionContract
+    Test-AssessmentMasteryContract
 
     $registry = Get-Content -LiteralPath '.\content-sources.json' -Raw | ConvertFrom-Json
     if ($registry.schemaVersion -ne 1) {
