@@ -1154,7 +1154,7 @@ window.openEducationContentCatalog =
       "sourceId": "mens-relationship-skills",
       "title": "Open Education Men's Relationship Skills",
       "sourceRepo": "open-education-mens-relationship-skills",
-      "objectCount": 12,
+      "objectCount": 13,
       "courses": [
         {
           "id": "mens-relationship-skills:study-plans/courses/MRS-010-onboarding-ethics-and-personal-code.md",
@@ -1233,6 +1233,30 @@ window.openEducationContentCatalog =
             {
               "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/healthy-commitment",
               "label": "Healthy Commitment"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/family-template-discernment",
+              "label": "Family Template Discernment"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/values-aligned-partner-search",
+              "label": "Values Aligned Partner Search"
+            }
+          ]
+        },
+        {
+          "id": "mens-relationship-skills:study-plans/courses/MRS-302-trust-fidelity-and-relationship-reality-checks.md",
+          "title": "MRS-302 - Trust, Fidelity, And Relationship Reality Checks",
+          "sourceRepo": "open-education-mens-relationship-skills",
+          "sourcePath": "study-plans\\courses\\MRS-302-trust-fidelity-and-relationship-reality-checks.md",
+          "objectives": [
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-302/trust-pattern-discernment",
+              "label": "Trust Pattern Discernment"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-302/fidelity-response-plan",
+              "label": "Fidelity Response Plan"
             }
           ]
         },
@@ -1287,12 +1311,28 @@ window.openEducationContentCatalog =
           "label": "Initiative And Boundaries"
         },
         {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/family-template-discernment",
+          "label": "Family Template Discernment"
+        },
+        {
           "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/healthy-commitment",
           "label": "Healthy Commitment"
         },
         {
           "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/partner-discernment",
           "label": "Partner Discernment"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/values-aligned-partner-search",
+          "label": "Values Aligned Partner Search"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-302/fidelity-response-plan",
+          "label": "Fidelity Response Plan"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-302/trust-pattern-discernment",
+          "label": "Trust Pattern Discernment"
         },
         {
           "objectiveId": "mens-relationship-skills:objectives/course/mrs-499/integrated-scenario-performance",
