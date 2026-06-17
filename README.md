@@ -18,6 +18,7 @@ The local content sources are declared in `content-sources.json` and are expecte
 - `F:\dev\open-education-cybersecurity`
 - `F:\dev\open-education-data-science`
 - `F:\dev\open-education-game-development`
+- `F:\dev\open-education-mens-relationship-skills`
 - `F:\dev\open-education-software-development`
 
 Each content repo owns its study plans, resource lists, assessments, examples, and domain-specific learning assets. This core repo owns the ingestion contract and teaching system.

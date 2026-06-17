@@ -2,16 +2,13 @@
 
 ## Objective
 
-Add the actual `open-education-suite` consumer adapter for `assessment-mastery/assessment/v1`, exporting public-safe assessment/rubric/mastery metadata without learner submissions, learner PII, private feedback bodies, private course content, generated media, secrets, credentials, local paths, or private datastore rows.
+Register a new sibling Open Education content repository for men's confidence, communication, ethical attraction, dating discernment, and relationship skills.
 
 ## Smallest Relevant File Set
 
-- scripts/assessment/export-assessment-mastery-contract.ps1
-- scripts/codex-verify.ps1
-- docs/assessment-feedback.md
-- docs/todo/TODO_03_assessment_practice_and_feedback.md
-- fixtures/assessment-items.json
-- fixtures/mastery-calibration.json
+- content-sources.json
+- README.md
+- F:\dev\open-education-mens-relationship-skills\*
 
 ## Intended Verification Command
 
@@ -21,6 +18,7 @@ Add the actual `open-education-suite` consumer adapter for `assessment-mastery/a
 
 ## Scope Guardrails
 
-- Emit metadata only: logical refs, sanitized IDs, rubric/task/mastery policy, feedback template refs, privacy flags, and output refs.
-- Do not emit learner submissions, learner PII, private feedback bodies, private course content, generated media, credentials, secrets, absolute private paths, or local datastore rows.
-- No changes to assessment scoring behavior unless needed for the adapter surface.
+- Keep Open Education Suite content-agnostic; do not copy course content into the suite.
+- New course content must remain public-safe and must not include learner PII, private dating logs, sexual disclosures, generated intimate media, credentials, secrets, or local private paths.
+- Reframe manipulative or stereotyping source ideas into consent-centered confidence, communication, boundaries, and mutual discernment.
+

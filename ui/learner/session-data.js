@@ -652,7 +652,7 @@ window.openEducationContentCatalog =
 {
   "schemaVersion": 1,
   "generatedFrom": "scripts/ingestion/scan-content-sources.ps1",
-  "sourceCount": 5,
+  "sourceCount": 6,
   "sources": [
     {
       "sourceId": "cybersecurity",
@@ -1147,6 +1147,160 @@ window.openEducationContentCatalog =
         {
           "objectiveId": "game-development:objectives/vr-comfort-basics",
           "label": "Vr Comfort Basics"
+        }
+      ]
+    },
+    {
+      "sourceId": "mens-relationship-skills",
+      "title": "Open Education Men's Relationship Skills",
+      "sourceRepo": "open-education-mens-relationship-skills",
+      "objectCount": 12,
+      "courses": [
+        {
+          "id": "mens-relationship-skills:study-plans/courses/MRS-010-onboarding-ethics-and-personal-code.md",
+          "title": "MRS-010 - Onboarding, Ethics, And Personal Code",
+          "sourceRepo": "open-education-mens-relationship-skills",
+          "sourcePath": "study-plans\\courses\\MRS-010-onboarding-ethics-and-personal-code.md",
+          "objectives": [
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-010/personal-code",
+              "label": "Personal Code"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-010/ethical-guardrails",
+              "label": "Ethical Guardrails"
+            }
+          ]
+        },
+        {
+          "id": "mens-relationship-skills:study-plans/courses/MRS-101-inner-strength-and-grounded-confidence.md",
+          "title": "MRS-101 - Inner Strength And Grounded Confidence",
+          "sourceRepo": "open-education-mens-relationship-skills",
+          "sourcePath": "study-plans\\courses\\MRS-101-inner-strength-and-grounded-confidence.md",
+          "objectives": [
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-101/emotional-regulation",
+              "label": "Emotional Regulation"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-101/competence-confidence",
+              "label": "Competence Confidence"
+            }
+          ]
+        },
+        {
+          "id": "mens-relationship-skills:study-plans/courses/MRS-102-communication-and-social-intelligence.md",
+          "title": "MRS-102 - Communication And Social Intelligence",
+          "sourceRepo": "open-education-mens-relationship-skills",
+          "sourcePath": "study-plans\\courses\\MRS-102-communication-and-social-intelligence.md",
+          "objectives": [
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-102/active-listening",
+              "label": "Active Listening"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-102/conversational-reciprocity",
+              "label": "Conversational Reciprocity"
+            }
+          ]
+        },
+        {
+          "id": "mens-relationship-skills:study-plans/courses/MRS-201-ethical-attraction-and-dating-practice.md",
+          "title": "MRS-201 - Ethical Attraction And Dating Practice",
+          "sourceRepo": "open-education-mens-relationship-skills",
+          "sourcePath": "study-plans\\courses\\MRS-201-ethical-attraction-and-dating-practice.md",
+          "objectives": [
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-201/ethical-attraction",
+              "label": "Ethical Attraction"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-201/initiative-and-boundaries",
+              "label": "Initiative And Boundaries"
+            }
+          ]
+        },
+        {
+          "id": "mens-relationship-skills:study-plans/courses/MRS-301-relationship-discernment-and-commitment.md",
+          "title": "MRS-301 - Relationship Discernment And Commitment",
+          "sourceRepo": "open-education-mens-relationship-skills",
+          "sourcePath": "study-plans\\courses\\MRS-301-relationship-discernment-and-commitment.md",
+          "objectives": [
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/partner-discernment",
+              "label": "Partner Discernment"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/healthy-commitment",
+              "label": "Healthy Commitment"
+            }
+          ]
+        },
+        {
+          "id": "mens-relationship-skills:study-plans/courses/MRS-499-capstone-relational-character-portfolio.md",
+          "title": "MRS-499 - Capstone Relational Character Portfolio",
+          "sourceRepo": "open-education-mens-relationship-skills",
+          "sourcePath": "study-plans\\courses\\MRS-499-capstone-relational-character-portfolio.md",
+          "objectives": [
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-499/integrated-scenario-performance",
+              "label": "Integrated Scenario Performance"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-499/portfolio-self-audit",
+              "label": "Portfolio Self Audit"
+            }
+          ]
+        }
+      ],
+      "objectives": [
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-010/ethical-guardrails",
+          "label": "Ethical Guardrails"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-010/personal-code",
+          "label": "Personal Code"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-101/competence-confidence",
+          "label": "Competence Confidence"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-101/emotional-regulation",
+          "label": "Emotional Regulation"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-102/active-listening",
+          "label": "Active Listening"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-102/conversational-reciprocity",
+          "label": "Conversational Reciprocity"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-201/ethical-attraction",
+          "label": "Ethical Attraction"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-201/initiative-and-boundaries",
+          "label": "Initiative And Boundaries"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/healthy-commitment",
+          "label": "Healthy Commitment"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/partner-discernment",
+          "label": "Partner Discernment"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-499/integrated-scenario-performance",
+          "label": "Integrated Scenario Performance"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-499/portfolio-self-audit",
+          "label": "Portfolio Self Audit"
         }
       ]
     },
