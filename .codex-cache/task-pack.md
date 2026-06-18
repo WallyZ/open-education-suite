@@ -2,7 +2,7 @@
 
 ## Objective
 
-Refresh suite-generated learner catalog metadata after expanding the registered `open-education-mens-relationship-skills` content repo with partner vetting, family-template discernment, and trust/fidelity course material.
+Refresh suite-generated learner catalog metadata after the registered `open-education-mens-relationship-skills` content repo added Phase 2 generated lecture/practice packets, a reading library, and a completed gap audit.
 
 ## Smallest Relevant File Set
 
