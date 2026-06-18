@@ -1154,7 +1154,7 @@ window.openEducationContentCatalog =
       "sourceId": "mens-relationship-skills",
       "title": "Open Education Men's Relationship Skills",
       "sourceRepo": "open-education-mens-relationship-skills",
-      "objectCount": 14,
+      "objectCount": 15,
       "courses": [
         {
           "id": "mens-relationship-skills:study-plans/courses/MRS-010-onboarding-ethics-and-personal-code.md",
@@ -1265,6 +1265,34 @@ window.openEducationContentCatalog =
           ]
         },
         {
+          "id": "mens-relationship-skills:study-plans/courses/MRS-303-modern-dating-safety-sexual-health-and-practical-partnership.md",
+          "title": "MRS-303 - Modern Dating Safety, Sexual Health, And Practical Partnership",
+          "sourceRepo": "open-education-mens-relationship-skills",
+          "sourcePath": "study-plans\\courses\\MRS-303-modern-dating-safety-sexual-health-and-practical-partnership.md",
+          "objectives": [
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-303/online-dating-safety",
+              "label": "Online Dating Safety"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-303/sexual-health-family-planning",
+              "label": "Sexual Health Family Planning"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-303/breakup-recovery",
+              "label": "Breakup Recovery"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-303/practical-partnership",
+              "label": "Practical Partnership"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-303/safety-referral-boundaries",
+              "label": "Safety Referral Boundaries"
+            }
+          ]
+        },
+        {
           "id": "mens-relationship-skills:study-plans/courses/MRS-499-capstone-relational-character-portfolio.md",
           "title": "MRS-499 - Capstone Relational Character Portfolio",
           "sourceRepo": "open-education-mens-relationship-skills",
@@ -1345,6 +1373,26 @@ window.openEducationContentCatalog =
         {
           "objectiveId": "mens-relationship-skills:objectives/course/mrs-302/trust-pattern-discernment",
           "label": "Trust Pattern Discernment"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-303/breakup-recovery",
+          "label": "Breakup Recovery"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-303/online-dating-safety",
+          "label": "Online Dating Safety"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-303/practical-partnership",
+          "label": "Practical Partnership"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-303/safety-referral-boundaries",
+          "label": "Safety Referral Boundaries"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-303/sexual-health-family-planning",
+          "label": "Sexual Health Family Planning"
         },
         {
           "objectiveId": "mens-relationship-skills:objectives/course/mrs-499/fellowship-leadership",

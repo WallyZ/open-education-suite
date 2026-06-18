@@ -2,7 +2,7 @@
 
 ## Objective
 
-Refresh suite-generated learner catalog metadata after the registered `open-education-mens-relationship-skills` content repo added fellowship and men's peer-elevation objectives, assessments, and course content.
+Refresh suite-generated learner catalog metadata after the registered `open-education-mens-relationship-skills` content repo added the Phase 3 `MRS-303` modern dating safety, sexual health, breakup recovery, practical partnership, and referral-boundary course.
 
 ## Smallest Relevant File Set
 
