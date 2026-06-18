@@ -2,7 +2,7 @@
 
 ## Objective
 
-Refresh suite-generated learner catalog metadata after the registered `open-education-mens-relationship-skills` content repo added Phase 2 generated lecture/practice packets, a reading library, and a completed gap audit.
+Refresh suite-generated learner catalog metadata after the registered `open-education-mens-relationship-skills` content repo added fellowship and men's peer-elevation objectives, assessments, and course content.
 
 ## Smallest Relevant File Set
 

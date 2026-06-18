@@ -1185,6 +1185,10 @@ window.openEducationContentCatalog =
             {
               "objectiveId": "mens-relationship-skills:objectives/course/mrs-101/competence-confidence",
               "label": "Competence Confidence"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-101/fellowship-and-elevation",
+              "label": "Fellowship And Elevation"
             }
           ]
         },
@@ -1273,6 +1277,10 @@ window.openEducationContentCatalog =
             {
               "objectiveId": "mens-relationship-skills:objectives/course/mrs-499/portfolio-self-audit",
               "label": "Portfolio Self Audit"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-499/fellowship-leadership",
+              "label": "Fellowship Leadership"
             }
           ]
         }
@@ -1293,6 +1301,10 @@ window.openEducationContentCatalog =
         {
           "objectiveId": "mens-relationship-skills:objectives/course/mrs-101/emotional-regulation",
           "label": "Emotional Regulation"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-101/fellowship-and-elevation",
+          "label": "Fellowship And Elevation"
         },
         {
           "objectiveId": "mens-relationship-skills:objectives/course/mrs-102/active-listening",
@@ -1333,6 +1345,10 @@ window.openEducationContentCatalog =
         {
           "objectiveId": "mens-relationship-skills:objectives/course/mrs-302/trust-pattern-discernment",
           "label": "Trust Pattern Discernment"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-499/fellowship-leadership",
+          "label": "Fellowship Leadership"
         },
         {
           "objectiveId": "mens-relationship-skills:objectives/course/mrs-499/integrated-scenario-performance",
