@@ -1154,7 +1154,7 @@ window.openEducationContentCatalog =
       "sourceId": "mens-relationship-skills",
       "title": "Open Education Men's Relationship Skills",
       "sourceRepo": "open-education-mens-relationship-skills",
-      "objectCount": 15,
+      "objectCount": 16,
       "courses": [
         {
           "id": "mens-relationship-skills:study-plans/courses/MRS-010-onboarding-ethics-and-personal-code.md",
@@ -1233,6 +1233,10 @@ window.openEducationContentCatalog =
             {
               "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/partner-discernment",
               "label": "Partner Discernment"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/presentation-vs-character-discernment",
+              "label": "Presentation Vs Character Discernment"
             },
             {
               "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/healthy-commitment",
@@ -1361,6 +1365,10 @@ window.openEducationContentCatalog =
         {
           "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/partner-discernment",
           "label": "Partner Discernment"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/presentation-vs-character-discernment",
+          "label": "Presentation Vs Character Discernment"
         },
         {
           "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/values-aligned-partner-search",

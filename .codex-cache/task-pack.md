@@ -2,7 +2,7 @@
 
 ## Objective
 
-Refresh suite-generated learner catalog metadata after the registered `open-education-mens-relationship-skills` content repo added the Phase 3 `MRS-303` modern dating safety, sexual health, breakup recovery, practical partnership, and referral-boundary course.
+Refresh suite-generated learner catalog metadata after the registered `open-education-mens-relationship-skills` content repo added the full delivery/progress guide, presentation-versus-character discernment objective, live-practice safety/progress assessment, and complete-delivery-ready manifest status.
 
 ## Smallest Relevant File Set
 
