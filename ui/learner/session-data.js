@@ -652,15 +652,104 @@ window.openEducationContentCatalog =
 {
   "schemaVersion": 1,
   "generatedFrom": "scripts/ingestion/scan-content-sources.ps1",
-  "sourceCount": 6,
+  "sourceCount": 10,
   "sources": [
     {
       "sourceId": "cybersecurity",
       "title": "Open Education Cybersecurity",
       "sourceRepo": "open-education-cybersecurity",
-      "objectCount": 6,
-      "courses": [],
+      "objectCount": 12,
+      "courses": [
+        {
+          "id": "cybersecurity:study-plans/courses/CYB-101-cybersecurity-defense-foundations.md",
+          "title": "CYB-101 Cybersecurity Defense Foundations",
+          "sourceRepo": "open-education-cybersecurity",
+          "sourcePath": "study-plans\\courses\\CYB-101-cybersecurity-defense-foundations.md",
+          "objectives": [
+            {
+              "objectiveId": "cybersecurity:objectives/course/cyb-101/security-thinking",
+              "label": "Security Thinking"
+            },
+            {
+              "objectiveId": "cybersecurity:objectives/course/cyb-101/network-and-identity-basics",
+              "label": "Network And Identity Basics"
+            },
+            {
+              "objectiveId": "cybersecurity:objectives/course/cyb-101/threat-modeling",
+              "label": "Threat Modeling"
+            },
+            {
+              "objectiveId": "cybersecurity:objectives/course/cyb-101/control-selection",
+              "label": "Control Selection"
+            },
+            {
+              "objectiveId": "cybersecurity:objectives/course/cyb-101/application-risk",
+              "label": "Application Risk"
+            },
+            {
+              "objectiveId": "cybersecurity:objectives/course/cyb-101/log-triage",
+              "label": "Log Triage"
+            },
+            {
+              "objectiveId": "cybersecurity:objectives/course/cyb-101/incident-response",
+              "label": "Incident Response"
+            },
+            {
+              "objectiveId": "cybersecurity:objectives/course/cyb-101/risk-communication",
+              "label": "Risk Communication"
+            },
+            {
+              "objectiveId": "cybersecurity:objectives/course/cyb-101/ethics-and-authorization",
+              "label": "Ethics And Authorization"
+            },
+            {
+              "objectiveId": "cybersecurity:objectives/course/cyb-101/capstone-defense",
+              "label": "Capstone Defense"
+            }
+          ]
+        }
+      ],
       "objectives": [
+        {
+          "objectiveId": "cybersecurity:objectives/course/cyb-101/application-risk",
+          "label": "Application Risk"
+        },
+        {
+          "objectiveId": "cybersecurity:objectives/course/cyb-101/capstone-defense",
+          "label": "Capstone Defense"
+        },
+        {
+          "objectiveId": "cybersecurity:objectives/course/cyb-101/control-selection",
+          "label": "Control Selection"
+        },
+        {
+          "objectiveId": "cybersecurity:objectives/course/cyb-101/ethics-and-authorization",
+          "label": "Ethics And Authorization"
+        },
+        {
+          "objectiveId": "cybersecurity:objectives/course/cyb-101/incident-response",
+          "label": "Incident Response"
+        },
+        {
+          "objectiveId": "cybersecurity:objectives/course/cyb-101/log-triage",
+          "label": "Log Triage"
+        },
+        {
+          "objectiveId": "cybersecurity:objectives/course/cyb-101/network-and-identity-basics",
+          "label": "Network And Identity Basics"
+        },
+        {
+          "objectiveId": "cybersecurity:objectives/course/cyb-101/risk-communication",
+          "label": "Risk Communication"
+        },
+        {
+          "objectiveId": "cybersecurity:objectives/course/cyb-101/security-thinking",
+          "label": "Security Thinking"
+        },
+        {
+          "objectiveId": "cybersecurity:objectives/course/cyb-101/threat-modeling",
+          "label": "Threat Modeling"
+        },
         {
           "objectiveId": "cybersecurity:objectives/incident-triage",
           "label": "Incident Triage"
@@ -676,12 +765,199 @@ window.openEducationContentCatalog =
       ]
     },
     {
+      "sourceId": "clear-reasoning",
+      "title": "Open Education Clear Reasoning",
+      "sourceRepo": "open-education-clear-reasoning",
+      "objectCount": 8,
+      "courses": [
+        {
+          "id": "clear-reasoning:study-plans/courses/CR-101-clear-reasoning-foundations.md",
+          "title": "CR-101 Clear Reasoning Foundations",
+          "sourceRepo": "open-education-clear-reasoning",
+          "sourcePath": "study-plans\\courses\\CR-101-clear-reasoning-foundations.md",
+          "objectives": [
+            {
+              "objectiveId": "clear-reasoning:objectives/course/cr-101/attention-and-distinction",
+              "label": "Attention And Distinction"
+            },
+            {
+              "objectiveId": "clear-reasoning:objectives/course/cr-101/definitions-and-categories",
+              "label": "Definitions And Categories"
+            },
+            {
+              "objectiveId": "clear-reasoning:objectives/course/cr-101/propositions-and-contradiction",
+              "label": "Propositions And Contradiction"
+            },
+            {
+              "objectiveId": "clear-reasoning:objectives/course/cr-101/proof-craft",
+              "label": "Proof Craft"
+            },
+            {
+              "objectiveId": "clear-reasoning:objectives/course/cr-101/inference-and-validity",
+              "label": "Inference And Validity"
+            },
+            {
+              "objectiveId": "clear-reasoning:objectives/course/cr-101/dialectical-questions",
+              "label": "Dialectical Questions"
+            },
+            {
+              "objectiveId": "clear-reasoning:objectives/course/cr-101/fallacy-repair",
+              "label": "Fallacy Repair"
+            },
+            {
+              "objectiveId": "clear-reasoning:objectives/course/cr-101/ethical-rhetoric",
+              "label": "Ethical Rhetoric"
+            },
+            {
+              "objectiveId": "clear-reasoning:objectives/course/cr-101/disagreement-discipline",
+              "label": "Disagreement Discipline"
+            },
+            {
+              "objectiveId": "clear-reasoning:objectives/course/cr-101/capstone-defense",
+              "label": "Capstone Defense"
+            }
+          ]
+        }
+      ],
+      "objectives": [
+        {
+          "objectiveId": "clear-reasoning:objectives/course/cr-101/attention-and-distinction",
+          "label": "Attention And Distinction"
+        },
+        {
+          "objectiveId": "clear-reasoning:objectives/course/cr-101/capstone-defense",
+          "label": "Capstone Defense"
+        },
+        {
+          "objectiveId": "clear-reasoning:objectives/course/cr-101/definitions-and-categories",
+          "label": "Definitions And Categories"
+        },
+        {
+          "objectiveId": "clear-reasoning:objectives/course/cr-101/dialectical-questions",
+          "label": "Dialectical Questions"
+        },
+        {
+          "objectiveId": "clear-reasoning:objectives/course/cr-101/disagreement-discipline",
+          "label": "Disagreement Discipline"
+        },
+        {
+          "objectiveId": "clear-reasoning:objectives/course/cr-101/ethical-rhetoric",
+          "label": "Ethical Rhetoric"
+        },
+        {
+          "objectiveId": "clear-reasoning:objectives/course/cr-101/fallacy-repair",
+          "label": "Fallacy Repair"
+        },
+        {
+          "objectiveId": "clear-reasoning:objectives/course/cr-101/inference-and-validity",
+          "label": "Inference And Validity"
+        },
+        {
+          "objectiveId": "clear-reasoning:objectives/course/cr-101/proof-craft",
+          "label": "Proof Craft"
+        },
+        {
+          "objectiveId": "clear-reasoning:objectives/course/cr-101/propositions-and-contradiction",
+          "label": "Propositions And Contradiction"
+        }
+      ]
+    },
+    {
       "sourceId": "data-science",
       "title": "Open Education Data Science",
       "sourceRepo": "open-education-data-science",
-      "objectCount": 6,
-      "courses": [],
+      "objectCount": 12,
+      "courses": [
+        {
+          "id": "data-science:study-plans/courses/DS-101-data-science-evidence-and-modeling.md",
+          "title": "DS-101 Data Science Evidence And Modeling",
+          "sourceRepo": "open-education-data-science",
+          "sourcePath": "study-plans\\courses\\DS-101-data-science-evidence-and-modeling.md",
+          "objectives": [
+            {
+              "objectiveId": "data-science:objectives/course/ds-101/question-and-evidence",
+              "label": "Question And Evidence"
+            },
+            {
+              "objectiveId": "data-science:objectives/course/ds-101/data-audit",
+              "label": "Data Audit"
+            },
+            {
+              "objectiveId": "data-science:objectives/course/ds-101/summary-statistics",
+              "label": "Summary Statistics"
+            },
+            {
+              "objectiveId": "data-science:objectives/course/ds-101/visual-reasoning",
+              "label": "Visual Reasoning"
+            },
+            {
+              "objectiveId": "data-science:objectives/course/ds-101/baseline-modeling",
+              "label": "Baseline Modeling"
+            },
+            {
+              "objectiveId": "data-science:objectives/course/ds-101/evaluation-and-overfitting",
+              "label": "Evaluation And Overfitting"
+            },
+            {
+              "objectiveId": "data-science:objectives/course/ds-101/causal-caution",
+              "label": "Causal Caution"
+            },
+            {
+              "objectiveId": "data-science:objectives/course/ds-101/reproducible-workflow",
+              "label": "Reproducible Workflow"
+            },
+            {
+              "objectiveId": "data-science:objectives/course/ds-101/communication",
+              "label": "Communication"
+            },
+            {
+              "objectiveId": "data-science:objectives/course/ds-101/capstone-defense",
+              "label": "Capstone Defense"
+            }
+          ]
+        }
+      ],
       "objectives": [
+        {
+          "objectiveId": "data-science:objectives/course/ds-101/baseline-modeling",
+          "label": "Baseline Modeling"
+        },
+        {
+          "objectiveId": "data-science:objectives/course/ds-101/capstone-defense",
+          "label": "Capstone Defense"
+        },
+        {
+          "objectiveId": "data-science:objectives/course/ds-101/causal-caution",
+          "label": "Causal Caution"
+        },
+        {
+          "objectiveId": "data-science:objectives/course/ds-101/communication",
+          "label": "Communication"
+        },
+        {
+          "objectiveId": "data-science:objectives/course/ds-101/data-audit",
+          "label": "Data Audit"
+        },
+        {
+          "objectiveId": "data-science:objectives/course/ds-101/evaluation-and-overfitting",
+          "label": "Evaluation And Overfitting"
+        },
+        {
+          "objectiveId": "data-science:objectives/course/ds-101/question-and-evidence",
+          "label": "Question And Evidence"
+        },
+        {
+          "objectiveId": "data-science:objectives/course/ds-101/reproducible-workflow",
+          "label": "Reproducible Workflow"
+        },
+        {
+          "objectiveId": "data-science:objectives/course/ds-101/summary-statistics",
+          "label": "Summary Statistics"
+        },
+        {
+          "objectiveId": "data-science:objectives/course/ds-101/visual-reasoning",
+          "label": "Visual Reasoning"
+        },
         {
           "objectiveId": "data-science:objectives/data-cleaning-basics",
           "label": "Data Cleaning Basics"
@@ -1154,7 +1430,7 @@ window.openEducationContentCatalog =
       "sourceId": "mens-relationship-skills",
       "title": "Open Education Men's Relationship Skills",
       "sourceRepo": "open-education-mens-relationship-skills",
-      "objectCount": 16,
+      "objectCount": 19,
       "courses": [
         {
           "id": "mens-relationship-skills:study-plans/courses/MRS-010-onboarding-ethics-and-personal-code.md",
@@ -1297,6 +1573,82 @@ window.openEducationContentCatalog =
           ]
         },
         {
+          "id": "mens-relationship-skills:study-plans/courses/MRS-304-healthy-sexuality-porn-reality-and-mutual-pleasure.md",
+          "title": "MRS-304 - Healthy Sexuality, Porn Reality, And Mutual Pleasure",
+          "sourceRepo": "open-education-mens-relationship-skills",
+          "sourcePath": "study-plans\\courses\\MRS-304-healthy-sexuality-porn-reality-and-mutual-pleasure.md",
+          "objectives": [
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/porn-reality-and-body-confidence",
+              "label": "Porn Reality And Body Confidence"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/sexual-habit-recovery",
+              "label": "Sexual Habit Recovery"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/anatomy-function-and-medical-humility",
+              "label": "Anatomy Function And Medical Humility"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/consent-and-pleasure-communication",
+              "label": "Consent And Pleasure Communication"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/arousal-pacing-and-self-command",
+              "label": "Arousal Pacing And Self Command"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/fantasy-boundaries-and-values",
+              "label": "Fantasy Boundaries And Values"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/mutual-attention-and-feedback",
+              "label": "Mutual Attention And Feedback"
+            }
+          ]
+        },
+        {
+          "id": "mens-relationship-skills:study-plans/courses/MRS-401-marriage-preparation-and-relationship-practice.md",
+          "title": "MRS-401 - Marriage Preparation And Relationship Practice",
+          "sourceRepo": "open-education-mens-relationship-skills",
+          "sourcePath": "study-plans\\courses\\MRS-401-marriage-preparation-and-relationship-practice.md",
+          "objectives": [
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/marriage-readiness-self-audit",
+              "label": "Marriage Readiness Self Audit"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/opposite-sex-social-practice",
+              "label": "Opposite Sex Social Practice"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/courtship-intention-and-pacing",
+              "label": "Courtship Intention And Pacing"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/hard-conversation-readiness",
+              "label": "Hard Conversation Readiness"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/marriage-conflict-repair",
+              "label": "Marriage Conflict Repair"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/shared-life-systems",
+              "label": "Shared Life Systems"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/family-and-community-integration",
+              "label": "Family And Community Integration"
+            },
+            {
+              "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/commitment-discernment-and-exit",
+              "label": "Commitment Discernment And Exit"
+            }
+          ]
+        },
+        {
           "id": "mens-relationship-skills:study-plans/courses/MRS-499-capstone-relational-character-portfolio.md",
           "title": "MRS-499 - Capstone Relational Character Portfolio",
           "sourceRepo": "open-education-mens-relationship-skills",
@@ -1401,6 +1753,66 @@ window.openEducationContentCatalog =
         {
           "objectiveId": "mens-relationship-skills:objectives/course/mrs-303/sexual-health-family-planning",
           "label": "Sexual Health Family Planning"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/anatomy-function-and-medical-humility",
+          "label": "Anatomy Function And Medical Humility"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/arousal-pacing-and-self-command",
+          "label": "Arousal Pacing And Self Command"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/consent-and-pleasure-communication",
+          "label": "Consent And Pleasure Communication"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/fantasy-boundaries-and-values",
+          "label": "Fantasy Boundaries And Values"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/mutual-attention-and-feedback",
+          "label": "Mutual Attention And Feedback"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/porn-reality-and-body-confidence",
+          "label": "Porn Reality And Body Confidence"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/sexual-habit-recovery",
+          "label": "Sexual Habit Recovery"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/commitment-discernment-and-exit",
+          "label": "Commitment Discernment And Exit"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/courtship-intention-and-pacing",
+          "label": "Courtship Intention And Pacing"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/family-and-community-integration",
+          "label": "Family And Community Integration"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/hard-conversation-readiness",
+          "label": "Hard Conversation Readiness"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/marriage-conflict-repair",
+          "label": "Marriage Conflict Repair"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/marriage-readiness-self-audit",
+          "label": "Marriage Readiness Self Audit"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/opposite-sex-social-practice",
+          "label": "Opposite Sex Social Practice"
+        },
+        {
+          "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/shared-life-systems",
+          "label": "Shared Life Systems"
         },
         {
           "objectiveId": "mens-relationship-skills:objectives/course/mrs-499/fellowship-leadership",
@@ -1520,9 +1932,98 @@ window.openEducationContentCatalog =
       "sourceId": "software-development",
       "title": "Open Education Software Development",
       "sourceRepo": "open-education-software-development",
-      "objectCount": 6,
-      "courses": [],
+      "objectCount": 12,
+      "courses": [
+        {
+          "id": "software-development:study-plans/courses/SD-101-software-development-practice.md",
+          "title": "SD-101 Software Development Practice",
+          "sourceRepo": "open-education-software-development",
+          "sourcePath": "study-plans\\courses\\SD-101-software-development-practice.md",
+          "objectives": [
+            {
+              "objectiveId": "software-development:objectives/course/sd-101/problem-framing",
+              "label": "Problem Framing"
+            },
+            {
+              "objectiveId": "software-development:objectives/course/sd-101/small-slices",
+              "label": "Small Slices"
+            },
+            {
+              "objectiveId": "software-development:objectives/course/sd-101/readable-code",
+              "label": "Readable Code"
+            },
+            {
+              "objectiveId": "software-development:objectives/course/sd-101/testable-functions",
+              "label": "Testable Functions"
+            },
+            {
+              "objectiveId": "software-development:objectives/course/sd-101/debugging",
+              "label": "Debugging"
+            },
+            {
+              "objectiveId": "software-development:objectives/course/sd-101/version-control",
+              "label": "Version Control"
+            },
+            {
+              "objectiveId": "software-development:objectives/course/sd-101/error-handling",
+              "label": "Error Handling"
+            },
+            {
+              "objectiveId": "software-development:objectives/course/sd-101/security-and-privacy",
+              "label": "Security And Privacy"
+            },
+            {
+              "objectiveId": "software-development:objectives/course/sd-101/technical-communication",
+              "label": "Technical Communication"
+            },
+            {
+              "objectiveId": "software-development:objectives/course/sd-101/capstone-defense",
+              "label": "Capstone Defense"
+            }
+          ]
+        }
+      ],
       "objectives": [
+        {
+          "objectiveId": "software-development:objectives/course/sd-101/capstone-defense",
+          "label": "Capstone Defense"
+        },
+        {
+          "objectiveId": "software-development:objectives/course/sd-101/debugging",
+          "label": "Debugging"
+        },
+        {
+          "objectiveId": "software-development:objectives/course/sd-101/error-handling",
+          "label": "Error Handling"
+        },
+        {
+          "objectiveId": "software-development:objectives/course/sd-101/problem-framing",
+          "label": "Problem Framing"
+        },
+        {
+          "objectiveId": "software-development:objectives/course/sd-101/readable-code",
+          "label": "Readable Code"
+        },
+        {
+          "objectiveId": "software-development:objectives/course/sd-101/security-and-privacy",
+          "label": "Security And Privacy"
+        },
+        {
+          "objectiveId": "software-development:objectives/course/sd-101/small-slices",
+          "label": "Small Slices"
+        },
+        {
+          "objectiveId": "software-development:objectives/course/sd-101/technical-communication",
+          "label": "Technical Communication"
+        },
+        {
+          "objectiveId": "software-development:objectives/course/sd-101/testable-functions",
+          "label": "Testable Functions"
+        },
+        {
+          "objectiveId": "software-development:objectives/course/sd-101/version-control",
+          "label": "Version Control"
+        },
         {
           "objectiveId": "software-development:objectives/debugging",
           "label": "Debugging"
@@ -1534,6 +2035,348 @@ window.openEducationContentCatalog =
         {
           "objectiveId": "software-development:objectives/version-control-basics",
           "label": "Version Control Basics"
+        }
+      ]
+    },
+    {
+      "sourceId": "american-history",
+      "title": "Open Education American History",
+      "sourceRepo": "open-education-american-history",
+      "objectCount": 8,
+      "courses": [
+        {
+          "id": "american-history:study-plans/courses/AMH-REFERENCE-PROGRAM.md",
+          "title": "AMH-REFERENCE-PROGRAM American History: Evidence, Argument, And Research",
+          "sourceRepo": "open-education-american-history",
+          "sourcePath": "study-plans\\courses\\AMH-REFERENCE-PROGRAM.md",
+          "objectives": [
+            {
+              "objectiveId": "american-history:objectives/course/amh-reference/diagnostic-restoration",
+              "label": "Diagnostic Restoration"
+            },
+            {
+              "objectiveId": "american-history:objectives/course/amh-reference/evidence-before-conclusion",
+              "label": "Evidence Before Conclusion"
+            },
+            {
+              "objectiveId": "american-history:objectives/course/amh-reference/chronology-and-geography",
+              "label": "Chronology And Geography"
+            },
+            {
+              "objectiveId": "american-history:objectives/course/amh-reference/primary-source-analysis",
+              "label": "Primary Source Analysis"
+            },
+            {
+              "objectiveId": "american-history:objectives/course/amh-reference/historical-argument",
+              "label": "Historical Argument"
+            },
+            {
+              "objectiveId": "american-history:objectives/course/amh-reference/historiography",
+              "label": "Historiography"
+            },
+            {
+              "objectiveId": "american-history:objectives/course/amh-reference/public-history-and-teaching",
+              "label": "Public History And Teaching"
+            },
+            {
+              "objectiveId": "american-history:objectives/course/amh-reference/research-prospectus-defense",
+              "label": "Research Prospectus Defense"
+            }
+          ]
+        }
+      ],
+      "objectives": [
+        {
+          "objectiveId": "american-history:objectives/course/amh-reference/chronology-and-geography",
+          "label": "Chronology And Geography"
+        },
+        {
+          "objectiveId": "american-history:objectives/course/amh-reference/diagnostic-restoration",
+          "label": "Diagnostic Restoration"
+        },
+        {
+          "objectiveId": "american-history:objectives/course/amh-reference/evidence-before-conclusion",
+          "label": "Evidence Before Conclusion"
+        },
+        {
+          "objectiveId": "american-history:objectives/course/amh-reference/historical-argument",
+          "label": "Historical Argument"
+        },
+        {
+          "objectiveId": "american-history:objectives/course/amh-reference/historiography",
+          "label": "Historiography"
+        },
+        {
+          "objectiveId": "american-history:objectives/course/amh-reference/primary-source-analysis",
+          "label": "Primary Source Analysis"
+        },
+        {
+          "objectiveId": "american-history:objectives/course/amh-reference/public-history-and-teaching",
+          "label": "Public History And Teaching"
+        },
+        {
+          "objectiveId": "american-history:objectives/course/amh-reference/research-prospectus-defense",
+          "label": "Research Prospectus Defense"
+        }
+      ]
+    },
+    {
+      "sourceId": "leadership",
+      "title": "Open Education Leadership",
+      "sourceRepo": "open-education-leadership",
+      "objectCount": 7,
+      "courses": [
+        {
+          "id": "leadership:study-plans/courses/LEAD-101-leadership-practice-and-judgment.md",
+          "title": "LEAD-101 Leadership Practice and Judgment",
+          "sourceRepo": "open-education-leadership",
+          "sourcePath": "study-plans\\courses\\LEAD-101-leadership-practice-and-judgment.md",
+          "objectives": [
+            {
+              "objectiveId": "leadership:objectives/course/lead-101/leadership-as-responsibility",
+              "label": "Leadership As Responsibility"
+            },
+            {
+              "objectiveId": "leadership:objectives/course/lead-101/listening-sensemaking",
+              "label": "Listening Sensemaking"
+            },
+            {
+              "objectiveId": "leadership:objectives/course/lead-101/communication-intent",
+              "label": "Communication Intent"
+            },
+            {
+              "objectiveId": "leadership:objectives/course/lead-101/decision-quality",
+              "label": "Decision Quality"
+            },
+            {
+              "objectiveId": "leadership:objectives/course/lead-101/trust",
+              "label": "Trust"
+            },
+            {
+              "objectiveId": "leadership:objectives/course/lead-101/conflict-repair",
+              "label": "Conflict Repair"
+            },
+            {
+              "objectiveId": "leadership:objectives/course/lead-101/coaching-feedback",
+              "label": "Coaching Feedback"
+            },
+            {
+              "objectiveId": "leadership:objectives/course/lead-101/team-systems",
+              "label": "Team Systems"
+            },
+            {
+              "objectiveId": "leadership:objectives/course/lead-101/ethical-pressure",
+              "label": "Ethical Pressure"
+            },
+            {
+              "objectiveId": "leadership:objectives/course/lead-101/capstone-defense",
+              "label": "Capstone Defense"
+            }
+          ]
+        }
+      ],
+      "objectives": [
+        {
+          "objectiveId": "leadership:objectives/course/lead-101/capstone-defense",
+          "label": "Capstone Defense"
+        },
+        {
+          "objectiveId": "leadership:objectives/course/lead-101/change-leadership",
+          "label": "Change Leadership"
+        },
+        {
+          "objectiveId": "leadership:objectives/course/lead-101/coaching-feedback",
+          "label": "Coaching Feedback"
+        },
+        {
+          "objectiveId": "leadership:objectives/course/lead-101/communication-intent",
+          "label": "Communication Intent"
+        },
+        {
+          "objectiveId": "leadership:objectives/course/lead-101/conflict-repair",
+          "label": "Conflict Repair"
+        },
+        {
+          "objectiveId": "leadership:objectives/course/lead-101/crisis-aar",
+          "label": "Crisis Aar"
+        },
+        {
+          "objectiveId": "leadership:objectives/course/lead-101/decision-quality",
+          "label": "Decision Quality"
+        },
+        {
+          "objectiveId": "leadership:objectives/course/lead-101/ethical-pressure",
+          "label": "Ethical Pressure"
+        },
+        {
+          "objectiveId": "leadership:objectives/course/lead-101/inclusion-fairness",
+          "label": "Inclusion Fairness"
+        },
+        {
+          "objectiveId": "leadership:objectives/course/lead-101/leadership-as-responsibility",
+          "label": "Leadership As Responsibility"
+        },
+        {
+          "objectiveId": "leadership:objectives/course/lead-101/listening-sensemaking",
+          "label": "Listening Sensemaking"
+        },
+        {
+          "objectiveId": "leadership:objectives/course/lead-101/self-command",
+          "label": "Self Command"
+        },
+        {
+          "objectiveId": "leadership:objectives/course/lead-101/team-systems",
+          "label": "Team Systems"
+        },
+        {
+          "objectiveId": "leadership:objectives/course/lead-101/trust",
+          "label": "Trust"
+        }
+      ]
+    },
+    {
+      "sourceId": "comedy",
+      "title": "Open Education Comedy",
+      "sourceRepo": "open-education-comedy",
+      "objectCount": 7,
+      "courses": [
+        {
+          "id": "comedy:study-plans/courses/COM-101-humor-writing-and-performance.md",
+          "title": "COM-101 Humor Writing And Performance",
+          "sourceRepo": "open-education-comedy",
+          "sourcePath": "study-plans\\courses\\COM-101-humor-writing-and-performance.md",
+          "objectives": [
+            {
+              "objectiveId": "comedy:objectives/course/com-101/humor-theories",
+              "label": "Humor Theories"
+            },
+            {
+              "objectiveId": "comedy:objectives/course/com-101/premise-notebook",
+              "label": "Premise Notebook"
+            },
+            {
+              "objectiveId": "comedy:objectives/course/com-101/incongruity-surprise",
+              "label": "Incongruity Surprise"
+            },
+            {
+              "objectiveId": "comedy:objectives/course/com-101/wordplay-language",
+              "label": "Wordplay Language"
+            },
+            {
+              "objectiveId": "comedy:objectives/course/com-101/observation-specificity",
+              "label": "Observation Specificity"
+            },
+            {
+              "objectiveId": "comedy:objectives/course/com-101/exaggeration-understatement",
+              "label": "Exaggeration Understatement"
+            },
+            {
+              "objectiveId": "comedy:objectives/course/com-101/irony-satire-parody",
+              "label": "Irony Satire Parody"
+            },
+            {
+              "objectiveId": "comedy:objectives/course/com-101/character-persona",
+              "label": "Character Persona"
+            },
+            {
+              "objectiveId": "comedy:objectives/course/com-101/story-comedy",
+              "label": "Story Comedy"
+            },
+            {
+              "objectiveId": "comedy:objectives/course/com-101/sketch-game",
+              "label": "Sketch Game"
+            },
+            {
+              "objectiveId": "comedy:objectives/course/com-101/improv-listening",
+              "label": "Improv Listening"
+            },
+            {
+              "objectiveId": "comedy:objectives/course/com-101/timing-delivery",
+              "label": "Timing Delivery"
+            },
+            {
+              "objectiveId": "comedy:objectives/course/com-101/audience-feedback",
+              "label": "Audience Feedback"
+            },
+            {
+              "objectiveId": "comedy:objectives/course/com-101/ethics-boundaries",
+              "label": "Ethics Boundaries"
+            },
+            {
+              "objectiveId": "comedy:objectives/course/com-101/revision-testing",
+              "label": "Revision Testing"
+            },
+            {
+              "objectiveId": "comedy:objectives/course/com-101/capstone-showcase",
+              "label": "Capstone Showcase"
+            }
+          ]
+        }
+      ],
+      "objectives": [
+        {
+          "objectiveId": "comedy:objectives/course/com-101/audience-feedback",
+          "label": "Audience Feedback"
+        },
+        {
+          "objectiveId": "comedy:objectives/course/com-101/capstone-showcase",
+          "label": "Capstone Showcase"
+        },
+        {
+          "objectiveId": "comedy:objectives/course/com-101/character-persona",
+          "label": "Character Persona"
+        },
+        {
+          "objectiveId": "comedy:objectives/course/com-101/ethics-boundaries",
+          "label": "Ethics Boundaries"
+        },
+        {
+          "objectiveId": "comedy:objectives/course/com-101/exaggeration-understatement",
+          "label": "Exaggeration Understatement"
+        },
+        {
+          "objectiveId": "comedy:objectives/course/com-101/humor-theories",
+          "label": "Humor Theories"
+        },
+        {
+          "objectiveId": "comedy:objectives/course/com-101/improv-listening",
+          "label": "Improv Listening"
+        },
+        {
+          "objectiveId": "comedy:objectives/course/com-101/incongruity-surprise",
+          "label": "Incongruity Surprise"
+        },
+        {
+          "objectiveId": "comedy:objectives/course/com-101/irony-satire-parody",
+          "label": "Irony Satire Parody"
+        },
+        {
+          "objectiveId": "comedy:objectives/course/com-101/observation-specificity",
+          "label": "Observation Specificity"
+        },
+        {
+          "objectiveId": "comedy:objectives/course/com-101/premise-notebook",
+          "label": "Premise Notebook"
+        },
+        {
+          "objectiveId": "comedy:objectives/course/com-101/revision-testing",
+          "label": "Revision Testing"
+        },
+        {
+          "objectiveId": "comedy:objectives/course/com-101/sketch-game",
+          "label": "Sketch Game"
+        },
+        {
+          "objectiveId": "comedy:objectives/course/com-101/story-comedy",
+          "label": "Story Comedy"
+        },
+        {
+          "objectiveId": "comedy:objectives/course/com-101/timing-delivery",
+          "label": "Timing Delivery"
+        },
+        {
+          "objectiveId": "comedy:objectives/course/com-101/wordplay-language",
+          "label": "Wordplay Language"
         }
       ]
     }
