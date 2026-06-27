@@ -2,21 +2,27 @@
 
 ## Objective
 
-Refresh suite-generated learner catalog metadata after the registered `open-education-mens-relationship-skills` content repo added the full delivery/progress guide, presentation-versus-character discernment objective, live-practice safety/progress assessment, and complete-delivery-ready manifest status.
+Add the smallest usable local-first learner profile system so multiple students can use Open Education Suite on the same computer with separate preferences, learning style, accessibility needs, goals, progress, assessment history, and recommendation context.
 
 ## Smallest Relevant File Set
 
-- ui/learner/session-data.js
-- F:\dev\open-education-mens-relationship-skills\*
+- ui/learner/*
+- scripts/*
+- tests/*
+- docs/TODO.md
+- docs/WORKFLOW.md
+- scripts/codex-verify.ps1
 
 ## Intended Verification Command
 
 ```powershell
-.\scripts\codex-verify.ps1
+pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\codex-verify.ps1
 ```
 
 ## Scope Guardrails
 
-- Keep Open Education Suite content-agnostic; do not copy course content into suite docs.
-- Update generated learner catalog metadata only.
-- Do not add learner PII, private relationship logs, dating messages, surveillance data, credentials, secrets, or local private paths.
+- Keep the suite content-agnostic; do not copy course content into the suite.
+- Keep learner data local-first and avoid authentication, cloud sync, or external identity providers.
+- Support multiple learners on one computer through explicit local learner selection and isolated profile/progress records.
+- Do not add learner PII beyond user-entered display name/preferences.
+- Add concrete TODOs only for discovered gaps that remain after the usable slice is implemented.

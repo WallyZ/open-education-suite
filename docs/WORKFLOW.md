@@ -17,7 +17,13 @@ The suite should read content repos through their manifests, normalize learning 
 
 Use the learner model, mastery evidence, prerequisites, and review history to choose the next explanation, practice item, quiz, project, or remediation.
 
-## 5. Verify
+## 5. Select the Local Learner Profile
+
+The learner UI supports multiple local students on the same computer/browser. Before studying, select or create the active student profile in the Learner Workspace rail. Profile-specific preferences and records stay local and are stored under scoped browser keys for that learner id, including learner state, assessment evidence, lecture checkpoints, journal entries, lecture resume position, and last course selection.
+
+Use profile fields for display name, goals, explanation style, practice mode, learning pace, preferred format, accommodations, and prior experience. Keep sensitive accommodations local and avoid putting real learner PII into fixtures or support bundles.
+
+## 6. Verify
 
 Run:
 
@@ -27,7 +33,7 @@ Run:
 
 Report the command, exit code, and log path when verification fails.
 
-## 6. Run the Learner UI Bridge Locally
+## 7. Run the Learner UI Bridge Locally
 
 The learner UI bridge is the local web surface for browser-based learner workflow checks. It defaults to `http://127.0.0.1:8786/ui/learner/index.html`.
 
@@ -68,7 +74,7 @@ Disable or remove startup with:
 .\scripts\manage_learner_ui_launcher.ps1 -Action UninstallStartup
 ```
 
-## 7. Export Voice Studio Session Metadata
+## 8. Export Voice Studio Session Metadata
 
 The suite can export public-safe lecture/practice audio metadata to the shared `voice-studio/session/v1` contract without copying raw audio, voiceprints, model artifacts, hashes, generated media paths, or private file paths.
 

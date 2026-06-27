@@ -20,9 +20,11 @@ Great teachers remember what a student knows, where they struggle, and what supp
 - [x] Add a learner-state audit report that explains why each mastery value changed. <!-- ms:id d0d4ad405571 -->
 - [x] Add conflict-safe local sync rules for future offline/online merging. <!-- ms:id 5885d8cfa1bc -->
 - [x] Add verification fixtures for valid state, invalid state, update-after-answer, and returning-after-gap. <!-- ms:id 13cc67116db3 -->
+- [x] Add same-computer multi-learner profile isolation for local learner state, journals, assessment evidence, checkpoints, lecture resume, and course selection. <!-- ms:id 9f3a1c47b2de -->
+  - Evidence (2026-06-27): `ui/learner/app.js` now stores `openEducationLearnerProfiles`, `openEducationActiveLearnerId`, and learner-scoped browser keys; `docs/learner-state-privacy.md` documents the scoped-key contract; `tests/learner-ui.spec.js` verifies two local profiles keep journal and state records separate. Verification: `pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\codex-verify.ps1` passed (`.codex-cache\logs\codex-verify_20260627_104945_a404c6e9.log`).
 
 ## Acceptance Notes
 
 - Learner state must be human-inspectable during early development.
 - State updates must be deterministic and explainable.
-- Privacy and audit rules should exist before adding hosted or multi-user storage.
+- Privacy and audit rules should exist before adding hosted storage.

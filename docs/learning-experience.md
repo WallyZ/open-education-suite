@@ -11,6 +11,7 @@
 
 The learner home view should prioritize:
 
+- active local learner profile and profile-specific learning preferences
 - next action with the reason it was selected
 - active goals and current objective
 - mastery map by objective
@@ -97,3 +98,9 @@ Durable state belongs in:
 - learner state for goals, mastery, misconceptions, and events
 
 Dashboards, home screens, and reports should derive from those records.
+
+## Same-Computer Learner Profiles
+
+The learner workspace supports multiple local students in the same browser through explicit profile selection. A profile records display name, goals, explanation style, practice mode, learning pace, preferred format, accommodations, and prior experience. Learner-owned browser records are scoped by learner id so journal entries, assessment evidence, lecture checkpoints, resume position, course selection, and learner-state exports remain separate.
+
+This is not hosted authentication. It is a local-first identity boundary for shared-family, shared-lab, and single-machine use. A learner should switch to their own profile before studying; the app then adapts labels, preferences, progress, and saved evidence to that selected profile.

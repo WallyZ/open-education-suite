@@ -29,6 +29,8 @@ The CLI proves the teaching engine works, but learners need a real workspace: ne
 - [x] Add visual regression and keyboard-flow checks once a browser test harness exists. <!-- ms:id 7d5062247e50 -->
 - [x] Add localization scaffolding for UI labels, dates, objective names, and feedback. <!-- ms:id 3368c844c1b3 -->
 - [x] Add a `local-app-launcher/v1` consumer adapter for the learner UI bridge with dynamic live/test ports, watchdog delegation, and manifest verification. <!-- ms:id 5f0f48c8f16d -->
+- [x] Add local learner profile manager for multiple students on the same computer with per-profile preferences and isolated learner-owned records. <!-- ms:id b4e72d83a9c1 -->
+  - Evidence (2026-06-27): `ui/learner/index.html` exposes active-student selection and profile fields for display name, goals, explanation style, practice mode, pace, format, accommodations, and prior experience; `ui/learner/app.js` applies the selected profile to the active session and scopes saved state/evidence by learner id; `tests/learner-ui.spec.js` covers creating Alex and Blair profiles in the same browser without mixing their saved state. Verification: `pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\codex-verify.ps1` passed (`.codex-cache\logs\codex-verify_20260627_104945_a404c6e9.log`).
 
 ## Acceptance Notes
 

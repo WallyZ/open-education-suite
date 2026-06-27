@@ -54,6 +54,62 @@ test.describe("learner workspace", () => {
     await expect(page.getByRole("heading", { name: "Learner Workspace" })).toBeVisible();
   });
 
+  test("keeps separate local profiles, preferences, and learner-owned records", async ({ page }) => {
+    await expect(page.getByRole("heading", { name: "Student profile" })).toBeVisible();
+
+    await page.getByLabel("Display name").fill("Alex");
+    await page.getByLabel("Explanation").selectOption("socratic");
+    await page.getByLabel("Practice").selectOption("project");
+    await page.getByLabel("Pace").selectOption("deliberate");
+    await page.getByLabel("Format").selectOption("hands-on");
+    await page.getByLabel("Goals").fill("debugging, prototypes");
+    await page.getByLabel("Access needs").fill("captions, low distraction");
+    await page.getByLabel("Prior experience").fill("Scratch, board games");
+    await page.getByRole("button", { name: "Save profile" }).click();
+
+    await expect(page.locator("#learner-title")).toHaveText("Alex");
+    await expect(page.locator("#preferenceValue")).toHaveText("Socratic");
+    await expect(page.locator("#practiceValue")).toHaveText("Project");
+    await expect(page.locator("#paceValue")).toHaveText("Deliberate");
+    await expect(page.locator("#formatValue")).toHaveText("Hands on");
+    await expect(page.locator("#accessValue")).toHaveText("Captions");
+
+    await page.getByRole("button", { name: "Evidence" }).click();
+    await page.getByRole("textbox", { name: "Journal" }).fill("Alex journal evidence.");
+    await page.getByRole("button", { name: "Save journal" }).click();
+    await page.getByRole("button", { name: "Save state" }).click();
+
+    await page.getByLabel("Display name").fill("Blair");
+    await page.getByLabel("Goals").fill("math review");
+    await page.getByLabel("Access needs").fill("large text");
+    await page.getByLabel("Prior experience").fill("algebra basics");
+    await page.getByRole("button", { name: "Create profile" }).click();
+
+    await expect(page.locator("#learner-title")).toHaveText("Blair");
+    await expect(page.locator("#learnerProfileSelect")).toHaveValue("blair");
+    await page.getByRole("textbox", { name: "Journal" }).fill("Blair journal evidence.");
+    await page.getByRole("button", { name: "Save journal" }).click();
+    await page.getByRole("button", { name: "Save state" }).click();
+
+    const storage = await page.evaluate(() => {
+      return Object.fromEntries(
+        Object.keys(localStorage)
+          .sort()
+          .map((key) => [key, localStorage.getItem(key)])
+      );
+    });
+
+    expect(storage.openEducationLearnerProfiles).toContain("Alex");
+    expect(storage.openEducationLearnerProfiles).toContain("Blair");
+    expect(storage.openEducationActiveLearnerId).toBe("blair");
+    expect(storage["openEducationLearnerJournal:gdev-101-live-smoke-learner"]).toContain("Alex journal evidence.");
+    expect(storage["openEducationLearnerJournal:gdev-101-live-smoke-learner"]).not.toContain("Blair journal evidence.");
+    expect(storage["openEducationLearnerJournal:blair"]).toContain("Blair journal evidence.");
+    expect(storage["openEducationLearnerJournal:blair"]).not.toContain("Alex journal evidence.");
+    expect(storage["openEducationLearnerState:gdev-101-live-smoke-learner"]).toContain('"displayName": "Alex"');
+    expect(storage["openEducationLearnerState:blair"]).toContain('"displayName": "Blair"');
+  });
+
   test("shows evidence-centered learner analytics without surveillance framing", async ({ page }) => {
     await page.getByRole("button", { name: "Progress" }).click();
     await expect(page.getByRole("heading", { name: "Evidence view" })).toBeVisible();

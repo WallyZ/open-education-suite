@@ -207,12 +207,14 @@ h3 {
   gap: 0.55rem;
 }
 
-.course-browser label {
+.course-browser label,
+.learner-profile-panel label {
   color: var(--muted);
   font-size: 0.78rem;
   font-weight: 750;
 }
 
+input,
 select {
   width: 100%;
   min-height: 2.5rem;
@@ -221,6 +223,17 @@ select {
   background: #fff;
   color: var(--ink);
   padding: 0.5rem 0.65rem;
+}
+
+.learner-profile-panel {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.profile-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
 }
 
 .objective-list {

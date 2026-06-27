@@ -58,10 +58,68 @@
             <dd id="practiceValue">Scaffolded</dd>
           </div>
           <div>
+            <dt>Pace</dt>
+            <dd id="paceValue">Balanced</dd>
+          </div>
+          <div>
+            <dt>Format</dt>
+            <dd id="formatValue">Mixed</dd>
+          </div>
+          <div>
             <dt>Access</dt>
             <dd id="accessValue">Low distraction</dd>
           </div>
         </dl>
+      </section>
+
+      <section class="rail-panel learner-profile-panel" aria-labelledby="profile-manager-title">
+        <p class="eyebrow">Profile</p>
+        <h2 id="profile-manager-title">Student profile</h2>
+        <label for="learnerProfileSelect">Active student</label>
+        <select id="learnerProfileSelect"></select>
+        <label for="learnerDisplayName">Display name</label>
+        <input id="learnerDisplayName" type="text" autocomplete="off">
+        <label for="explanationStyleSelect">Explanation</label>
+        <select id="explanationStyleSelect">
+          <option value="adaptive">Adaptive</option>
+          <option value="worked-example">Worked example</option>
+          <option value="socratic">Socratic</option>
+          <option value="visual">Visual</option>
+          <option value="concise">Concise</option>
+        </select>
+        <label for="practiceModeSelect">Practice</label>
+        <select id="practiceModeSelect">
+          <option value="guided">Guided</option>
+          <option value="scaffolded">Scaffolded</option>
+          <option value="drill">Drill</option>
+          <option value="project">Project</option>
+          <option value="oral-explanation">Oral explanation</option>
+        </select>
+        <label for="learningPaceSelect">Pace</label>
+        <select id="learningPaceSelect">
+          <option value="balanced">Balanced</option>
+          <option value="deliberate">Deliberate</option>
+          <option value="accelerated">Accelerated</option>
+        </select>
+        <label for="modalityPreferenceSelect">Format</label>
+        <select id="modalityPreferenceSelect">
+          <option value="mixed">Mixed</option>
+          <option value="text-first">Text first</option>
+          <option value="video-first">Video first</option>
+          <option value="audio-first">Audio first</option>
+          <option value="hands-on">Hands on</option>
+        </select>
+        <label for="learningGoalsInput">Goals</label>
+        <input id="learningGoalsInput" type="text" autocomplete="off">
+        <label for="accommodationsInput">Access needs</label>
+        <input id="accommodationsInput" type="text" autocomplete="off">
+        <label for="priorExperienceInput">Prior experience</label>
+        <input id="priorExperienceInput" type="text" autocomplete="off">
+        <div class="profile-actions">
+          <button class="secondary-button" type="button" id="saveProfileButton">Save profile</button>
+          <button class="secondary-button" type="button" id="createProfileButton">Create profile</button>
+        </div>
+        <p class="rail-note" id="profileLog" aria-live="polite"></p>
       </section>
 
       <section class="rail-panel course-browser" aria-labelledby="course-browser-title">

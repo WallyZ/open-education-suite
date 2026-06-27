@@ -412,6 +412,17 @@
           "target": "Learner state imported locally."
         },
         {
+          "description": "Return to the original local learner profile before checking scoped resume state",
+          "kind": "select_option",
+          "target": "#learnerProfileSelect",
+          "value": "gdev-101-live-smoke-learner"
+        },
+        {
+          "description": "Confirm the original local learner profile is active again",
+          "kind": "assert_visible_text",
+          "target": "Active student: gdev-101-live-smoke-learner."
+        },
+        {
           "description": "Reload the page to verify lecture resume persistence",
           "kind": "probe_refresh",
           "target": "/ui/learner/index.html"

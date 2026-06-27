@@ -48,4 +48,15 @@ Future offline/online sync should:
 
 ## Learner UI Local State
 
-The learner UI stores its first durable state snapshot in browser `localStorage` under `openEducationLearnerState`. The UI can save, export, import, and preview sync conflicts locally; the preview reports incoming learning events and mastery differences without mutating state. Hosted or multi-device sync must keep the same append-events-and-recompute-mastery conflict policy.
+The learner UI stores a local profile registry in browser `localStorage` under `openEducationLearnerProfiles` plus the selected learner id in `openEducationActiveLearnerId`. Each learner profile has a stable `learnerId`, display name, goals, preferences, accommodations, prior experience, and timestamps.
+
+Learner-owned records use profile-scoped keys so multiple students can use the same computer/browser without overwriting each other:
+
+- `openEducationLearnerState:<learnerId>`
+- `openEducationAssessmentEvidence:<learnerId>`
+- `openEducationLectureCheckpoints:<learnerId>`
+- `openEducationLearnerJournal:<learnerId>`
+- `openEducationLectureResume:<learnerId>`
+- `openEducationLastCourseSelection:<learnerId>`
+
+The UI can save, export, import, and preview sync conflicts locally; the preview reports incoming learning events and mastery differences without mutating state. Hosted or multi-device sync must keep the same append-events-and-recompute-mastery conflict policy and must not merge profile-scoped records without explicit learner identity mapping.

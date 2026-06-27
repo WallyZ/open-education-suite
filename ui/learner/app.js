@@ -96,6 +96,8 @@ function normalizeLearner(profile) {
   return {
     preference: formatPreference(preferences.explanationStyle || "adaptive"),
     practice: formatPreference(preferences.practiceMode || "guided"),
+    pace: formatPreference(preferences.learningPace || "balanced"),
+    format: formatPreference(preferences.modalityPreference || "mixed"),
     access: formatPreference((profile.accommodations || [])[0] || "standard")
   };
 }
@@ -324,6 +326,11 @@ let session = buildSessionFromStartSession(currentSessionOutput, currentLectureP
 const LEARNER_STATE_STORAGE_KEY = "openEducationLearnerState";
 const ASSESSMENT_STORAGE_KEY = "openEducationAssessmentEvidence";
 const COURSE_SELECTION_STORAGE_KEY = "openEducationLastCourseSelection";
+const LEARNER_PROFILE_REGISTRY_KEY = "openEducationLearnerProfiles";
+const ACTIVE_LEARNER_ID_STORAGE_KEY = "openEducationActiveLearnerId";
+const LECTURE_RESUME_STORAGE_KEY = "openEducationLectureResume";
+const LECTURE_CHECKPOINT_STORAGE_KEY = "openEducationLectureCheckpoints";
+const LEARNER_JOURNAL_STORAGE_KEY = "openEducationLearnerJournal";
 
 const state = {
   activeView: "lesson",
@@ -338,7 +345,8 @@ const state = {
   activeAssessmentMode: "multiple-choice",
   activeSourceId: "",
   activeCourseId: "",
-  selectedObjectiveId: ""
+  selectedObjectiveId: "",
+  activeLearnerId: ""
 };
 
 const elements = {
@@ -358,6 +366,18 @@ const elements = {
   focusToggle: document.getElementById("focusToggle"),
   contrastToggle: document.getElementById("contrastToggle"),
   learnerTitle: document.getElementById("learner-title"),
+  learnerProfileSelect: document.getElementById("learnerProfileSelect"),
+  learnerDisplayName: document.getElementById("learnerDisplayName"),
+  explanationStyleSelect: document.getElementById("explanationStyleSelect"),
+  practiceModeSelect: document.getElementById("practiceModeSelect"),
+  learningPaceSelect: document.getElementById("learningPaceSelect"),
+  modalityPreferenceSelect: document.getElementById("modalityPreferenceSelect"),
+  learningGoalsInput: document.getElementById("learningGoalsInput"),
+  accommodationsInput: document.getElementById("accommodationsInput"),
+  priorExperienceInput: document.getElementById("priorExperienceInput"),
+  saveProfileButton: document.getElementById("saveProfileButton"),
+  createProfileButton: document.getElementById("createProfileButton"),
+  profileLog: document.getElementById("profileLog"),
   nextActionTitle: document.getElementById("next-action-title"),
   courseTitle: document.getElementById("course-title"),
   courseSummary: document.getElementById("course-summary"),
@@ -406,6 +426,8 @@ const elements = {
   assessmentLog: document.getElementById("assessmentLog"),
   preferenceValue: document.getElementById("preferenceValue"),
   practiceValue: document.getElementById("practiceValue"),
+  paceValue: document.getElementById("paceValue"),
+  formatValue: document.getElementById("formatValue"),
   accessValue: document.getElementById("accessValue"),
   saveStateButton: document.getElementById("saveStateButton"),
   exportStateButton: document.getElementById("exportStateButton"),
@@ -447,6 +469,311 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function parseJsonOrNull(text) {
+  if (!text) {
+    return null;
+  }
+  try {
+    return JSON.parse(text);
+  }
+  catch {
+    return null;
+  }
+}
+
+function splitList(value) {
+  return String(value || "")
+    .split(/[,\n;]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function sanitizeLearnerId(value) {
+  const cleaned = String(value || "")
+    .trim()
+    .replace(/[^a-z0-9._-]+/gi, "-")
+    .replace(/^-+|-+$/g, "")
+    .toLowerCase();
+  return cleaned || "learner";
+}
+
+function displayNameForProfile(profile) {
+  return String(profile?.displayName || profile?.learnerId || "Learner").trim() || "Learner";
+}
+
+function scopedStorageKey(baseKey, learnerId = state.activeLearnerId) {
+  return `${baseKey}:${sanitizeLearnerId(learnerId || currentSessionOutput.learnerId || session.learnerId || "learner")}`;
+}
+
+function normalizeLearnerProfileRecord(profile = {}, fallbackLearnerId = "") {
+  const preferences = profile.preferences || {};
+  const learnerId = sanitizeLearnerId(
+    profile.learnerId ||
+    fallbackLearnerId ||
+    profile.displayName ||
+    currentSessionOutput.learnerId ||
+    session.learnerId
+  );
+  const now = new Date().toISOString();
+  return {
+    schemaVersion: 1,
+    learnerId,
+    displayName: displayNameForProfile({ ...profile, learnerId }),
+    goals: Array.isArray(profile.goals) && profile.goals.length > 0 ? profile.goals : [session.objectiveId],
+    constraints: Array.isArray(profile.constraints) ? profile.constraints : [],
+    preferences: {
+      explanationStyle: preferences.explanationStyle || "adaptive",
+      practiceMode: preferences.practiceMode || "guided",
+      learningPace: preferences.learningPace || "balanced",
+      modalityPreference: preferences.modalityPreference || "mixed"
+    },
+    accommodations: Array.isArray(profile.accommodations) ? profile.accommodations : [],
+    priorExperience: Array.isArray(profile.priorExperience) ? profile.priorExperience : [],
+    createdAt: profile.createdAt || now,
+    updatedAt: profile.updatedAt || now
+  };
+}
+
+function buildDefaultLearnerProfile() {
+  return normalizeLearnerProfileRecord(
+    {
+      ...(currentSessionOutput.learnerProfile || {}),
+      learnerId: currentSessionOutput.learnerId || session.learnerId,
+      displayName: currentSessionOutput.learnerProfile?.displayName ||
+        currentSessionOutput.learnerId ||
+        session.learnerId
+    },
+    currentSessionOutput.learnerId || session.learnerId
+  );
+}
+
+function readLearnerProfileRegistry() {
+  const parsed = parseJsonOrNull(localStorage.getItem(LEARNER_PROFILE_REGISTRY_KEY));
+  const defaultProfile = buildDefaultLearnerProfile();
+  const profileMap = new Map();
+
+  if (parsed && Array.isArray(parsed.profiles)) {
+    parsed.profiles.forEach((profile) => {
+      const normalized = normalizeLearnerProfileRecord(profile);
+      profileMap.set(normalized.learnerId, normalized);
+    });
+  }
+
+  if (!profileMap.has(defaultProfile.learnerId)) {
+    profileMap.set(defaultProfile.learnerId, defaultProfile);
+  }
+
+  const storedActiveLearnerId = sanitizeLearnerId(
+    localStorage.getItem(ACTIVE_LEARNER_ID_STORAGE_KEY) ||
+    parsed?.activeLearnerId ||
+    defaultProfile.learnerId
+  );
+  const activeLearnerId = profileMap.has(storedActiveLearnerId)
+    ? storedActiveLearnerId
+    : Array.from(profileMap.keys())[0];
+
+  return {
+    schemaVersion: 1,
+    activeLearnerId,
+    profiles: Array.from(profileMap.values()).sort((a, b) =>
+      displayNameForProfile(a).localeCompare(displayNameForProfile(b))
+    ),
+    updatedAt: parsed?.updatedAt || new Date().toISOString()
+  };
+}
+
+function writeLearnerProfileRegistry(registry) {
+  const normalizedProfiles = (registry.profiles || []).map((profile) => normalizeLearnerProfileRecord(profile));
+  const activeLearnerId = normalizeActiveLearnerId(registry.activeLearnerId, normalizedProfiles);
+  const payload = {
+    schemaVersion: 1,
+    activeLearnerId,
+    profiles: normalizedProfiles,
+    updatedAt: new Date().toISOString()
+  };
+  localStorage.setItem(LEARNER_PROFILE_REGISTRY_KEY, JSON.stringify(payload, null, 2));
+  localStorage.setItem(ACTIVE_LEARNER_ID_STORAGE_KEY, activeLearnerId);
+  return payload;
+}
+
+function normalizeActiveLearnerId(candidate, profiles) {
+  const ids = new Set((profiles || []).map((profile) => profile.learnerId));
+  const normalized = sanitizeLearnerId(candidate || "");
+  if (ids.has(normalized)) {
+    return normalized;
+  }
+  return profiles[0]?.learnerId || buildDefaultLearnerProfile().learnerId;
+}
+
+function getActiveLearnerProfile(registry = readLearnerProfileRegistry()) {
+  return registry.profiles.find((profile) => profile.learnerId === registry.activeLearnerId) ||
+    registry.profiles[0] ||
+    buildDefaultLearnerProfile();
+}
+
+function upsertLearnerProfile(profile, activate = true) {
+  const registry = readLearnerProfileRegistry();
+  const normalized = normalizeLearnerProfileRecord(profile);
+  const profiles = registry.profiles.filter((item) => item.learnerId !== normalized.learnerId);
+  profiles.push({ ...normalized, updatedAt: new Date().toISOString() });
+  return writeLearnerProfileRegistry({
+    ...registry,
+    activeLearnerId: activate ? normalized.learnerId : registry.activeLearnerId,
+    profiles
+  });
+}
+
+function profileForSession(profile) {
+  return {
+    learnerId: profile.learnerId,
+    displayName: profile.displayName,
+    goals: profile.goals || [],
+    constraints: profile.constraints || [],
+    preferences: profile.preferences || {},
+    accommodations: profile.accommodations || [],
+    priorExperience: profile.priorExperience || []
+  };
+}
+
+function applyLearnerProfile(profile) {
+  state.activeLearnerId = profile.learnerId;
+  currentSessionOutput.learnerId = profile.learnerId;
+  currentSessionOutput.learnerProfile = profileForSession(profile);
+  if (currentSessionOutput.action) {
+    currentSessionOutput.action.learnerId = profile.learnerId;
+  }
+  session = buildSessionFromStartSession(currentSessionOutput, currentLecturePackage);
+}
+
+function migrateLegacyLearnerStorage(learnerId) {
+  [
+    LEARNER_STATE_STORAGE_KEY,
+    ASSESSMENT_STORAGE_KEY,
+    COURSE_SELECTION_STORAGE_KEY,
+    LECTURE_RESUME_STORAGE_KEY,
+    LECTURE_CHECKPOINT_STORAGE_KEY,
+    LEARNER_JOURNAL_STORAGE_KEY
+  ].forEach((baseKey) => {
+    const scopedKey = scopedStorageKey(baseKey, learnerId);
+    const legacyValue = localStorage.getItem(baseKey);
+    if (legacyValue && !localStorage.getItem(scopedKey)) {
+      localStorage.setItem(scopedKey, legacyValue);
+    }
+  });
+}
+
+function uniqueLearnerId(baseValue, profiles) {
+  const base = sanitizeLearnerId(baseValue || "learner");
+  const used = new Set((profiles || []).map((profile) => profile.learnerId));
+  if (!used.has(base)) {
+    return base;
+  }
+  let index = 2;
+  while (used.has(`${base}-${index}`)) {
+    index += 1;
+  }
+  return `${base}-${index}`;
+}
+
+function initializeLearnerProfiles() {
+  const registry = writeLearnerProfileRegistry(readLearnerProfileRegistry());
+  const activeProfile = getActiveLearnerProfile(registry);
+  applyLearnerProfile(activeProfile);
+  migrateLegacyLearnerStorage(activeProfile.learnerId);
+  renderLearnerProfileControls(registry);
+}
+
+function renderLearnerProfileControls(registry = readLearnerProfileRegistry()) {
+  const activeProfile = getActiveLearnerProfile(registry);
+  elements.learnerProfileSelect.innerHTML = registry.profiles
+    .map((profile) => `
+      <option value="${escapeHtml(profile.learnerId)}"${profile.learnerId === activeProfile.learnerId ? " selected" : ""}>
+        ${escapeHtml(displayNameForProfile(profile))}
+      </option>
+    `)
+    .join("");
+  elements.learnerDisplayName.value = activeProfile.displayName || "";
+  elements.explanationStyleSelect.value = activeProfile.preferences?.explanationStyle || "adaptive";
+  elements.practiceModeSelect.value = activeProfile.preferences?.practiceMode || "guided";
+  elements.learningPaceSelect.value = activeProfile.preferences?.learningPace || "balanced";
+  elements.modalityPreferenceSelect.value = activeProfile.preferences?.modalityPreference || "mixed";
+  elements.learningGoalsInput.value = (activeProfile.goals || []).join(", ");
+  elements.accommodationsInput.value = (activeProfile.accommodations || []).join(", ");
+  elements.priorExperienceInput.value = (activeProfile.priorExperience || []).join(", ");
+}
+
+function collectProfileForm(existing = {}) {
+  const learnerId = existing.learnerId || sanitizeLearnerId(elements.learnerProfileSelect.value || elements.learnerDisplayName.value);
+  return normalizeLearnerProfileRecord({
+    ...existing,
+    learnerId,
+    displayName: elements.learnerDisplayName.value.trim() || learnerId,
+    goals: splitList(elements.learningGoalsInput.value),
+    constraints: existing.constraints || [],
+    preferences: {
+      ...(existing.preferences || {}),
+      explanationStyle: elements.explanationStyleSelect.value || "adaptive",
+      practiceMode: elements.practiceModeSelect.value || "guided",
+      learningPace: elements.learningPaceSelect.value || "balanced",
+      modalityPreference: elements.modalityPreferenceSelect.value || "mixed"
+    },
+    accommodations: splitList(elements.accommodationsInput.value),
+    priorExperience: splitList(elements.priorExperienceInput.value)
+  }, learnerId);
+}
+
+function saveActiveLearnerProfile() {
+  const registry = readLearnerProfileRegistry();
+  const existing = registry.profiles.find((profile) => profile.learnerId === state.activeLearnerId) || {};
+  const nextProfile = collectProfileForm(existing);
+  const updated = upsertLearnerProfile(nextProfile, true);
+  applyLearnerProfile(getActiveLearnerProfile(updated));
+  renderLearnerProfileControls(updated);
+  renderSession();
+  saveLearnerState({ silent: true });
+  elements.profileLog.textContent = `Profile saved for ${displayNameForProfile(nextProfile)}.`;
+}
+
+function createLearnerProfile() {
+  const registry = readLearnerProfileRegistry();
+  const displayName = elements.learnerDisplayName.value.trim() || "New learner";
+  const learnerId = uniqueLearnerId(displayName, registry.profiles);
+  const nextProfile = collectProfileForm({
+    learnerId,
+    displayName,
+    goals: splitList(elements.learningGoalsInput.value),
+    accommodations: splitList(elements.accommodationsInput.value),
+    priorExperience: splitList(elements.priorExperienceInput.value)
+  });
+  const updated = upsertLearnerProfile(nextProfile, true);
+  applyLearnerProfile(getActiveLearnerProfile(updated));
+  renderLearnerProfileControls(updated);
+  loadSavedLearnerState();
+  renderSession();
+  elements.profileLog.textContent = `Profile created for ${displayNameForProfile(nextProfile)}.`;
+}
+
+function switchLearnerProfile(learnerId) {
+  saveLearnerState({ silent: true });
+  const registry = writeLearnerProfileRegistry({
+    ...readLearnerProfileRegistry(),
+    activeLearnerId: learnerId
+  });
+  const activeProfile = getActiveLearnerProfile(registry);
+  applyLearnerProfile(activeProfile);
+  migrateLegacyLearnerStorage(activeProfile.learnerId);
+  renderLearnerProfileControls(registry);
+  const loaded = loadSavedLearnerState();
+  const selection = getInitialCatalogSelection();
+  if (selection) {
+    applyCatalogSelection(selection, { persist: false });
+  }
+  else if (!loaded) {
+    renderSession();
+  }
+  elements.profileLog.textContent = `Active student: ${displayNameForProfile(activeProfile)}.`;
 }
 
 function setView(view) {
@@ -653,7 +980,7 @@ function findFirstCatalogSelection() {
 
 function readStoredCourseSelection() {
   try {
-    return JSON.parse(localStorage.getItem(COURSE_SELECTION_STORAGE_KEY) || "null");
+    return JSON.parse(localStorage.getItem(scopedStorageKey(COURSE_SELECTION_STORAGE_KEY)) || "null");
   }
   catch {
     return null;
@@ -709,7 +1036,7 @@ function findActiveCatalogSelection() {
 
 function persistCourseSelection(selection) {
   localStorage.setItem(
-    COURSE_SELECTION_STORAGE_KEY,
+    scopedStorageKey(COURSE_SELECTION_STORAGE_KEY),
     JSON.stringify({
       sourceId: selection.source.sourceId,
       courseId: selection.course?.id || "",
@@ -878,7 +1205,7 @@ function applyCatalogSelection(selection, options = {}) {
   currentSessionOutput.feedback = "Selected course changed locally. Run a teaching session to produce durable adaptation evidence.";
   currentSessionOutput.assessmentItemId = "";
   currentSessionOutput.learnerProfile = currentSessionOutput.learnerProfile || {};
-  currentSessionOutput.learnerProfile.goals = [selection.objective.objectiveId];
+  currentSessionOutput.learnerProfile.goals = currentSessionOutput.learnerProfile.goals || [selection.objective.objectiveId];
 
   currentLecturePackage = getLecturePackageForSelection(selection);
   session = buildSessionFromStartSession(currentSessionOutput, currentLecturePackage);
@@ -896,7 +1223,8 @@ function applyCatalogSelection(selection, options = {}) {
 }
 
 function renderSession() {
-  elements.learnerTitle.textContent = session.learnerId;
+  const activeProfile = getActiveLearnerProfile();
+  elements.learnerTitle.textContent = activeProfile.displayName || session.learnerId;
   elements.nextActionTitle.textContent = session.action.title;
   elements.teacherTitle.textContent = `${getObjectiveLabel(session.objectiveId)} warm-up`;
   elements.courseTitle.textContent = session.source.title;
@@ -905,7 +1233,10 @@ function renderSession() {
   elements.sourcePill.textContent = getCourseCode(session.objectiveId) || session.source.title;
   elements.preferenceValue.textContent = session.learner.preference;
   elements.practiceValue.textContent = session.learner.practice;
+  elements.paceValue.textContent = session.learner.pace;
+  elements.formatValue.textContent = session.learner.format;
   elements.accessValue.textContent = session.learner.access;
+  renderLearnerProfileControls();
   renderThread();
   renderMastery();
   renderLearnerAnalytics();
@@ -1125,9 +1456,10 @@ function saveAssessmentEvidence() {
     elements.assessmentLog.textContent = feedbackText("assessmentEmpty", "Assessment response is empty.");
     return;
   }
-  const saved = JSON.parse(localStorage.getItem(ASSESSMENT_STORAGE_KEY) || "[]");
+  const saved = JSON.parse(localStorage.getItem(scopedStorageKey(ASSESSMENT_STORAGE_KEY)) || "[]");
   saved.unshift({
     at: new Date().toISOString(),
+    learnerId: session.learnerId,
     objectiveId: session.objectiveId,
     sourceRepo: session.source.sourceRepo,
     sourcePath: session.source.sourcePath,
@@ -1136,7 +1468,7 @@ function saveAssessmentEvidence() {
     response,
     masteryImpact: "proposal-only"
   });
-  localStorage.setItem(ASSESSMENT_STORAGE_KEY, JSON.stringify(saved.slice(0, 20)));
+  localStorage.setItem(scopedStorageKey(ASSESSMENT_STORAGE_KEY), JSON.stringify(saved.slice(0, 20)));
   elements.assessmentLog.textContent = feedbackText("assessmentSaved", "Assessment response saved locally as an evidence proposal.");
 }
 
@@ -1149,8 +1481,9 @@ function formatTime(totalSeconds) {
 
 function saveLectureResume() {
   localStorage.setItem(
-    "openEducationLectureResume",
+    scopedStorageKey(LECTURE_RESUME_STORAGE_KEY),
     JSON.stringify({
+      learnerId: session.learnerId,
       packageId: session.lecture.packageId,
       positionSeconds: state.lecturePosition
     })
@@ -1463,7 +1796,7 @@ function renderLecture() {
   elements.lectureTranscript.textContent = session.lecture.transcript;
   elements.lectureProgress.max = String(session.lecture.durationSeconds);
 
-  const savedResume = JSON.parse(localStorage.getItem("openEducationLectureResume") || "null");
+  const savedResume = JSON.parse(localStorage.getItem(scopedStorageKey(LECTURE_RESUME_STORAGE_KEY)) || "null");
   if (savedResume && savedResume.packageId === session.lecture.packageId) {
     state.lecturePosition = Number(savedResume.positionSeconds) || 0;
   }
@@ -1561,7 +1894,7 @@ function appendCheckpointEvidenceToLearnerState(evidence) {
     evidenceSource: "lecture-checkpoint",
     reason: `lecture-checkpoint:${evidence.packageId}:${evidence.checkpointId}:proposal-only`
   });
-  localStorage.setItem(LEARNER_STATE_STORAGE_KEY, JSON.stringify(snapshot, null, 2));
+  localStorage.setItem(scopedStorageKey(LEARNER_STATE_STORAGE_KEY), JSON.stringify(snapshot, null, 2));
 }
 
 function saveCheckpoint(checkpointId) {
@@ -1573,11 +1906,11 @@ function saveCheckpoint(checkpointId) {
     return;
   }
 
-  const saved = JSON.parse(localStorage.getItem("openEducationLectureCheckpoints") || "[]");
+  const saved = JSON.parse(localStorage.getItem(scopedStorageKey(LECTURE_CHECKPOINT_STORAGE_KEY)) || "[]");
   const evidence = buildCheckpointEvidence(checkpoint, text);
   saved.unshift(evidence);
   appendCheckpointEvidenceToLearnerState(evidence);
-  localStorage.setItem("openEducationLectureCheckpoints", JSON.stringify(saved.slice(0, 20)));
+  localStorage.setItem(scopedStorageKey(LECTURE_CHECKPOINT_STORAGE_KEY), JSON.stringify(saved.slice(0, 20)));
   input.value = "";
   elements.checkpointLog.textContent = feedbackText("checkpointSaved", "Checkpoint saved to learner state as an evidence proposal.");
 }
@@ -1588,19 +1921,20 @@ function persistJournal() {
     elements.journalLog.textContent = feedbackText("journalEmpty", "Journal is empty.");
     return;
   }
-  const saved = JSON.parse(localStorage.getItem("openEducationLearnerJournal") || "[]");
+  const saved = JSON.parse(localStorage.getItem(scopedStorageKey(LEARNER_JOURNAL_STORAGE_KEY)) || "[]");
   saved.unshift({
     at: new Date().toISOString(),
+    learnerId: session.learnerId,
     objectiveId: session.objectiveId,
     text
   });
-  localStorage.setItem("openEducationLearnerJournal", JSON.stringify(saved.slice(0, 10)));
+  localStorage.setItem(scopedStorageKey(LEARNER_JOURNAL_STORAGE_KEY), JSON.stringify(saved.slice(0, 10)));
   elements.journalEntry.value = "";
   elements.journalLog.textContent = feedbackText("journalSaved", "Journal saved locally.");
 }
 
 function getStoredLearnerState() {
-  const raw = localStorage.getItem(LEARNER_STATE_STORAGE_KEY);
+  const raw = localStorage.getItem(scopedStorageKey(LEARNER_STATE_STORAGE_KEY));
   if (!raw) {
     return null;
   }
@@ -1654,7 +1988,7 @@ function readSavedLearnerState() {
 }
 
 function loadSavedLearnerState() {
-  const raw = localStorage.getItem(LEARNER_STATE_STORAGE_KEY);
+  const raw = localStorage.getItem(scopedStorageKey(LEARNER_STATE_STORAGE_KEY));
   if (!raw) {
     return false;
   }
@@ -1675,7 +2009,12 @@ function parseLearnerStateText(text) {
   if (!candidate || candidate.schemaVersion !== 1 || !candidate.learnerId || !candidate.profile) {
     throw new Error("Learner state import must use schemaVersion 1 and include learnerId/profile.");
   }
-  return candidate;
+  const learnerId = sanitizeLearnerId(candidate.learnerId);
+  return {
+    ...candidate,
+    learnerId,
+    profile: profileForSession(normalizeLearnerProfileRecord(candidate.profile, learnerId))
+  };
 }
 
 function applyLearnerStateSnapshot(snapshot) {
@@ -1690,10 +2029,12 @@ function applyLearnerStateSnapshot(snapshot) {
   renderSession();
 }
 
-function saveLearnerState() {
+function saveLearnerState(options = {}) {
   const snapshot = buildLearnerStateSnapshot();
-  localStorage.setItem(LEARNER_STATE_STORAGE_KEY, JSON.stringify(snapshot, null, 2));
-  elements.stateSyncLog.textContent = feedbackText("stateSaved", "Learner state saved locally.");
+  localStorage.setItem(scopedStorageKey(LEARNER_STATE_STORAGE_KEY), JSON.stringify(snapshot, null, 2));
+  if (!options.silent) {
+    elements.stateSyncLog.textContent = feedbackText("stateSaved", "Learner state saved locally.");
+  }
 }
 
 function exportLearnerState() {
@@ -1705,7 +2046,11 @@ function exportLearnerState() {
 function importLearnerState() {
   try {
     const snapshot = parseLearnerStateText(elements.stateExchange.value.trim());
-    localStorage.setItem(LEARNER_STATE_STORAGE_KEY, JSON.stringify(snapshot, null, 2));
+    const importedProfile = normalizeLearnerProfileRecord(snapshot.profile, snapshot.learnerId);
+    upsertLearnerProfile(importedProfile, true);
+    applyLearnerProfile(importedProfile);
+    localStorage.setItem(scopedStorageKey(LEARNER_STATE_STORAGE_KEY, snapshot.learnerId), JSON.stringify(snapshot, null, 2));
+    renderLearnerProfileControls();
     elements.stateSyncLog.textContent = feedbackText("stateImported", "Learner state imported locally.");
     try {
       applyLearnerStateSnapshot(snapshot);
@@ -1936,6 +2281,11 @@ function initialize() {
         `Active local lesson: ${button.textContent.trim()}. Last-used course is saved in this browser.`;
     }
   });
+  elements.learnerProfileSelect.addEventListener("change", () => {
+    switchLearnerProfile(elements.learnerProfileSelect.value);
+  });
+  elements.saveProfileButton.addEventListener("click", saveActiveLearnerProfile);
+  elements.createProfileButton.addEventListener("click", createLearnerProfile);
   elements.saveJournalButton.addEventListener("click", persistJournal);
   elements.saveStateButton.addEventListener("click", saveLearnerState);
   elements.exportStateButton.addEventListener("click", exportLearnerState);
@@ -1944,6 +2294,7 @@ function initialize() {
   elements.focusToggle.addEventListener("click", () => togglePressed(elements.focusToggle, "is-focus"));
   elements.contrastToggle.addEventListener("click", () => togglePressed(elements.contrastToggle, "is-high-contrast"));
 
+  initializeLearnerProfiles();
   const learnerStateLoaded = loadSavedLearnerState();
   const initialSelection = getInitialCatalogSelection();
   if (initialSelection) {
