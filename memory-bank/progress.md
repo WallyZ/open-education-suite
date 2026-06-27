@@ -1,21 +1,25 @@
 # Progress
 
-- Last updated: 2026-06-05
-
 ## Completed
-- Installed repo-kit standards assets in existing-repo safe mode.
-- Tailored `.repo-kit/exchange.json`, cross-repo exchange docs, logging docs, release checklist, repo health assessment, and agent compatibility docs.
-- Added stable `ms:id` audit tags to historical completed TODO items.
-- Added `docs/todo/00_repo_bootstrap.md` with completed adoption evidence and three agent-ready follow-up TODOs.
-- Wired TODO format, ready-queue, and memory-bank checks into `scripts/codex-verify.ps1`.
-- Fixed `scripts/status/next-work.ps1` to scan all split TODO markdown files, including `00_repo_bootstrap.md`.
-- Synced `memory-bank/repoKitCatalog.md` from `F:\dev\00-repo-kit`.
-- Verification passed with `pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\codex-verify.ps1`.
+- 2026-06-27: [6e174d7] Refresh learner catalog for relationship practicum
+- 2026-06-27: [d9c20f1] Refresh learner catalog for relationship delivery guide
+- 2026-06-27: [fcdbda1] Refresh learner catalog for MRS 303
+- 2026-06-27: TODO status checked=8 (0), unchecked=3 (0).
 
 ## In progress
-- No implementation work in progress after this standards wave.
+- Review docs terminology lint for education-suite vocabulary [PH2]
+- Review security and supply-chain scanner profiles for local education data boundaries [PH2]
+- Add hosted workflow callers only if this repo needs GitHub CI enforcement [PH2]
 
 ## Next
-- Review docs terminology lint for education-suite vocabulary [PH2].
-- Review security and supply-chain scanner profiles for local education data boundaries [PH2].
-- Add hosted workflow callers only if this repo needs GitHub CI enforcement [PH2].
+- Review docs terminology lint for education-suite vocabulary [PH2]
+- Review security and supply-chain scanner profiles for local education data boundaries [PH2]
+- Add hosted workflow callers only if this repo needs GitHub CI enforcement [PH2]
+
+## Verification notes
+- Refresh script: `scripts/memory/refresh_memory_bank.ps1`
+- Inputs: todo=docs/TODO.md, todo_root=docs/todo, commits=8, profile=32k
+- Profile resolution: auto-detected local runtime from OLLAMA_*
+- TODO source: split
+- Generated on: 2026-06-27
+

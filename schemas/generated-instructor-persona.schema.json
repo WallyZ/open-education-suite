@@ -1,0 +1,230 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-education-suite.local/schemas/generated-instructor-persona.schema.json",
+  "title": "Open Education Suite Generated Instructor Persona",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schemaVersion",
+    "personaVersion",
+    "personaId",
+    "status",
+    "role",
+    "displayName",
+    "gender",
+    "ageRange",
+    "presentationStyle",
+    "disclosureLanguage",
+    "voiceConsentRule",
+    "likenessConsentRule",
+    "allowedConsentValues",
+    "toneRequirements",
+    "prohibitedUses",
+    "learnerFacingTransparency",
+    "voice",
+    "likeness",
+    "mannerisms",
+    "teachingStyle",
+    "operatorReview"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "personaVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "personaId": {
+      "type": "string",
+      "pattern": "^oes-[a-z0-9-]+-v[0-9]+$"
+    },
+    "status": {
+      "enum": [
+        "approved",
+        "candidate",
+        "blocked",
+        "deprecated"
+      ]
+    },
+    "role": {
+      "type": "string"
+    },
+    "displayName": {
+      "type": "string"
+    },
+    "gender": {
+      "enum": [
+        "male",
+        "female",
+        "neutral",
+        "nonbinary"
+      ]
+    },
+    "ageRange": {
+      "type": "string"
+    },
+    "presentationStyle": {
+      "type": "string"
+    },
+    "disclosureLanguage": {
+      "type": "string"
+    },
+    "voiceConsentRule": {
+      "type": "string"
+    },
+    "likenessConsentRule": {
+      "type": "string"
+    },
+    "allowedConsentValues": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "enum": [
+          "synthetic-project-owned",
+          "explicit-consent-recorded"
+        ]
+      }
+    },
+    "toneRequirements": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "string"
+      }
+    },
+    "prohibitedUses": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "string"
+      }
+    },
+    "learnerFacingTransparency": {
+      "type": "string"
+    },
+    "voice": {
+      "type": "object",
+      "required": [
+        "voiceProfileId",
+        "voiceConsent",
+        "voiceMatchPolicy",
+        "targetInstructorGender",
+        "targetVoiceGender",
+        "targetVoiceRegister",
+        "emotionTargets",
+        "providerRefs"
+      ],
+      "properties": {
+        "voiceProfileId": {
+          "type": "string"
+        },
+        "voiceConsent": {
+          "enum": [
+            "synthetic-project-owned",
+            "explicit-consent-recorded"
+          ]
+        },
+        "voiceMatchPolicy": {
+          "const": "match-generated-instructor-gender"
+        },
+        "targetInstructorGender": {
+          "enum": [
+            "male",
+            "female",
+            "neutral",
+            "nonbinary"
+          ]
+        },
+        "targetVoiceGender": {
+          "enum": [
+            "masculine",
+            "feminine",
+            "neutral"
+          ]
+        },
+        "targetVoiceRegister": {
+          "type": "string"
+        },
+        "emotionTargets": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "string"
+          }
+        },
+        "providerRefs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "likeness": {
+      "type": "object",
+      "required": [
+        "likenessProfileId",
+        "likenessConsent",
+        "realPersonClone",
+        "avatarSeedRef",
+        "visualStyle",
+        "providerRefs"
+      ],
+      "properties": {
+        "likenessProfileId": {
+          "type": "string"
+        },
+        "likenessConsent": {
+          "enum": [
+            "synthetic-project-owned",
+            "explicit-consent-recorded"
+          ]
+        },
+        "realPersonClone": {
+          "const": false
+        },
+        "avatarSeedRef": {
+          "type": "string"
+        },
+        "visualStyle": {
+          "type": "string"
+        },
+        "providerRefs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "mannerisms": {
+      "type": "object",
+      "required": [
+        "gaze",
+        "gesture",
+        "boardPosture",
+        "pace",
+        "emotionalRange"
+      ]
+    },
+    "teachingStyle": {
+      "type": "object",
+      "required": [
+        "toneRequirements",
+        "subjectFit",
+        "accessibilityDefaults",
+        "boardInteractionDefaults"
+      ]
+    },
+    "operatorReview": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

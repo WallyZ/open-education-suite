@@ -14,6 +14,18 @@ Permanent technical decisions for `open-education-suite`.
 - Rationale: Subject study plans, resources, generated lectures, and domain-specific course content belong in sibling `open-education-*` repos so the core platform remains reusable.
 - Verification: `scripts/codex-verify.ps1` rejects domain study plans and resources in the core repo and verifies declared sibling content sources through `content-sources.json`.
 
+## Keep the program-pack template contract in the suite
+
+- Decision: `open-education-suite` owns the reusable program-pack standard, while each subject repo owns its concrete template copies, schemas, benchmarks, resources, assessments, rubrics, and content.
+- Rationale: The standard is part of the central interface and should improve every course. A separate template repo would add coordination overhead before the contract stabilizes.
+- Verification: Subject repos register through `content-repo.json`; the suite scanner imports adapter Markdown and generated lecture manifests without copying domain course bodies into the suite.
+
+## Split reusable generated-instructor assets from subject lectures
+
+- Decision: A future sibling `open-education-teacher` repo should own reusable generated-instructor persona and media-model assets, while subject repos own final rendered lecture packages.
+- Rationale: Instructor identity, voice profiles, mannerisms, age/style variants, and avatar generation settings should be reusable across subjects without mixing with course content or platform code.
+- Verification: Lecture manifests reference approved persona and provider contracts; rendered lecture media remains under the owning subject repo.
+
 ## Preserve essay-first high-rigor assessment
 
 - Decision: Essays are the default high-rigor summative assessment type; quizzes remain diagnostic, retrieval, and misconception-check tools.

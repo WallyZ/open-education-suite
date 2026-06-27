@@ -65,14 +65,25 @@
           "target": "Programming Fundamentals"
         },
         {
-          "description": "Inspect a course objective without mutating the learner session",
+          "description": "Select a course objective as the active local lesson",
           "kind": "click",
           "target": "[data-objective-id=\"game-development:objectives/course/gdev-102/programming-fundamentals\"]"
         },
         {
-          "description": "Confirm objective selection is navigation-only",
+          "description": "Confirm objective selection updates the active local lesson",
           "kind": "assert_visible_text",
-          "target": "Objective selected for inspection: Programming Fundamentals"
+          "target": "Active local lesson: Programming Fundamentals. Last-used course is saved in this browser."
+        },
+        {
+          "description": "Return to the rendered GDEV-101 lecture course",
+          "kind": "select_option",
+          "target": "#courseSelect",
+          "value": "game-development:study-plans/courses/GDEV-101-game-design-foundations.md"
+        },
+        {
+          "description": "Confirm rendered lecture course is active again",
+          "kind": "assert_visible_text",
+          "target": "Start GDEV-101 design vocabulary"
         },
         {
           "description": "Run the deterministic teaching turn through the local bridge",

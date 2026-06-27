@@ -6,42 +6,70 @@
       "title": "Open Education Cybersecurity",
       "localPath": "../open-education-cybersecurity",
       "contentManifest": "content-repo.json",
-      "status": "seeded-empty"
+      "status": "complete-delivery-ready"
+    },
+    {
+      "id": "clear-reasoning",
+      "title": "Open Education Clear Reasoning",
+      "localPath": "../open-education-clear-reasoning",
+      "contentManifest": "content-repo.json",
+      "status": "complete-delivery-ready"
     },
     {
       "id": "data-science",
       "title": "Open Education Data Science",
       "localPath": "../open-education-data-science",
       "contentManifest": "content-repo.json",
-      "status": "seeded-empty"
+      "status": "complete-delivery-ready"
     },
     {
       "id": "game-development",
       "title": "Open Education Game Development",
       "localPath": "../open-education-game-development",
       "contentManifest": "content-repo.json",
-      "status": "seeded-from-suite"
+      "status": "complete-delivery-ready"
     },
     {
       "id": "mens-relationship-skills",
       "title": "Open Education Men's Relationship Skills",
       "localPath": "../open-education-mens-relationship-skills",
       "contentManifest": "content-repo.json",
-      "status": "seeded-course-outline"
+      "status": "complete-delivery-ready"
     },
     {
       "id": "performing-arts",
       "title": "Open Education Performing Arts",
       "localPath": "../open-education-performing-arts",
       "contentManifest": "content-repo.json",
-      "status": "seeded-performance-curriculum"
+      "status": "complete-delivery-ready"
     },
     {
       "id": "software-development",
       "title": "Open Education Software Development",
       "localPath": "../open-education-software-development",
       "contentManifest": "content-repo.json",
-      "status": "seeded-from-suite"
+      "status": "complete-delivery-ready"
+    },
+    {
+      "id": "american-history",
+      "title": "Open Education American History",
+      "localPath": "../open-education-american-history",
+      "contentManifest": "content-repo.json",
+      "status": "complete-delivery-ready"
+    },
+    {
+      "id": "leadership",
+      "title": "Open Education Leadership",
+      "localPath": "../open-education-leadership",
+      "contentManifest": "content-repo.json",
+      "status": "complete-delivery-ready"
+    },
+    {
+      "id": "comedy",
+      "title": "Open Education Comedy",
+      "localPath": "../open-education-comedy",
+      "contentManifest": "content-repo.json",
+      "status": "complete-delivery-ready"
     }
   ]
 }

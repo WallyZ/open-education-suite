@@ -31,6 +31,9 @@
     "learner_state.read",
     "next_action.read",
     "assessment.read",
+    "offline_knowledge.lookup",
+    "offline_knowledge.write_note",
+    "ai_runtime.select",
     "state_update.propose"
   ]
 }

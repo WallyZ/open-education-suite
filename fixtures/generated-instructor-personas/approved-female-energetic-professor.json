@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
   "personaVersion": "1.0.0",
-  "personaId": "oes-default-generated-instructor-v1",
+  "personaId": "oes-female-energetic-professor-v1",
   "status": "approved",
-  "role": "default-generated-instructor",
-  "displayName": "Default Generated Instructor",
-  "gender": "male",
+  "role": "generated-instructor",
+  "displayName": "Energetic Studio Professor",
+  "gender": "female",
   "ageRange": "adult",
   "presentationStyle": "realistic-synthetic-instructor-at-chalkboard",
   "disclosureLanguage": "This lecture uses an original generated instructor and synthetic voice for an Open Education Suite lesson.",
@@ -34,16 +34,16 @@
   ],
   "learnerFacingTransparency": "Show the generated instructor disclosure near lecture playback, transcript, and package metadata.",
   "voice": {
-    "voiceProfileId": "oes-voice-masculine-calm-professor-v1",
+    "voiceProfileId": "oes-voice-feminine-energetic-professor-v1",
     "voiceConsent": "synthetic-project-owned",
     "voiceMatchPolicy": "match-generated-instructor-gender",
-    "targetInstructorGender": "male",
-    "targetVoiceGender": "masculine",
-    "targetVoiceRegister": "lower adult register with deeper resonance",
+    "targetInstructorGender": "female",
+    "targetVoiceGender": "feminine",
+    "targetVoiceRegister": "warm adult register with natural classroom energy",
     "emotionTargets": [
-      "calm confidence during definitions",
-      "encouraging precision during active recall",
-      "measured seriousness during misconception correction"
+      "bright orientation at the start of new material",
+      "patient explanation during worked examples",
+      "steady confidence during synthesis questions"
     ],
     "providerRefs": [
       "local-comfyui-voice-candidate",
@@ -51,22 +51,21 @@
     ]
   },
   "likeness": {
-    "likenessProfileId": "oes-avatar-realistic-male-board-instructor-v1",
+    "likenessProfileId": "oes-avatar-realistic-female-board-instructor-v1",
     "likenessConsent": "synthetic-project-owned",
     "realPersonClone": false,
     "avatarSeedRef": "project-owned-synthetic-seed",
-    "visualStyle": "front-row university classroom with instructor beside an empty board",
+    "visualStyle": "front-row classroom instructor with readable board space",
     "providerRefs": [
-      "local-comfyui-avatar-candidate",
-      "cloud-avatar-render-candidate"
+      "local-comfyui-avatar-candidate"
     ]
   },
   "mannerisms": {
-    "gaze": "Looks at the learner during direct explanation and back to the board when writing.",
-    "gesture": "Uses restrained pointing, open-hand emphasis, and no distracting repetitive motion.",
-    "boardPosture": "Starts to one side of the board and avoids covering high-priority board content.",
-    "pace": "Speaks at a deliberate lecture pace with active-recall pauses and clear resume cues.",
-    "emotionalRange": "Warm, serious, and encouraging without theatrical exaggeration."
+    "gaze": "Maintains learner eye contact before turning to write on the board.",
+    "gesture": "Uses concise pointing and light hand emphasis.",
+    "boardPosture": "Works from the side of the board and leaves room for close-up crops.",
+    "pace": "Lively but measured enough for note-taking.",
+    "emotionalRange": "Encouraging, thoughtful, and precise."
   },
   "teachingStyle": {
     "toneRequirements": [
@@ -79,31 +78,27 @@
       "respectful of learner agency"
     ],
     "subjectFit": [
-      "content-agnostic baseline",
-      "works for game development and humanities pilots",
-      "requires subject-owned examples and board visuals"
+      "studio critique",
+      "design foundations",
+      "humanities discussion"
     ],
     "accessibilityDefaults": [
       "captions",
       "transcript",
-      "board close-up option",
-      "pause overlay text"
+      "pause overlay",
+      "board close-up"
     ],
     "boardInteractionDefaults": [
-      "empty board at scene start",
-      "board-local writing rather than full-screen overlay text",
-      "close-up available for dense diagrams"
+      "board-local writing",
+      "highlighted examples",
+      "clear diagram lanes"
     ]
   },
   "operatorReview": [
     "Confirm personaId matches an approved persona policy.",
     "Confirm the generated instructor disclosure is learner-visible.",
     "Confirm voice and likeness consent values are approved.",
-    "Confirm tone follows the stated requirements.",
+    "Confirm feminine voice register matches the female instructor profile.",
     "Confirm no real person is cloned or impersonated."
-  ],
-  "teacherRepoReadiness": [
-    "Schema, approved fixtures, blocked fixtures, and verifier gate are stable enough to move reusable persona assets into open-education-teacher.",
-    "The suite keeps the selection and safety contract; subject repos keep rendered lecture packages and subject visuals."
   ]
 }

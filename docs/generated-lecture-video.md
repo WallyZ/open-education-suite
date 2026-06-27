@@ -118,6 +118,22 @@ The default policy requires:
 
 The persona policy is checked by `scripts/quality/check-lecture-video.ps1` against the deterministic fixture so generated instructor disclosure, consent, and tone rules cannot drift silently.
 
+## Persona Contract Stabilization
+
+`schemas/generated-instructor-persona.schema.json` is the stable suite-owned contract for generated instructors. It covers persona identity, semantic version, status, disclosure, voice and likeness consent, gender/voice matching, likeness clone safety, mannerisms, teaching style, accessibility defaults, board interaction defaults, and operator review requirements.
+
+Approved persona fixtures live under `fixtures/generated-instructor-personas/`. The current approved set includes male, female, and neutral instructor profiles with explicit voice register, emotion targets, board posture, provider references, and consent-safe likeness metadata. Blocked fixtures live under `fixtures/generated-instructor-personas/blocked/` and prove the contract rejects real-person cloning, missing disclosure, unapproved consent, and voice/gender mismatch.
+
+`scripts/quality/check-generated-instructor-persona.ps1 -SelfTest` is the dedicated persona contract gate. It validates the default persona, approved fixtures, blocked fixtures, the GDEV lecture package reference, and the American History pilot persona reference. The suite verifier runs this gate before the broader lecture-video check so persona drift is caught even if a lecture package has not changed.
+
+This is the split boundary for a future `open-education-teacher` repo: reusable voice profiles, avatar seeds, mannerism profiles, approved samples, consent records, and provider routing hints can move there once the schema remains stable. The suite should continue to own the schema, selector contract, learner-facing disclosure rules, and verifier gate. Subject repos should continue to own rendered lectures, transcripts, captions, board visuals, checksums, and subject-specific persona references.
+
+## Teacher Media Repository Boundary
+
+Reusable generated-instructor assets should move into a sibling `open-education-teacher` repo once the persona contract stabilizes. That repo should own project-approved persona profiles, voice profile references, image and avatar seeds, mannerism profiles, age/style variants, gender/voice matching rules, consent records, provider routing hints, and QA samples.
+
+The suite should own only the schema, selection contract, safety gates, and learner UI behavior. Subject repos should own the finished lecture packages, transcripts, captions, checksums, rendered media metadata, and subject-specific board visuals. This keeps reusable teacher models separate from course content while still letting every generated lecture reference an approved instructor profile.
+
 ## Instructor Realism Contract
 
 Each lecture package carries a `generatedInstructor.realismProfile` so realistic rendering has a deterministic target before a provider is plugged in. The profile must name the presentation style, render-readiness state, visual fidelity targets, movement plan, and board interaction plan.

@@ -29,6 +29,7 @@ This is the index for platform backlog items. Each detailed backlog file lives u
 - [TODO_18_courseware_source_review_and_course_design.md](todo/TODO_18_courseware_source_review_and_course_design.md) - MIT OCW and similar source-course review, course authoring patterns, and source-link quality gates
 - [TODO_19_publish_grade_classroom_video_realism.md](todo/TODO_19_publish_grade_classroom_video_realism.md) - publish-grade instructor performance, gesture planning, classroom realism, chalk realism, visual QA, and shot direction
 - [TODO_20_information_presentation_strategy.md](todo/TODO_20_information_presentation_strategy.md) - information-type and subject-aware presentation patterns, modality selection, accessibility, and quality gates
+- [TODO_21_generated_instructor_persona_contract.md](todo/TODO_21_generated_instructor_persona_contract.md) - stable generated-instructor persona schema, approved and blocked fixtures, pilot references, and verifier gate
 
 ## Projects Reviewed for Ideas
 

@@ -1,7 +1,7 @@
 # Solution Harvest
 
 ## Metadata
-- Last updated: 2026-06-05
+- Last updated: 2026-06-21
 - Repo: open-education-suite
 - Privacy default: internal
 
@@ -28,6 +28,11 @@
 ### Content package generator
 - Local path: `scripts/ingestion/build-content-package.ps1`
 - Reuse value: deterministic package build with source provenance and no source repo mutation.
+
+### Program-pack template contract
+- Local path: `docs/program-pack-template.md`
+- Reuse value: reusable world-class subject pack standard with benchmark, competency, assessment, rubric, provenance, and maintenance requirements.
+- Privacy: public-safe after replacing local paths with repo-relative examples.
 
 ## Promoted to Repo-Kit
 - None yet. Review candidates through `.repo-kit/exchange.json` before upstreaming.

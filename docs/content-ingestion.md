@@ -25,6 +25,12 @@ generated-lectures/   # optional subject-owned generated lecture packages
 
 The manifest should identify the repo, declare its platform role, and list the folders the suite may ingest.
 
+## Program Pack Template Contract
+
+World-class subject packs should follow the program-pack standard in `docs/program-pack-template.md`: benchmark dossier, competency map, diagnostics, pathways, resources, assessments, rubrics, teaching supports, provenance, quality record, and maintenance plan. The suite owns that standard as a content-agnostic interface. Subject repos own the concrete pack files and any local template copies.
+
+When a subject pack uses richer YAML/JSON structures than the scanner imports directly, it should add suite adapter Markdown under `study-plans/`, `study-plans/courses/`, `resources/`, `objectives/`, `assessments/`, and `misconceptions/`. The adapter should summarize and link to the pack source of truth instead of duplicating the full course body.
+
 ## First Ingestion Target
 
 The read-only scanner is:

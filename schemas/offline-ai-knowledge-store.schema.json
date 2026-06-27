@@ -1,0 +1,155 @@
+{
+  "schemaVersion": 1,
+  "title": "Open Education Offline AI Knowledge Store",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "storeId",
+    "ownerRepoId",
+    "role",
+    "title",
+    "sourceRecordsPath",
+    "runtimeProfiles",
+    "recordTypes",
+    "privacyBoundary",
+    "writebackPolicy"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "open-education/offline-ai-knowledge-store/v1"
+    },
+    "storeId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]*$"
+    },
+    "ownerRepoId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]*$"
+    },
+    "role": {
+      "enum": [
+        "content-knowledge-seed",
+        "suite-runtime-template"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string"
+    },
+    "sourceRecordsPath": {
+      "type": "string",
+      "pattern": "^[^:]+$"
+    },
+    "preferredRuntimeProfiles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "runtimeProfiles": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "provider",
+          "apiBase",
+          "chatEndpoint",
+          "embeddingsEndpoint",
+          "networkScope"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "provider": {
+            "enum": [
+              "ollama",
+              "lm-studio"
+            ]
+          },
+          "apiBase": {
+            "type": "string"
+          },
+          "chatEndpoint": {
+            "type": "string"
+          },
+          "embeddingsEndpoint": {
+            "type": "string"
+          },
+          "networkScope": {
+            "const": "localhost-only"
+          },
+          "defaultModelPolicy": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "recordTypes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "privacyBoundary": {
+      "type": "object",
+      "required": [
+        "containsLearnerPrivateData",
+        "containsCredentials",
+        "containsPrivateNotes",
+        "containsEmbeddings",
+        "containsCopiedSourceText",
+        "allowsLocalPrivateOverlays"
+      ],
+      "properties": {
+        "containsLearnerPrivateData": {
+          "const": false
+        },
+        "containsCredentials": {
+          "const": false
+        },
+        "containsPrivateNotes": {
+          "const": false
+        },
+        "containsEmbeddings": {
+          "const": false
+        },
+        "containsCopiedSourceText": {
+          "const": false
+        },
+        "allowsLocalPrivateOverlays": {
+          "const": true
+        }
+      }
+    },
+    "writebackPolicy": {
+      "type": "object",
+      "required": [
+        "seedRecordsAreReadOnly",
+        "privateOverlaysStayLocal",
+        "publicPromotionRequiresReview",
+        "durableLearnerStateRequiresCheckedCode"
+      ],
+      "properties": {
+        "seedRecordsAreReadOnly": {
+          "const": true
+        },
+        "privateOverlaysStayLocal": {
+          "const": true
+        },
+        "publicPromotionRequiresReview": {
+          "const": true
+        },
+        "durableLearnerStateRequiresCheckedCode": {
+          "const": true
+        }
+      }
+    }
+  }
+}

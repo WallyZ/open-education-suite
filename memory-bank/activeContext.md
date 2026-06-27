@@ -1,23 +1,22 @@
 # Active Context
 
-Last updated: 2026-06-05
+Last updated: 2026-06-27
 
 ## Current objective
-- Repo-kit standards adoption for `open-education-suite` is complete and verified.
-- Next open TODO: Review docs terminology lint for education-suite vocabulary [PH2].
+- Review docs terminology lint for education-suite vocabulary [PH2]
 
 ## Active wave/task
-- Close out and commit the repo-kit adoption wave.
+- Primary TODO target: Review docs terminology lint for education-suite vocabulary [PH2]
 
 ## Allowed scope
-- Standards adoption files, TODO lifecycle, memory-bank, exchange, logging/lint docs, and verifier/status helper wiring.
+- Files directly related to the active wave and required verification updates.
+- `memory-bank/activeContext.md` and `memory-bank/progress.md` maintenance.
 
 ## Risks/blockers
-- Do not replace platform-specific verifier checks with generic repo-kit checks.
-- Do not add subject content, generated media, learner data, or QA Live harness code to this repo.
-- Hosted CI/workflow changes remain owner-gated.
+- No major blockers captured during refresh.
 
 ## Next 3 actions
-- Review docs terminology lint for education-suite vocabulary [PH2].
-- Review security and supply-chain scanner profiles for local education data boundaries [PH2].
-- Decide whether hosted workflow callers are needed [PH2].
+- Review docs terminology lint for education-suite vocabulary [PH2]
+- Review security and supply-chain scanner profiles for local education data boundaries [PH2]
+- Add hosted workflow callers only if this repo needs GitHub CI enforcement [PH2]
+

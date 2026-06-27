@@ -9,28 +9,40 @@ const learnerViews = ["lesson", "lecture", "progress", "assessment", "handoff", 
 test.describe("learner workspace", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(uiUrl);
+    await page.evaluate(() => localStorage.clear());
+    await page.reload();
   });
 
-  test("loads the GDEV-101 learner workspace with source provenance", async ({ page }) => {
+  test("loads the first catalog course when no course was previously selected", async ({ page }) => {
     await expect(page.getByRole("heading", { name: "Learner Workspace" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Start GDEV-101 design vocabulary" })).toBeVisible();
-    await expect(page.locator("#objectiveId")).toHaveText("game-development:objectives/course/gdev-101/design-vocabulary");
-    await expect(page.getByRole("heading", { name: "GDEV-101 Game Design Foundations" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Start GDEV-010 toolchain readiness" })).toBeVisible();
+    await expect(page.locator("#objectiveId")).toHaveText("game-development:objectives/course/gdev-010/toolchain-readiness");
+    await expect(page.getByRole("heading", { name: "GDEV-010 Onboarding Studio" })).toBeVisible();
     await page.getByRole("button", { name: "Evidence" }).click();
-    await expect(page.getByText("open-education-game-development / study-plans\\courses\\GDEV-101-game-design-foundations.md")).toBeVisible();
+    await expect(page.getByText("open-education-game-development / study-plans\\courses\\GDEV-010-onboarding-studio.md")).toBeVisible();
   });
 
-  test("browses ingested sources, courses, and objectives without changing the active session", async ({ page }) => {
+  test("switches sources and courses into the active local lesson and remembers the last course", async ({ page }) => {
     await expect(page.getByRole("heading", { name: "Catalog" })).toBeVisible();
+    await expect(page.locator("#courseSelect")).toHaveValue("game-development:study-plans/courses/GDEV-010-onboarding-studio.md");
+
     await page.locator("#sourceSelect").selectOption("software-development");
     await expect(page.getByRole("button", { name: "Debugging" })).toBeVisible();
+    await expect(page.locator("#objectiveId")).toHaveText("software-development:objectives/debugging");
+    await expect(page.getByRole("heading", { name: "Start debugging" })).toBeVisible();
 
-    await page.locator("#sourceSelect").selectOption("game-development");
-    await page.locator("#courseSelect").selectOption("game-development:study-plans/courses/GDEV-102-programming-for-games.md");
-    await expect(page.getByRole("button", { name: "Programming Fundamentals" })).toBeVisible();
-    await page.locator('[data-objective-id="game-development:objectives/course/gdev-102/programming-fundamentals"]').click();
-    await expect(page.getByText("Objective selected for inspection: Programming Fundamentals")).toBeVisible();
-    await expect(page.locator("#objectiveId")).toHaveText("game-development:objectives/course/gdev-101/design-vocabulary");
+    await page.locator("#sourceSelect").selectOption("mens-relationship-skills");
+    await page.locator("#courseSelect").selectOption("mens-relationship-skills:study-plans/courses/MRS-303-modern-dating-safety-sexual-health-and-practical-partnership.md");
+    await expect(page.getByRole("button", { name: "Online Dating Safety" })).toBeVisible();
+    await expect(page.locator("#objectiveId")).toHaveText("mens-relationship-skills:objectives/course/mrs-303/online-dating-safety");
+    await expect(page.getByRole("heading", { name: "Start MRS-303 online dating safety" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "MRS-303 - Modern Dating Safety, Sexual Health, And Practical Partnership" })).toBeVisible();
+    await expect(page.getByText("Begin MRS-303 - Modern Dating Safety")).toBeVisible();
+
+    await page.reload();
+    await expect(page.locator("#sourceSelect")).toHaveValue("mens-relationship-skills");
+    await expect(page.locator("#courseSelect")).toHaveValue("mens-relationship-skills:study-plans/courses/MRS-303-modern-dating-safety-sexual-health-and-practical-partnership.md");
+    await expect(page.locator("#objectiveId")).toHaveText("mens-relationship-skills:objectives/course/mrs-303/online-dating-safety");
   });
 
   test("loads localization scaffolding for labels, dates, objectives, and feedback", async ({ page }) => {
@@ -67,7 +79,7 @@ test.describe("learner workspace", () => {
 
     await page.getByRole("button", { name: "Hint" }).focus();
     await page.keyboard.press("Enter");
-    await expect(page.getByText("Start from the selected source: GDEV-101 Game Design Foundations.")).toBeVisible();
+    await expect(page.getByText("Start from GDEV-010 Onboarding Studio, then name the current objective: Toolchain Readiness.")).toBeVisible();
   });
 
   test("supports keyboard flow across all learner workspace views", async ({ page }) => {
@@ -121,7 +133,7 @@ test.describe("learner workspace", () => {
     await expect(page.getByText("Sort those words into actions, goals, constraints, and feedback")).toBeVisible();
 
     await page.getByRole("button", { name: "Hint" }).click();
-    await expect(page.getByText("Start from the selected source: GDEV-101 Game Design Foundations.")).toBeVisible();
+    await expect(page.getByText("Start from GDEV-010 Onboarding Studio, then name the current objective: Toolchain Readiness.")).toBeVisible();
 
     await page.getByRole("button", { name: "Mark complete" }).click();
     await expect(page.locator("#masteryValue")).toHaveText("18%");
@@ -133,6 +145,9 @@ test.describe("learner workspace", () => {
   });
 
   test("supports lecture playback, transcript, citations, checkpoints, and resume", async ({ page }) => {
+    await page.locator("#courseSelect").selectOption("game-development:study-plans/courses/GDEV-101-game-design-foundations.md");
+    await expect(page.locator("#objectiveId")).toHaveText("game-development:objectives/course/gdev-101/design-vocabulary");
+
     await page.getByRole("button", { name: "Lecture" }).click();
     await expect(page.getByRole("heading", { name: "Design Vocabulary: Verbs, Goals, and Feedback" })).toBeVisible();
     await expect(page.getByText("This lecture uses an original generated instructor")).toBeVisible();

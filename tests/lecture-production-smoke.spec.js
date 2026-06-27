@@ -8,6 +8,8 @@ test.describe("lecture production smoke", () => {
 
     await page.goto(pathToFileURL(uiPath).href);
     await expect(page.getByRole("heading", { name: "Learner Workspace" })).toBeVisible();
+    await page.locator("#courseSelect").selectOption("game-development:study-plans/courses/GDEV-101-game-design-foundations.md");
+    await expect(page.locator("#objectiveId")).toHaveText("game-development:objectives/course/gdev-101/design-vocabulary");
     await page.getByRole("button", { name: "Lecture" }).click();
 
     await expect(page.locator("#lectureStatusPill")).toHaveText("rendered-fixture");

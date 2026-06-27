@@ -376,11 +376,13 @@ try {
     Assert-FileExists '.\docs\content-repo-readiness.md'
     Assert-FileExists '.\docs\teaching-quality-rubric.md'
     Assert-FileExists '.\docs\todo\TODO_12_generated_lecture_video.md'
+    Assert-FileExists '.\docs\todo\TODO_21_generated_instructor_persona_contract.md'
     Assert-FileExists '.\schemas\adaptive-teacher.schema.json'
     Assert-FileExists '.\schemas\assessment.schema.json'
     Assert-FileExists '.\schemas\learner-state.schema.json'
     Assert-FileExists '.\schemas\ai-teacher.schema.json'
     Assert-FileExists '.\schemas\lecture-video.schema.json'
+    Assert-FileExists '.\schemas\generated-instructor-persona.schema.json'
     Assert-FileExists '.\fixtures\learner-scenarios.json'
     Assert-FileExists '.\fixtures\assessment-items.json'
     Assert-FileExists '.\fixtures\golden-workflows.json'
@@ -391,8 +393,17 @@ try {
     Assert-FileExists '.\fixtures\ai-teacher-response.grounded.json'
     Assert-FileExists '.\fixtures\information-presentation-patterns.json'
     Assert-FileExists '.\fixtures\lecture-performance-promotion-policy.json'
+    Assert-FileExists '.\fixtures\generated-instructor-persona.default.json'
+    Assert-FileExists '.\fixtures\generated-instructor-personas\approved-male-calm-professor.json'
+    Assert-FileExists '.\fixtures\generated-instructor-personas\approved-female-energetic-professor.json'
+    Assert-FileExists '.\fixtures\generated-instructor-personas\approved-neutral-clear-coach.json'
+    Assert-FileExists '.\fixtures\generated-instructor-personas\blocked\blocked-real-person-clone.json'
+    Assert-FileExists '.\fixtures\generated-instructor-personas\blocked\blocked-voice-gender-mismatch.json'
+    Assert-FileExists '.\fixtures\generated-instructor-personas\blocked\blocked-missing-disclosure.json'
+    Assert-FileExists '.\fixtures\generated-instructor-personas\blocked\blocked-unapproved-consent.json'
     Assert-FileExists '..\open-education-game-development\generated-lectures\gdev-101-design-vocabulary\lecture-video.json'
     Assert-FileExists '..\open-education-game-development\generated-lectures\gdev-101-design-vocabulary\lecture-rendered-media.json'
+    Assert-FileExists '..\open-education-american-history\generated-lectures\amh-reference-intro\persona-reference.json'
     Assert-FileExists '.\fixtures\teaching-quality-benchmarks.json'
     Assert-FileExists '.\fixtures\mastery-calibration.json'
     Assert-FileExists '.\study-plans\templates\study-plan-template.md'
@@ -423,6 +434,7 @@ try {
     Assert-FileExists '.\scripts\quality\check-course-design-quality.ps1'
     Assert-FileExists '.\scripts\quality\check-teaching-quality.ps1'
     Assert-FileExists '.\scripts\quality\check-information-presentation-patterns.ps1'
+    Assert-FileExists '.\scripts\quality\check-generated-instructor-persona.ps1'
     Assert-FileExists '.\scripts\quality\check-lecture-video.ps1'
     Assert-FileExists '.\scripts\quality\check-lecture-performance-promotion.ps1'
     Assert-FileExists '.\scripts\state\read-learner-state.ps1'
@@ -760,6 +772,19 @@ try {
     }
     if ($informationPresentationResult.readOnly -ne $true -or $informationPresentationResult.networkAccess -ne 'none') {
         throw 'Information presentation pattern check must be read-only and offline-safe by default.'
+    }
+
+    $generatedInstructorPersonaOutput = & .\scripts\quality\check-generated-instructor-persona.ps1 -SelfTest 2>&1
+    $generatedInstructorPersonaOutput | Tee-Object -FilePath $logPath -Append
+    if ($LASTEXITCODE -ne 0) {
+        throw "Generated instructor persona contract check failed with exit code $LASTEXITCODE."
+    }
+    $generatedInstructorPersonaResult = $generatedInstructorPersonaOutput | ConvertFrom-Json
+    if ($generatedInstructorPersonaResult.errorCount -ne 0) {
+        throw 'Generated instructor persona contract check reported errors.'
+    }
+    if ($generatedInstructorPersonaResult.readOnly -ne $true -or $generatedInstructorPersonaResult.networkAccess -ne 'none') {
+        throw 'Generated instructor persona contract check must be read-only and offline-safe by default.'
     }
 
     $lectureVideoOutput = & .\scripts\quality\check-lecture-video.ps1 2>&1

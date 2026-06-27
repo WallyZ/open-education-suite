@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "personaVersion": "1.0.0",
-  "personaId": "oes-default-generated-instructor-v1",
+  "personaId": "oes-male-calm-professor-v1",
   "status": "approved",
-  "role": "default-generated-instructor",
-  "displayName": "Default Generated Instructor",
+  "role": "generated-instructor",
+  "displayName": "Calm Board Professor",
   "gender": "male",
-  "ageRange": "adult",
+  "ageRange": "middle-adult",
   "presentationStyle": "realistic-synthetic-instructor-at-chalkboard",
   "disclosureLanguage": "This lecture uses an original generated instructor and synthetic voice for an Open Education Suite lesson.",
   "voiceConsentRule": "Use only project-owned synthetic voices or voices with explicit recorded consent for this course package.",
@@ -42,8 +42,8 @@
     "targetVoiceRegister": "lower adult register with deeper resonance",
     "emotionTargets": [
       "calm confidence during definitions",
-      "encouraging precision during active recall",
-      "measured seriousness during misconception correction"
+      "warm encouragement during practice",
+      "firm precision during misconception repair"
     ],
     "providerRefs": [
       "local-comfyui-voice-candidate",
@@ -55,18 +55,17 @@
     "likenessConsent": "synthetic-project-owned",
     "realPersonClone": false,
     "avatarSeedRef": "project-owned-synthetic-seed",
-    "visualStyle": "front-row university classroom with instructor beside an empty board",
+    "visualStyle": "front-row classroom instructor standing beside the board",
     "providerRefs": [
-      "local-comfyui-avatar-candidate",
-      "cloud-avatar-render-candidate"
+      "local-comfyui-avatar-candidate"
     ]
   },
   "mannerisms": {
-    "gaze": "Looks at the learner during direct explanation and back to the board when writing.",
-    "gesture": "Uses restrained pointing, open-hand emphasis, and no distracting repetitive motion.",
-    "boardPosture": "Starts to one side of the board and avoids covering high-priority board content.",
-    "pace": "Speaks at a deliberate lecture pace with active-recall pauses and clear resume cues.",
-    "emotionalRange": "Warm, serious, and encouraging without theatrical exaggeration."
+    "gaze": "Alternates eye contact with board-focused writing moments.",
+    "gesture": "Uses open-hand emphasis and clear pointing to board regions.",
+    "boardPosture": "Starts on the learner's left side of the board and avoids occluding text.",
+    "pace": "Moderate, deliberate, with active-recall pauses.",
+    "emotionalRange": "Grounded, encouraging, and serious when accuracy matters."
   },
   "teachingStyle": {
     "toneRequirements": [
@@ -79,31 +78,27 @@
       "respectful of learner agency"
     ],
     "subjectFit": [
-      "content-agnostic baseline",
-      "works for game development and humanities pilots",
-      "requires subject-owned examples and board visuals"
+      "game-development foundations",
+      "history lecture introductions",
+      "technical vocabulary"
     ],
     "accessibilityDefaults": [
       "captions",
       "transcript",
-      "board close-up option",
-      "pause overlay text"
+      "pause overlay",
+      "board close-up"
     ],
     "boardInteractionDefaults": [
-      "empty board at scene start",
-      "board-local writing rather than full-screen overlay text",
-      "close-up available for dense diagrams"
+      "empty board at start",
+      "board-local writing",
+      "clean sectioning for definitions and examples"
     ]
   },
   "operatorReview": [
     "Confirm personaId matches an approved persona policy.",
     "Confirm the generated instructor disclosure is learner-visible.",
     "Confirm voice and likeness consent values are approved.",
-    "Confirm tone follows the stated requirements.",
+    "Confirm masculine voice register matches the male instructor profile.",
     "Confirm no real person is cloned or impersonated."
-  ],
-  "teacherRepoReadiness": [
-    "Schema, approved fixtures, blocked fixtures, and verifier gate are stable enough to move reusable persona assets into open-education-teacher.",
-    "The suite keeps the selection and safety contract; subject repos keep rendered lecture packages and subject visuals."
   ]
 }

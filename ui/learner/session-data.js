@@ -1430,7 +1430,7 @@ window.openEducationContentCatalog =
       "sourceId": "mens-relationship-skills",
       "title": "Open Education Men's Relationship Skills",
       "sourceRepo": "open-education-mens-relationship-skills",
-      "objectCount": 19,
+      "objectCount": 85,
       "courses": [
         {
           "id": "mens-relationship-skills:study-plans/courses/MRS-010-onboarding-ethics-and-personal-code.md",

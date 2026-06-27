@@ -10,6 +10,9 @@ The AI teacher may use these platform tools:
 - `learner_state.read`: read a summarized learner state
 - `next_action.read`: read the deterministic next action
 - `assessment.read`: read assessment prompt, accepted answer metadata, hints, and feedback templates
+- `offline_knowledge.lookup`: read local course seed records and private overlays from the offline AI knowledge store
+- `offline_knowledge.write_note`: write local/private AI or learner notes without changing public course seed records
+- `ai_runtime.select`: select Ollama or LM Studio local runtime profile
 - `state_update.propose`: propose a state update for checked code to validate and apply
 
 ## Prompt Contract
@@ -51,6 +54,18 @@ The AI teacher may use these platform tools:
 `scripts/ai/invoke-openai-teacher.ps1` can call the OpenAI Chat Completions API using `OPENAI_API_KEY`. It writes the prompt payload and model output to caller-provided paths under `.codex-cache\tmp\` or another controlled run directory.
 
 The learner UI bridge keeps live model calls disabled by default. `scripts/teaching/learner_ui_bridge_server.py` must be started with `--enable-live-ai` before `/api/teacher/live` will invoke `scripts/ai/invoke-openai-teacher.ps1`; otherwise the endpoint returns `live-ai-disabled` without using credentials or network.
+
+## Offline AI Knowledge Store
+
+`docs/offline-ai-knowledge-store.md` defines the local database template for offline AI tutors. The suite owns the schema and builder; subject repos own public-safe seed manifests and records.
+
+Use:
+
+```powershell
+.\scripts\ai\build-offline-knowledge-store.ps1 -Provider ollama -OutputRoot .\.codex-cache\tmp\offline-ai-store
+```
+
+The builder reads registered content repos from `content-sources.json`, finds each repo's `aiKnowledgeStore` manifest, validates public/private boundaries, and emits `manifest.json`, `records.jsonl`, and `offline-knowledge-store.sqlite`. Use `-Provider lm-studio` when LM Studio should host the local model. Normal verification remains deterministic and does not require either runtime to be installed.
 
 `scripts/testing/run-live-gdev-teacher-smoke.ps1` performs a live GDEV-101 smoke test:
 

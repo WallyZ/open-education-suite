@@ -20,9 +20,13 @@ The system should be more than a content recommender. It should explain, questio
 - [x] Add a confidence gate that falls back to deterministic content or asks for clarification when model output is uncertain. <!-- ms:id 90c5d6ff5983 -->
 - [x] Add model-output evaluation fixtures for groundedness, correctness, tone, accessibility, and next-step usefulness. <!-- ms:id 1d67e4f3f1ad -->
 - [x] Keep state mutations deterministic: the model may propose updates, but checked code applies them. <!-- ms:id f8700778a162 -->
+- [x] Add an offline AI knowledge-store template with Ollama and LM Studio runtime profiles. <!-- ms:id 49d5f8a2b1c7 -->
+  - Evidence: Added `docs/offline-ai-knowledge-store.md`, `schemas/offline-ai-knowledge-store.schema.json`, `fixtures/offline-ai-knowledge-store.template.json`, and `scripts/ai/build-offline-knowledge-store.ps1`.
+  - Verification: Passed `.\scripts\codex-verify.ps1`; log `.codex-cache\logs\codex-verify_20260627_092406_7dcaa35e.log`.
 
 ## Acceptance Notes
 
 - AI output must be grounded in ingested content and learner state.
 - The model should never be the only source of durable truth.
 - Verification should include saved model-response fixtures before live model calls are used in CI.
+- Offline knowledge packages must remain local/private by default and may switch between Ollama and LM Studio without changing course seed records.

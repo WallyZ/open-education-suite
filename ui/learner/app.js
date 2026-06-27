@@ -78,6 +78,9 @@ function explainActionReason(action) {
   if (action.reason === "low-confidence") {
     return "Selected because the current objective still needs stronger evidence.";
   }
+  if (action.reason === "selected-course") {
+    return "Selected from course navigation. The local lesson preview now follows this course and objective.";
+  }
   return `Selected by the teaching session because ${String(action.reason || "the learner is ready for this step").replace(/-/g, " ")}.`;
 }
 
@@ -314,11 +317,13 @@ function buildSessionFromStartSession(sessionOutput, lecturePackage) {
 
 let currentSessionOutput = requireSessionData(window.openEducationSessionOutput, "openEducationSessionOutput");
 let currentLecturePackage = requireSessionData(window.openEducationLecturePackage, "openEducationLecturePackage");
+const defaultLecturePackage = currentLecturePackage;
 let currentContentCatalog = window.openEducationContentCatalog || { schemaVersion: 1, sources: [] };
 let session = buildSessionFromStartSession(currentSessionOutput, currentLecturePackage);
 
 const LEARNER_STATE_STORAGE_KEY = "openEducationLearnerState";
 const ASSESSMENT_STORAGE_KEY = "openEducationAssessmentEvidence";
+const COURSE_SELECTION_STORAGE_KEY = "openEducationLastCourseSelection";
 
 const state = {
   activeView: "lesson",
@@ -341,6 +346,7 @@ const elements = {
   navItems: Array.from(document.querySelectorAll("[data-view]")),
   panels: Array.from(document.querySelectorAll("[data-panel]")),
   teacherThread: document.getElementById("teacherThread"),
+  teacherTitle: document.getElementById("teacher-title"),
   responseForm: document.getElementById("responseForm"),
   learnerResponse: document.getElementById("learnerResponse"),
   runSessionButton: document.getElementById("runSessionButton"),
@@ -354,6 +360,7 @@ const elements = {
   learnerTitle: document.getElementById("learner-title"),
   nextActionTitle: document.getElementById("next-action-title"),
   courseTitle: document.getElementById("course-title"),
+  courseSummary: document.getElementById("course-summary"),
   masteryList: document.getElementById("masteryList"),
   reviewQueue: document.getElementById("reviewQueue"),
   analyticsSummary: document.getElementById("analyticsSummary"),
@@ -377,6 +384,7 @@ const elements = {
   objectiveList: document.getElementById("objectiveList"),
   courseNavigationLog: document.getElementById("courseNavigationLog"),
   lectureFrame: document.getElementById("lectureFrame"),
+  lectureTitle: document.getElementById("lecture-title"),
   lectureStatusPill: document.getElementById("lectureStatusPill"),
   lectureDisclosure: document.getElementById("lectureDisclosure"),
   lecturePlayButton: document.getElementById("lecturePlayButton"),
@@ -586,10 +594,313 @@ function renderCitations() {
   `;
 }
 
+function normalizeSourcePath(value) {
+  return String(value || "").replace(/\//g, "\\").toLowerCase();
+}
+
+function getCourseObjectives(source, course) {
+  if (course && Array.isArray(course.objectives) && course.objectives.length > 0) {
+    return course.objectives;
+  }
+  return Array.isArray(source?.objectives) ? source.objectives : [];
+}
+
+function getObjectiveForSelection(source, course, objectiveId) {
+  const objectives = getCourseObjectives(source, course);
+  return objectives.find((objective) => objective.objectiveId === objectiveId) ||
+    objectives[0] ||
+    {
+      objectiveId: session.objectiveId,
+      label: getObjectiveLabel(session.objectiveId)
+    };
+}
+
+function findCatalogSelection(sourceId, courseId, objectiveId) {
+  const source = getCatalogSources().find((candidate) => candidate.sourceId === sourceId);
+  if (!source) {
+    return null;
+  }
+  const courses = Array.isArray(source.courses) ? source.courses : [];
+  const course = courseId
+    ? courses.find((candidate) => candidate.id === courseId) || null
+    : courses[0] || null;
+  if (courseId && !course) {
+    return null;
+  }
+  return {
+    source,
+    course,
+    objective: getObjectiveForSelection(source, course, objectiveId)
+  };
+}
+
+function findFirstCatalogSelection() {
+  const sources = getCatalogSources();
+  for (const source of sources) {
+    const courses = Array.isArray(source.courses) ? source.courses : [];
+    if (courses.length > 0) {
+      return findCatalogSelection(source.sourceId, courses[0].id, "");
+    }
+  }
+  for (const source of sources) {
+    const objectives = Array.isArray(source.objectives) ? source.objectives : [];
+    if (objectives.length > 0) {
+      return findCatalogSelection(source.sourceId, "", objectives[0].objectiveId);
+    }
+  }
+  return null;
+}
+
+function readStoredCourseSelection() {
+  try {
+    return JSON.parse(localStorage.getItem(COURSE_SELECTION_STORAGE_KEY) || "null");
+  }
+  catch {
+    return null;
+  }
+}
+
+function findStoredCatalogSelection() {
+  const stored = readStoredCourseSelection();
+  if (!stored || !stored.sourceId) {
+    return null;
+  }
+  return findCatalogSelection(stored.sourceId, stored.courseId || "", stored.objectiveId || "");
+}
+
+function findCatalogSelectionBySourcePath(sourceId, sourcePath, objectiveId) {
+  const normalizedPath = normalizeSourcePath(sourcePath);
+  if (!normalizedPath) {
+    return null;
+  }
+  const sources = getCatalogSources().filter((source) => !sourceId || source.sourceId === sourceId);
+  for (const source of sources) {
+    const courses = Array.isArray(source.courses) ? source.courses : [];
+    const course = courses.find((candidate) => normalizeSourcePath(candidate.sourcePath) === normalizedPath);
+    if (course) {
+      return findCatalogSelection(source.sourceId, course.id, objectiveId || "");
+    }
+  }
+  return null;
+}
+
+function findSessionCatalogSelection() {
+  const source = session.source || {};
+  const provenance = currentSessionOutput.sourceProvenance || {};
+  const sourceId = source.sourceId || provenance.sourceId || "";
+  const sourcePath = source.sourcePath || provenance.sourcePath || "";
+  const objectiveId = session.objectiveId || currentSessionOutput.action?.objectiveId || "";
+  return findCatalogSelectionBySourcePath(sourceId, sourcePath, objectiveId) ||
+    (sourceId ? findCatalogSelection(sourceId, "", objectiveId) : null);
+}
+
+function getInitialCatalogSelection() {
+  return findStoredCatalogSelection() ||
+    findSessionCatalogSelection() ||
+    findFirstCatalogSelection();
+}
+
+function findActiveCatalogSelection() {
+  if (!state.activeSourceId) {
+    return null;
+  }
+  return findCatalogSelection(state.activeSourceId, state.activeCourseId, state.selectedObjectiveId);
+}
+
+function persistCourseSelection(selection) {
+  localStorage.setItem(
+    COURSE_SELECTION_STORAGE_KEY,
+    JSON.stringify({
+      sourceId: selection.source.sourceId,
+      courseId: selection.course?.id || "",
+      objectiveId: selection.objective.objectiveId,
+      usedAt: new Date().toISOString()
+    })
+  );
+}
+
+function getSelectionTitle(selection) {
+  return selection.course?.title || selection.source.title || "Selected course";
+}
+
+function buildSelectionSource(selection) {
+  const title = getSelectionTitle(selection);
+  const sourcePath = selection.course?.sourcePath || "";
+  const sourceRepo = selection.course?.sourceRepo || selection.source.sourceRepo || "";
+  return {
+    sourceId: selection.source.sourceId || "",
+    sourceRepo,
+    sourcePath,
+    title,
+    claim: `${title} is selected from ${selection.source.title || "the content catalog"} for ${lowerFirst(getObjectiveLabel(selection.objective.objectiveId))}.`
+  };
+}
+
+function buildSelectionPrompt(selection) {
+  const objectiveLabel = getObjectiveLabel(selection.objective.objectiveId);
+  return `Begin ${getSelectionTitle(selection)} with ${lowerFirst(objectiveLabel)}. Explain what you already know, one question you need answered, and one artifact or example that could prove progress.`;
+}
+
+function buildSelectionHints(selection) {
+  const title = getSelectionTitle(selection);
+  const objectiveLabel = getObjectiveLabel(selection.objective.objectiveId);
+  return [
+    { level: "nudge", text: `Start from ${title}, then name the current objective: ${objectiveLabel}.` },
+    { level: "concept-reminder", text: "Good evidence explains a claim, gives an example, and names what would change after practice." },
+    { level: "worked-example", text: `For ${objectiveLabel}, write one concrete situation, one decision, and one reason the decision is correct.` }
+  ];
+}
+
+function buildCatalogLecturePackage(selection) {
+  const title = getSelectionTitle(selection);
+  const objectiveLabel = getObjectiveLabel(selection.objective.objectiveId);
+  const source = buildSelectionSource(selection);
+  return {
+    schemaVersion: 1,
+    packageId: `catalog-preview:${selection.objective.objectiveId}`,
+    title: `${title}: ${objectiveLabel}`,
+    durationSeconds: 0,
+    renderStatus: "catalog-preview",
+    generatedInstructor: {
+      disclosure: "Course selected. Generate or load course-owned lecture media to play a rendered instructor lesson."
+    },
+    transcript: {
+      text: `Selected ${title}. The active lesson preview is ${objectiveLabel}. Start a session or generate a course-owned lecture package to replace this catalog preview with rendered media.`
+    },
+    citations: [
+      {
+        citationId: `course-${safeEventIdPart(title)}`,
+        sourceId: source.sourceId,
+        sourceRepo: source.sourceRepo,
+        sourcePath: source.sourcePath,
+        claim: source.claim
+      }
+    ],
+    chapters: [],
+    adaptiveHooks: {
+      checkpoints: [
+        {
+          checkpointId: `catalog-${safeEventIdPart(selection.objective.objectiveId)}`,
+          timeSecond: 0,
+          prompt: `Write what you already know about ${objectiveLabel} and one question to resolve next.`,
+          evidenceType: "diagnostic-reflection",
+          masteryImpact: "proposal-only"
+        }
+      ]
+    },
+    deliveryPlan: {
+      audienceMode: "catalog-selected-course-preview",
+      learningEnvironmentPrompts: [
+        "Set up a quiet, low-distraction place before starting.",
+        "Keep a paper notebook and pen available.",
+        "Write a concrete example before asking for the next explanation."
+      ],
+      boardPlan: {
+        defaultView: "course-preview",
+        closeUpAvailable: false,
+        closeUpLabel: "Board close-up",
+        moments: [
+          {
+            timeSecond: 0,
+            label: objectiveLabel,
+            summary: `Start ${title} with the selected objective and collect evidence before advancing.`
+          }
+        ]
+      }
+    },
+    performancePlan: {
+      audioProfile: {
+        voiceStyle: "",
+        emotionTargets: [],
+        prosodyDirectives: []
+      },
+      pausePrompts: [],
+      visualSync: {
+        boardStates: []
+      }
+    },
+    media: [],
+    contentSource: source
+  };
+}
+
+function getLecturePackageForSelection(selection) {
+  const defaultSource = defaultLecturePackage.contentSource || {};
+  const selectedPath = normalizeSourcePath(selection.course?.sourcePath || "");
+  const defaultPath = normalizeSourcePath(defaultSource.sourcePath || "");
+  const defaultObjectives = Array.isArray(defaultLecturePackage.objectiveIds)
+    ? defaultLecturePackage.objectiveIds
+    : [];
+  if (selectedPath && selectedPath === defaultPath && defaultObjectives.includes(selection.objective.objectiveId)) {
+    return defaultLecturePackage;
+  }
+  return buildCatalogLecturePackage(selection);
+}
+
+function buildCourseSummary() {
+  const repo = session.source.sourceRepo || "selected content source";
+  const objectiveLabel = getObjectiveLabel(session.objectiveId);
+  return `${session.source.title} is selected from ${repo}. Current objective: ${objectiveLabel}. Lesson, assessment, progress, citations, and saved evidence now use this selection.`;
+}
+
+function applyCatalogSelection(selection, options = {}) {
+  if (!selection || !selection.source || !selection.objective) {
+    return;
+  }
+
+  state.activeSourceId = selection.source.sourceId;
+  state.activeCourseId = selection.course?.id || "";
+  state.selectedObjectiveId = selection.objective.objectiveId;
+
+  const source = buildSelectionSource(selection);
+  currentSessionOutput.action = {
+    ...(currentSessionOutput.action || {}),
+    learnerId: currentSessionOutput.learnerId,
+    actionType: "lesson",
+    objectiveId: selection.objective.objectiveId,
+    reason: "selected-course",
+    nextReviewAt: null,
+    evidence: "catalog-selection"
+  };
+  currentSessionOutput.prompt = buildSelectionPrompt(selection);
+  currentSessionOutput.hintOptions = buildSelectionHints(selection);
+  currentSessionOutput.sourceProvenance = source;
+  currentSessionOutput.mastery = [
+    {
+      objectiveId: selection.objective.objectiveId,
+      confidence: 0,
+      lastEvidenceAt: null,
+      evidenceCount: 0,
+      evidenceSources: []
+    }
+  ];
+  currentSessionOutput.reviewQueue = [];
+  currentSessionOutput.feedback = "Selected course changed locally. Run a teaching session to produce durable adaptation evidence.";
+  currentSessionOutput.assessmentItemId = "";
+  currentSessionOutput.learnerProfile = currentSessionOutput.learnerProfile || {};
+  currentSessionOutput.learnerProfile.goals = [selection.objective.objectiveId];
+
+  currentLecturePackage = getLecturePackageForSelection(selection);
+  session = buildSessionFromStartSession(currentSessionOutput, currentLecturePackage);
+  state.hintIndex = 0;
+  state.masteryBoosted = false;
+  state.lecturePosition = 0;
+  resetLectureViewState();
+
+  if (options.persist === true) {
+    persistCourseSelection(selection);
+  }
+  if (options.render !== false) {
+    renderSession();
+  }
+}
+
 function renderSession() {
   elements.learnerTitle.textContent = session.learnerId;
   elements.nextActionTitle.textContent = session.action.title;
+  elements.teacherTitle.textContent = `${getObjectiveLabel(session.objectiveId)} warm-up`;
   elements.courseTitle.textContent = session.source.title;
+  elements.courseSummary.textContent = buildCourseSummary();
   elements.objectiveId.textContent = session.objectiveId;
   elements.sourcePill.textContent = getCourseCode(session.objectiveId) || session.source.title;
   elements.preferenceValue.textContent = session.learner.preference;
@@ -611,7 +922,6 @@ function getCatalogSources() {
 
 function getSelectedSource(sources) {
   return sources.find((source) => source.sourceId === state.activeSourceId) ||
-    sources.find((source) => source.sourceId === session.source.sourceId) ||
     sources[0] ||
     null;
 }
@@ -619,7 +929,6 @@ function getSelectedSource(sources) {
 function getSelectedCourse(source) {
   const courses = Array.isArray(source.courses) ? source.courses : [];
   return courses.find((course) => course.id === state.activeCourseId) ||
-    courses.find((course) => course.sourcePath === session.source.sourcePath) ||
     courses[0] ||
     null;
 }
@@ -679,7 +988,7 @@ function renderCourseNavigation() {
 
   const courseText = selectedCourse ? selectedCourse.title : selectedSource.title;
   elements.courseNavigationLog.textContent =
-    `Catalog view: ${courseText}. Navigation is read-only until a new session is started.`;
+    `Active local lesson: ${courseText}. Last-used course is saved in this browser.`;
 }
 
 function renderAssessmentControls() {
@@ -692,8 +1001,43 @@ function renderAssessmentControls() {
     .join("");
 }
 
+function contextualizeAssessmentMode(mode) {
+  const objectiveLabel = getObjectiveLabel(session.objectiveId);
+  if (mode.mode === "multiple-choice") {
+    return {
+      ...mode,
+      prompt: `Which response is the strongest evidence for ${objectiveLabel}?`,
+      options: [
+        "A concrete example with a reason and a next practice step",
+        "A statement that the lesson was watched",
+        "A guess with no evidence",
+        "A copied phrase without explanation"
+      ]
+    };
+  }
+  if (mode.mode === "short-answer") {
+    return {
+      ...mode,
+      prompt: `Explain one idea from ${session.source.title} and give a concrete example.`
+    };
+  }
+  if (mode.mode === "project-rubric") {
+    return {
+      ...mode,
+      prompt: `${session.source.title} checkpoint rubric`,
+      criteria: ["Objective evidence", "Clear before/after change", "Concrete example", "Next revision"]
+    };
+  }
+  return {
+    ...mode,
+    prompt: `Explain ${objectiveLabel} aloud, then paste or type the transcript.`
+  };
+}
+
 function renderAssessment() {
-  const mode = assessmentModes.find((item) => item.mode === state.activeAssessmentMode) || assessmentModes[0];
+  const mode = contextualizeAssessmentMode(
+    assessmentModes.find((item) => item.mode === state.activeAssessmentMode) || assessmentModes[0]
+  );
   renderAssessmentControls();
   if (mode.mode === "multiple-choice") {
     elements.assessmentRenderSurface.innerHTML = `
@@ -773,7 +1117,9 @@ function collectAssessmentResponse(mode) {
 }
 
 function saveAssessmentEvidence() {
-  const mode = assessmentModes.find((item) => item.mode === state.activeAssessmentMode) || assessmentModes[0];
+  const mode = contextualizeAssessmentMode(
+    assessmentModes.find((item) => item.mode === state.activeAssessmentMode) || assessmentModes[0]
+  );
   const response = collectAssessmentResponse(mode);
   if ((Array.isArray(response) && response.length === 0) || (!Array.isArray(response) && !response)) {
     elements.assessmentLog.textContent = feedbackText("assessmentEmpty", "Assessment response is empty.");
@@ -1109,6 +1455,7 @@ function renderPausePromptList() {
 }
 
 function renderLecture() {
+  elements.lectureTitle.textContent = session.lecture.title;
   elements.lectureStatusPill.textContent = session.lecture.renderStatus;
   renderLectureMediaFrame();
   renderBoardSupport();
@@ -1405,13 +1752,20 @@ async function runDeterministicSessionTurn() {
     currentSessionOutput = payload.session;
     currentLecturePackage = payload.lecturePackage;
     currentContentCatalog = payload.contentCatalog || currentContentCatalog;
-    session = buildSessionFromStartSession(currentSessionOutput, currentLecturePackage);
     state.hintIndex = 0;
     state.masteryBoosted = false;
-    resetLectureViewState();
-    state.activeSourceId = "";
-    state.activeCourseId = "";
-    state.selectedObjectiveId = "";
+    session = buildSessionFromStartSession(currentSessionOutput, currentLecturePackage);
+    const refreshedSelection = findStoredCatalogSelection() ||
+      findSessionCatalogSelection() ||
+      findActiveCatalogSelection() ||
+      findFirstCatalogSelection();
+    if (refreshedSelection) {
+      applyCatalogSelection(refreshedSelection, { persist: false, render: false });
+    }
+    else {
+      session = buildSessionFromStartSession(currentSessionOutput, currentLecturePackage);
+      resetLectureViewState();
+    }
     renderSession();
     elements.sessionBridgeLog.textContent =
       "Session bridge request sent. Session refreshed from local deterministic bridge.";
@@ -1566,23 +1920,20 @@ function initialize() {
   });
   elements.saveAssessmentButton.addEventListener("click", saveAssessmentEvidence);
   elements.sourceSelect.addEventListener("change", () => {
-    state.activeSourceId = elements.sourceSelect.value;
-    state.activeCourseId = "";
-    state.selectedObjectiveId = "";
-    renderCourseNavigation();
+    const selection = findCatalogSelection(elements.sourceSelect.value, "", "");
+    applyCatalogSelection(selection, { persist: true });
   });
   elements.courseSelect.addEventListener("change", () => {
-    state.activeCourseId = elements.courseSelect.value;
-    state.selectedObjectiveId = "";
-    renderCourseNavigation();
+    const selection = findCatalogSelection(state.activeSourceId, elements.courseSelect.value, "");
+    applyCatalogSelection(selection, { persist: true });
   });
   elements.objectiveList.addEventListener("click", (event) => {
     const button = event.target.closest("[data-objective-id]");
     if (button) {
-      state.selectedObjectiveId = button.dataset.objectiveId;
-      renderCourseNavigation();
+      const selection = findCatalogSelection(state.activeSourceId, state.activeCourseId, button.dataset.objectiveId);
+      applyCatalogSelection(selection, { persist: true });
       elements.courseNavigationLog.textContent =
-        `Objective selected for inspection: ${button.textContent.trim()}. Start a new session to adapt against it.`;
+        `Active local lesson: ${button.textContent.trim()}. Last-used course is saved in this browser.`;
     }
   });
   elements.saveJournalButton.addEventListener("click", persistJournal);
@@ -1593,7 +1944,12 @@ function initialize() {
   elements.focusToggle.addEventListener("click", () => togglePressed(elements.focusToggle, "is-focus"));
   elements.contrastToggle.addEventListener("click", () => togglePressed(elements.contrastToggle, "is-high-contrast"));
 
-  if (!loadSavedLearnerState()) {
+  const learnerStateLoaded = loadSavedLearnerState();
+  const initialSelection = getInitialCatalogSelection();
+  if (initialSelection) {
+    applyCatalogSelection(initialSelection, { persist: false });
+  }
+  else if (!learnerStateLoaded) {
     renderSession();
   }
   refreshLiveTeacherStatus();

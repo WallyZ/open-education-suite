@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "personaVersion": "1.0.0",
+  "personaId": "oes-blocked-unapproved-consent-v1",
+  "status": "blocked",
+  "role": "generated-instructor",
+  "displayName": "Blocked Unapproved Consent",
+  "gender": "female",
+  "ageRange": "adult",
+  "presentationStyle": "realistic-synthetic-instructor-at-chalkboard",
+  "disclosureLanguage": "This lecture uses an original generated instructor and synthetic voice for an Open Education Suite lesson.",
+  "voiceConsentRule": "Use only project-owned synthetic voices or voices with explicit recorded consent for this course package.",
+  "likenessConsentRule": "Use only synthetic non-real-person likenesses or real-person likenesses with explicit recorded consent for this course package.",
+  "allowedConsentValues": [
+    "synthetic-project-owned",
+    "explicit-consent-recorded"
+  ],
+  "toneRequirements": [
+    "clear",
+    "rigorous",
+    "calm",
+    "supportive without false praise",
+    "specific about evidence"
+  ],
+  "prohibitedUses": [
+    "real-person voice cloning without explicit consent",
+    "real-person likeness cloning without explicit consent",
+    "undisclosed generated instruction",
+    "false claims about being human or live"
+  ],
+  "learnerFacingTransparency": "Show the generated instructor disclosure near lecture playback, transcript, and package metadata.",
+  "voice": {
+    "voiceProfileId": "blocked-unlicensed-profile",
+    "voiceConsent": "unlicensed-public-scrape",
+    "voiceMatchPolicy": "match-generated-instructor-gender",
+    "targetInstructorGender": "female",
+    "targetVoiceGender": "feminine",
+    "targetVoiceRegister": "warm adult register",
+    "emotionTargets": [
+      "calm explanation",
+      "practice prompt"
+    ],
+    "providerRefs": [
+      "blocked-provider"
+    ]
+  },
+  "likeness": {
+    "likenessProfileId": "oes-avatar-realistic-female-board-instructor-v1",
+    "likenessConsent": "synthetic-project-owned",
+    "realPersonClone": false,
+    "avatarSeedRef": "project-owned-synthetic-seed",
+    "visualStyle": "front-row classroom instructor",
+    "providerRefs": [
+      "local-comfyui-avatar-candidate"
+    ]
+  },
+  "mannerisms": {
+    "gaze": "Looks at the learner.",
+    "gesture": "Points to the board.",
+    "boardPosture": "Stands beside the board.",
+    "pace": "Moderate.",
+    "emotionalRange": "Calm."
+  },
+  "teachingStyle": {
+    "toneRequirements": [
+      "clear",
+      "rigorous",
+      "calm",
+      "supportive without false praise",
+      "specific about evidence"
+    ],
+    "subjectFit": [
+      "blocked self-test"
+    ],
+    "accessibilityDefaults": [
+      "captions"
+    ],
+    "boardInteractionDefaults": [
+      "board-local writing"
+    ]
+  },
+  "operatorReview": [
+    "Confirm voice and likeness consent values are approved."
+  ],
+  "expectedFailure": {
+    "requiredErrorContains": "unapproved voice consent"
+  }
+}

@@ -58,6 +58,10 @@ debug.log
 # Local media archives
 # -----------------------------
 var/lecture-media/
+var/offline-ai/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
 
 # -----------------------------
 # IDE / Editor Files
