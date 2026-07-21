@@ -78,7 +78,7 @@
           "description": "Confirm the live catalog uses the same public-safe semantic adapter",
           "kind": "api_call",
           "target": "GET /api/content/catalog",
-          "value": "{\"expect_status\":200,\"expect_json\":{\"generatedFrom\":\"scripts/teaching/content_catalog_adapter.py\"},\"expect_text\":[\"public-safe-structured-draft\",\"lesson-gk-cw12-d01\",\"read-gk-t1-w12-d01\",\"assess-gk-t1-src\",\"fcc-program-architecture\"],\"reject_text\":[\"resolvedPath\",\"answerKey\",\"calibration\",\"sampleResponse\",\":\\\\\"]}"
+          "value": "{\"expect_status\":200,\"expect_json\":{\"generatedFrom\":\"scripts/teaching/content_catalog_adapter.py\"},\"expect_text\":[\"public-safe-structured-draft\",\"lesson-gk-cw12-d01\",\"read-gk-t1-w12-d01\",\"assess-gk-t1-src\",\"fcc-program-architecture\"],\"reject_text\":[\"resolvedPath\",\"answerKey\",\"calibration\",\"sampleResponse\",\":\\\\\\\\\"]}"
         },
         {
           "description": "Open the FCC structured-draft lecture preview",
