@@ -652,7 +652,7 @@ window.openEducationContentCatalog =
 {
   "schemaVersion": 1,
   "generatedFrom": "scripts/ingestion/scan-content-sources.ps1",
-  "sourceCount": 10,
+  "sourceCount": 11,
   "sources": [
     {
       "sourceId": "cybersecurity",
@@ -2117,6 +2117,248 @@ window.openEducationContentCatalog =
         {
           "objectiveId": "american-history:objectives/course/amh-reference/research-prospectus-defense",
           "label": "Research Prospectus Defense"
+        }
+      ]
+    },
+    {
+      "sourceId": "founder-level-civic-classical",
+      "title": "Open Education Founder-Level Civic Classical",
+      "sourceRepo": "open-education-founder-level-civic-classical",
+      "objectCount": 883,
+      "courses": [
+        {
+          "id": "founder-level-civic-classical:study-plans/courses/FCC-FUTURE-READY-SYSTEMS-INNOVATION-K12.md",
+          "title": "FCC-FUTURE-READY-SYSTEMS-INNOVATION-K12 — Future-Ready Systems, Innovation, And Stewardship K-12",
+          "sourceRepo": "open-education-founder-level-civic-classical",
+          "sourcePath": "study-plans\\courses\\FCC-FUTURE-READY-SYSTEMS-INNOVATION-K12.md",
+          "objectives": [
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/systems-cascade-reasoning",
+              "label": "Systems Cascade Reasoning"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/cognitive-bias-red-team",
+              "label": "Cognitive Bias Red Team"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/first-principles-reengineering",
+              "label": "First Principles Reengineering"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/rapid-prototyping-failure-learning",
+              "label": "Rapid Prototyping Failure Learning"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/human-ai-agency-prompt-verification",
+              "label": "Human Ai Agency Prompt Verification"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/adaptability-unlearning-transfer",
+              "label": "Adaptability Unlearning Transfer"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/ambition-vision-scaling",
+              "label": "Ambition Vision Scaling"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/antifragility-resilient-leadership",
+              "label": "Antifragility Resilient Leadership"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/measurement-learning-ownership",
+              "label": "Measurement Learning Ownership"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/talent-mentorship-stewardship",
+              "label": "Talent Mentorship Stewardship"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/values-institutional-stewardship",
+              "label": "Values Institutional Stewardship"
+            }
+          ]
+        },
+        {
+          "id": "founder-level-civic-classical:study-plans/courses/FCC-K12-founder-level-civic-classical.md",
+          "title": "FCC-K12 Founder-Level Civic Classical Sequence",
+          "sourceRepo": "open-education-founder-level-civic-classical",
+          "sourcePath": "study-plans\\courses\\FCC-K12-founder-level-civic-classical.md",
+          "objectives": [
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/program-orientation",
+              "label": "Program Orientation"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-k-foundations",
+              "label": "Fcc K Foundations"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-1-literacy-numeracy",
+              "label": "Fcc 1 Literacy Numeracy"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-2-stories-measurement",
+              "label": "Fcc 2 Stories Measurement"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-3-grammar-civic-story",
+              "label": "Fcc 3 Grammar Civic Story"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-4-founding-comparison",
+              "label": "Fcc 4 Founding Comparison"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-5-republic-markets-science",
+              "label": "Fcc 5 Republic Markets Science"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-6-logic-systems",
+              "label": "Fcc 6 Logic Systems"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-7-law-economics-lab",
+              "label": "Fcc 7 Law Economics Lab"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-8-capstone-readiness",
+              "label": "Fcc 8 Capstone Readiness"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-9-rhetoric-constitution",
+              "label": "Fcc 9 Rhetoric Constitution"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-10-modernity-markets-science",
+              "label": "Fcc 10 Modernity Markets Science"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-11-statesmanship-calculus-physics",
+              "label": "Fcc 11 Statesmanship Calculus Physics"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-12-capstone-college-foundation",
+              "label": "Fcc 12 Capstone College Foundation"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/american-enterprise-political-economy",
+              "label": "American Enterprise Political Economy"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/face-to-face-communication-social-confidence",
+              "label": "Face To Face Communication Social Confidence"
+            }
+          ]
+        }
+      ],
+      "objectives": [
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/adaptability-unlearning-transfer",
+          "label": "Adaptability Unlearning Transfer"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/ambition-vision-scaling",
+          "label": "Ambition Vision Scaling"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/antifragility-resilient-leadership",
+          "label": "Antifragility Resilient Leadership"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/cognitive-bias-red-team",
+          "label": "Cognitive Bias Red Team"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/first-principles-reengineering",
+          "label": "First Principles Reengineering"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/human-ai-agency-prompt-verification",
+          "label": "Human Ai Agency Prompt Verification"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/measurement-learning-ownership",
+          "label": "Measurement Learning Ownership"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/rapid-prototyping-failure-learning",
+          "label": "Rapid Prototyping Failure Learning"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/systems-cascade-reasoning",
+          "label": "Systems Cascade Reasoning"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/talent-mentorship-stewardship",
+          "label": "Talent Mentorship Stewardship"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/values-institutional-stewardship",
+          "label": "Values Institutional Stewardship"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/american-enterprise-political-economy",
+          "label": "American Enterprise Political Economy"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/face-to-face-communication-social-confidence",
+          "label": "Face To Face Communication Social Confidence"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-1-literacy-numeracy",
+          "label": "Fcc 1 Literacy Numeracy"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-10-modernity-markets-science",
+          "label": "Fcc 10 Modernity Markets Science"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-11-statesmanship-calculus-physics",
+          "label": "Fcc 11 Statesmanship Calculus Physics"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-12-capstone-college-foundation",
+          "label": "Fcc 12 Capstone College Foundation"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-2-stories-measurement",
+          "label": "Fcc 2 Stories Measurement"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-3-grammar-civic-story",
+          "label": "Fcc 3 Grammar Civic Story"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-4-founding-comparison",
+          "label": "Fcc 4 Founding Comparison"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-5-republic-markets-science",
+          "label": "Fcc 5 Republic Markets Science"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-6-logic-systems",
+          "label": "Fcc 6 Logic Systems"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-7-law-economics-lab",
+          "label": "Fcc 7 Law Economics Lab"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-8-capstone-readiness",
+          "label": "Fcc 8 Capstone Readiness"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-9-rhetoric-constitution",
+          "label": "Fcc 9 Rhetoric Constitution"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-k-foundations",
+          "label": "Fcc K Foundations"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/program-orientation",
+          "label": "Program Orientation"
         }
       ]
     },

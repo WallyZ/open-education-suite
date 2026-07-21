@@ -58,6 +58,13 @@
       "status": "complete-delivery-ready"
     },
     {
+      "id": "founder-level-civic-classical",
+      "title": "Open Education Founder-Level Civic Classical",
+      "localPath": "../open-education-founder-level-civic-classical",
+      "contentManifest": "content-repo.json",
+      "status": "draft-foundation-ready"
+    },
+    {
       "id": "leadership",
       "title": "Open Education Leadership",
       "localPath": "../open-education-leadership",
