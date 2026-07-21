@@ -1050,6 +1050,18 @@ function getSelectionTitle(selection) {
   return selection.course?.title || selection.source.title || "Selected course";
 }
 
+function getStructuredPreview(selection) {
+  const preview = selection?.course?.structuredPreview;
+  if (
+    !preview ||
+    preview.previewKind !== "public-safe-structured-draft" ||
+    preview.objectiveId !== selection?.objective?.objectiveId
+  ) {
+    return null;
+  }
+  return preview;
+}
+
 function buildSelectionSource(selection) {
   const title = getSelectionTitle(selection);
   const sourcePath = selection.course?.sourcePath || "";
@@ -1064,11 +1076,38 @@ function buildSelectionSource(selection) {
 }
 
 function buildSelectionPrompt(selection) {
+  const preview = getStructuredPreview(selection);
+  if (preview?.assessmentItem?.learnerPrompt) {
+    return `Preview ${preview.lesson.title}. ${preview.assessmentItem.learnerPrompt}`;
+  }
+  if (preview?.lesson?.dailyObjective) {
+    return `Preview ${preview.lesson.title}. Explain how you would demonstrate this objective: ${preview.lesson.dailyObjective}`;
+  }
   const objectiveLabel = getObjectiveLabel(selection.objective.objectiveId);
   return `Begin ${getSelectionTitle(selection)} with ${lowerFirst(objectiveLabel)}. Explain what you already know, one question you need answered, and one artifact or example that could prove progress.`;
 }
 
 function buildSelectionHints(selection) {
+  const preview = getStructuredPreview(selection);
+  if (preview) {
+    const retrievalPrompts = Array.isArray(preview.lesson?.retrievalPrompts)
+      ? preview.lesson.retrievalPrompts
+      : [];
+    return [
+      {
+        level: "nudge",
+        text: retrievalPrompts[0] || `Restate the lesson objective before beginning: ${preview.lesson.dailyObjective}`
+      },
+      {
+        level: "concept-reminder",
+        text: preview.reading?.learnerAction || `Use the assigned reading ${preview.reading?.title || "for this lesson"} as evidence.`
+      },
+      {
+        level: "worked-example",
+        text: `Build an evidence plan for ${preview.assessmentItem?.title || "the assessment item"}; preserve the first attempt and label one correction without revealing an answer key.`
+      }
+    ];
+  }
   const title = getSelectionTitle(selection);
   const objectiveLabel = getObjectiveLabel(selection.objective.objectiveId);
   return [
@@ -1082,41 +1121,98 @@ function buildCatalogLecturePackage(selection) {
   const title = getSelectionTitle(selection);
   const objectiveLabel = getObjectiveLabel(selection.objective.objectiveId);
   const source = buildSelectionSource(selection);
+  const preview = getStructuredPreview(selection);
+  const lessonTitle = preview?.lesson?.title || objectiveLabel;
+  const previewGates = Array.isArray(preview?.coverage?.missingArtifactKinds)
+    ? preview.coverage.missingArtifactKinds
+    : [];
+  const transcriptText = preview
+    ? [
+        `Structured draft lesson: ${preview.lesson.title}.`,
+        `Objective: ${preview.lesson.dailyObjective}`,
+        `Reading: ${preview.reading.title}. ${preview.reading.learnerAction}`,
+        `Coverage: ${preview.coverage.coverageStatus}.`,
+        `Assessment item: ${preview.assessmentItem.title}. ${preview.assessmentItem.learnerPrompt}`,
+        `Public AI context: ${preview.aiKnowledge.title}. ${preview.aiKnowledge.summary}`,
+        `This preview is not delivery-ready; ${previewGates.length} recorded readiness gates remain.`
+      ].join(" ")
+    : `Selected ${title}. The active lesson preview is ${objectiveLabel}. Start a session or generate a course-owned lecture package to replace this catalog preview with rendered media.`;
+  const citations = preview
+    ? [
+        {
+          citationId: `lesson-${safeEventIdPart(preview.lesson.lessonId)}`,
+          sourceId: source.sourceId,
+          sourceRepo: source.sourceRepo,
+          sourcePath: preview.lesson.sourcePath,
+          claim: `${preview.lesson.title} supplies the structured-draft lesson objective and retrieval prompts.`
+        },
+        {
+          citationId: `reading-${safeEventIdPart(preview.reading.assignmentId)}`,
+          sourceId: source.sourceId,
+          sourceRepo: source.sourceRepo,
+          sourcePath: preview.reading.sourcePath,
+          claim: `${preview.reading.title} supplies the learner-facing reading handoff and rights route.`
+        },
+        {
+          citationId: `coverage-${safeEventIdPart(preview.coverage.recordId)}`,
+          sourceId: source.sourceId,
+          sourceRepo: source.sourceRepo,
+          sourcePath: preview.coverage.sourcePath,
+          claim: `Coverage remains ${preview.coverage.coverageStatus} with explicit readiness gates.`
+        },
+        {
+          citationId: `assessment-${safeEventIdPart(preview.assessmentItem.itemId)}`,
+          sourceId: source.sourceId,
+          sourceRepo: source.sourceRepo,
+          sourcePath: preview.assessmentItem.sourcePath,
+          claim: `${preview.assessmentItem.title} supplies a learner prompt; answer keys are excluded from this catalog.`
+        },
+        {
+          citationId: `ai-${safeEventIdPart(preview.aiKnowledge.recordId)}`,
+          sourceId: source.sourceId,
+          sourceRepo: source.sourceRepo,
+          sourcePath: preview.aiKnowledge.sourcePath,
+          claim: `${preview.aiKnowledge.title} is a read-only ${preview.aiKnowledge.privacyClass} tutor seed.`
+        }
+      ]
+    : [
+        {
+          citationId: `course-${safeEventIdPart(title)}`,
+          sourceId: source.sourceId,
+          sourceRepo: source.sourceRepo,
+          sourcePath: source.sourcePath,
+          claim: source.claim
+        }
+      ];
   return {
     schemaVersion: 1,
     packageId: `catalog-preview:${selection.objective.objectiveId}`,
-    title: `${title}: ${objectiveLabel}`,
+    title: `${title}: ${lessonTitle}`,
     durationSeconds: 0,
-    renderStatus: "catalog-preview",
+    renderStatus: preview ? "structured-draft-preview" : "catalog-preview",
     generatedInstructor: {
-      disclosure: "Course selected. Generate or load course-owned lecture media to play a rendered instructor lesson."
+      disclosure: preview
+        ? "Local structured-draft preview assembled from public-safe course records. External review, accessibility QA, and pilot evidence remain required."
+        : "Course selected. Generate or load course-owned lecture media to play a rendered instructor lesson."
     },
     transcript: {
-      text: `Selected ${title}. The active lesson preview is ${objectiveLabel}. Start a session or generate a course-owned lecture package to replace this catalog preview with rendered media.`
+      text: transcriptText
     },
-    citations: [
-      {
-        citationId: `course-${safeEventIdPart(title)}`,
-        sourceId: source.sourceId,
-        sourceRepo: source.sourceRepo,
-        sourcePath: source.sourcePath,
-        claim: source.claim
-      }
-    ],
+    citations,
     chapters: [],
     adaptiveHooks: {
       checkpoints: [
         {
           checkpointId: `catalog-${safeEventIdPart(selection.objective.objectiveId)}`,
           timeSecond: 0,
-          prompt: `Write what you already know about ${objectiveLabel} and one question to resolve next.`,
+          prompt: preview?.assessmentItem?.learnerPrompt || `Write what you already know about ${objectiveLabel} and one question to resolve next.`,
           evidenceType: "diagnostic-reflection",
           masteryImpact: "proposal-only"
         }
       ]
     },
     deliveryPlan: {
-      audienceMode: "catalog-selected-course-preview",
+      audienceMode: preview ? "catalog-structured-draft-preview" : "catalog-selected-course-preview",
       learningEnvironmentPrompts: [
         "Set up a quiet, low-distraction place before starting.",
         "Keep a paper notebook and pen available.",
@@ -1129,8 +1225,10 @@ function buildCatalogLecturePackage(selection) {
         moments: [
           {
             timeSecond: 0,
-            label: objectiveLabel,
-            summary: `Start ${title} with the selected objective and collect evidence before advancing.`
+            label: lessonTitle,
+            summary: preview
+              ? `Preview ${preview.lesson.dailyObjective} and collect evidence without treating draft status as mastery.`
+              : `Start ${title} with the selected objective and collect evidence before advancing.`
           }
         ]
       }
@@ -1165,6 +1263,13 @@ function getLecturePackageForSelection(selection) {
 }
 
 function buildCourseSummary() {
+  const preview = getStructuredPreview(findActiveCatalogSelection());
+  if (preview) {
+    const gates = Array.isArray(preview.coverage?.missingArtifactKinds)
+      ? preview.coverage.missingArtifactKinds.length
+      : 0;
+    return `Structured draft preview: ${preview.lesson.title}. Reading: ${preview.reading.title}. Coverage: ${preview.coverage.coverageStatus}. Assessment item: ${preview.assessmentItem.title}. AI context: ${preview.aiKnowledge.title}. ${gates} readiness gates remain; this is not a delivery-ready lesson.`;
+  }
   const repo = session.source.sourceRepo || "selected content source";
   const objectiveLabel = getObjectiveLabel(session.objectiveId);
   return `${session.source.title} is selected from ${repo}. Current objective: ${objectiveLabel}. Lesson, assessment, progress, citations, and saved evidence now use this selection.`;

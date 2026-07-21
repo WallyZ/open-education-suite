@@ -651,7 +651,7 @@ window.openEducationLecturePackage =
 window.openEducationContentCatalog = 
 {
   "schemaVersion": 1,
-  "generatedFrom": "scripts/ingestion/scan-content-sources.ps1",
+  "generatedFrom": "scripts/teaching/content_catalog_adapter.py",
   "sourceCount": 11,
   "sources": [
     {
@@ -664,7 +664,7 @@ window.openEducationContentCatalog =
           "id": "cybersecurity:study-plans/courses/CYB-101-cybersecurity-defense-foundations.md",
           "title": "CYB-101 Cybersecurity Defense Foundations",
           "sourceRepo": "open-education-cybersecurity",
-          "sourcePath": "study-plans\\courses\\CYB-101-cybersecurity-defense-foundations.md",
+          "sourcePath": "study-plans/courses/CYB-101-cybersecurity-defense-foundations.md",
           "objectives": [
             {
               "objectiveId": "cybersecurity:objectives/course/cyb-101/security-thinking",
@@ -762,7 +762,8 @@ window.openEducationContentCatalog =
           "objectiveId": "cybersecurity:objectives/threat-modeling-basics",
           "label": "Threat Modeling Basics"
         }
-      ]
+      ],
+      "structuredPreviewCount": 0
     },
     {
       "sourceId": "clear-reasoning",
@@ -774,7 +775,7 @@ window.openEducationContentCatalog =
           "id": "clear-reasoning:study-plans/courses/CR-101-clear-reasoning-foundations.md",
           "title": "CR-101 Clear Reasoning Foundations",
           "sourceRepo": "open-education-clear-reasoning",
-          "sourcePath": "study-plans\\courses\\CR-101-clear-reasoning-foundations.md",
+          "sourcePath": "study-plans/courses/CR-101-clear-reasoning-foundations.md",
           "objectives": [
             {
               "objectiveId": "clear-reasoning:objectives/course/cr-101/attention-and-distinction",
@@ -860,7 +861,8 @@ window.openEducationContentCatalog =
           "objectiveId": "clear-reasoning:objectives/course/cr-101/propositions-and-contradiction",
           "label": "Propositions And Contradiction"
         }
-      ]
+      ],
+      "structuredPreviewCount": 0
     },
     {
       "sourceId": "data-science",
@@ -872,7 +874,7 @@ window.openEducationContentCatalog =
           "id": "data-science:study-plans/courses/DS-101-data-science-evidence-and-modeling.md",
           "title": "DS-101 Data Science Evidence And Modeling",
           "sourceRepo": "open-education-data-science",
-          "sourcePath": "study-plans\\courses\\DS-101-data-science-evidence-and-modeling.md",
+          "sourcePath": "study-plans/courses/DS-101-data-science-evidence-and-modeling.md",
           "objectives": [
             {
               "objectiveId": "data-science:objectives/course/ds-101/question-and-evidence",
@@ -970,7 +972,8 @@ window.openEducationContentCatalog =
           "objectiveId": "data-science:objectives/visualization-basics",
           "label": "Visualization Basics"
         }
-      ]
+      ],
+      "structuredPreviewCount": 0
     },
     {
       "sourceId": "game-development",
@@ -982,7 +985,7 @@ window.openEducationContentCatalog =
           "id": "game-development:study-plans/courses/GDEV-010-onboarding-studio.md",
           "title": "GDEV-010 Onboarding Studio",
           "sourceRepo": "open-education-game-development",
-          "sourcePath": "study-plans\\courses\\GDEV-010-onboarding-studio.md",
+          "sourcePath": "study-plans/courses/GDEV-010-onboarding-studio.md",
           "objectives": [
             {
               "objectiveId": "game-development:objectives/course/gdev-010/toolchain-readiness",
@@ -998,7 +1001,7 @@ window.openEducationContentCatalog =
           "id": "game-development:study-plans/courses/GDEV-101-game-design-foundations.md",
           "title": "GDEV-101 Game Design Foundations",
           "sourceRepo": "open-education-game-development",
-          "sourcePath": "study-plans\\courses\\GDEV-101-game-design-foundations.md",
+          "sourcePath": "study-plans/courses/GDEV-101-game-design-foundations.md",
           "objectives": [
             {
               "objectiveId": "game-development:objectives/course/gdev-101/design-vocabulary",
@@ -1014,7 +1017,7 @@ window.openEducationContentCatalog =
           "id": "game-development:study-plans/courses/GDEV-102-programming-for-games.md",
           "title": "GDEV-102 Programming for Games",
           "sourceRepo": "open-education-game-development",
-          "sourcePath": "study-plans\\courses\\GDEV-102-programming-for-games.md",
+          "sourcePath": "study-plans/courses/GDEV-102-programming-for-games.md",
           "objectives": [
             {
               "objectiveId": "game-development:objectives/course/gdev-102/programming-fundamentals",
@@ -1030,7 +1033,7 @@ window.openEducationContentCatalog =
           "id": "game-development:study-plans/courses/GDEV-103-game-math-physics.md",
           "title": "GDEV-103 Game Math and Physics",
           "sourceRepo": "open-education-game-development",
-          "sourcePath": "study-plans\\courses\\GDEV-103-game-math-physics.md",
+          "sourcePath": "study-plans/courses/GDEV-103-game-math-physics.md",
           "objectives": [
             {
               "objectiveId": "game-development:objectives/course/gdev-103/game-math",
@@ -1046,7 +1049,7 @@ window.openEducationContentCatalog =
           "id": "game-development:study-plans/courses/GDEV-104-engine-tools-workflows.md",
           "title": "GDEV-104 Engine Tools and Workflows",
           "sourceRepo": "open-education-game-development",
-          "sourcePath": "study-plans\\courses\\GDEV-104-engine-tools-workflows.md",
+          "sourcePath": "study-plans/courses/GDEV-104-engine-tools-workflows.md",
           "objectives": [
             {
               "objectiveId": "game-development:objectives/course/gdev-104/engine-literacy",
@@ -1062,7 +1065,7 @@ window.openEducationContentCatalog =
           "id": "game-development:study-plans/courses/GDEV-201-gameplay-systems-architecture.md",
           "title": "GDEV-201 Gameplay Systems Architecture",
           "sourceRepo": "open-education-game-development",
-          "sourcePath": "study-plans\\courses\\GDEV-201-gameplay-systems-architecture.md",
+          "sourcePath": "study-plans/courses/GDEV-201-gameplay-systems-architecture.md",
           "objectives": [
             {
               "objectiveId": "game-development:objectives/course/gdev-201/gameplay-systems",
@@ -1078,7 +1081,7 @@ window.openEducationContentCatalog =
           "id": "game-development:study-plans/courses/GDEV-202-level-design-ux-narrative.md",
           "title": "GDEV-202 Level Design, UX, and Narrative",
           "sourceRepo": "open-education-game-development",
-          "sourcePath": "study-plans\\courses\\GDEV-202-level-design-ux-narrative.md",
+          "sourcePath": "study-plans/courses/GDEV-202-level-design-ux-narrative.md",
           "objectives": [
             {
               "objectiveId": "game-development:objectives/course/gdev-202/level-flow",
@@ -1094,7 +1097,7 @@ window.openEducationContentCatalog =
           "id": "game-development:study-plans/courses/GDEV-203-art-animation-audio-ui-pipeline.md",
           "title": "GDEV-203 Art, Animation, Audio, and UI Pipeline",
           "sourceRepo": "open-education-game-development",
-          "sourcePath": "study-plans\\courses\\GDEV-203-art-animation-audio-ui-pipeline.md",
+          "sourcePath": "study-plans/courses/GDEV-203-art-animation-audio-ui-pipeline.md",
           "objectives": [
             {
               "objectiveId": "game-development:objectives/course/gdev-203/content-pipeline",
@@ -1110,7 +1113,7 @@ window.openEducationContentCatalog =
           "id": "game-development:study-plans/courses/GDEV-204-ai-simulation-procedural-systems.md",
           "title": "GDEV-204 AI, Simulation, and Procedural Systems",
           "sourceRepo": "open-education-game-development",
-          "sourcePath": "study-plans\\courses\\GDEV-204-ai-simulation-procedural-systems.md",
+          "sourcePath": "study-plans/courses/GDEV-204-ai-simulation-procedural-systems.md",
           "objectives": [
             {
               "objectiveId": "game-development:objectives/course/gdev-204/game-ai",
@@ -1126,7 +1129,7 @@ window.openEducationContentCatalog =
           "id": "game-development:study-plans/courses/GDEV-301-production-qa-analytics-live-ops.md",
           "title": "GDEV-301 Production, QA, Analytics, and Live Operations",
           "sourceRepo": "open-education-game-development",
-          "sourcePath": "study-plans\\courses\\GDEV-301-production-qa-analytics-live-ops.md",
+          "sourcePath": "study-plans/courses/GDEV-301-production-qa-analytics-live-ops.md",
           "objectives": [
             {
               "objectiveId": "game-development:objectives/course/gdev-301/production-planning",
@@ -1142,7 +1145,7 @@ window.openEducationContentCatalog =
           "id": "game-development:study-plans/courses/GDEV-302-multiplayer-online-systems.md",
           "title": "GDEV-302 Multiplayer and Online Systems",
           "sourceRepo": "open-education-game-development",
-          "sourcePath": "study-plans\\courses\\GDEV-302-multiplayer-online-systems.md",
+          "sourcePath": "study-plans/courses/GDEV-302-multiplayer-online-systems.md",
           "objectives": [
             {
               "objectiveId": "game-development:objectives/course/gdev-302/networking-literacy",
@@ -1158,7 +1161,7 @@ window.openEducationContentCatalog =
           "id": "game-development:study-plans/courses/GDEV-303-performance-platforms-accessibility-compliance.md",
           "title": "GDEV-303 Performance, Platforms, Accessibility, and Compliance",
           "sourceRepo": "open-education-game-development",
-          "sourcePath": "study-plans\\courses\\GDEV-303-performance-platforms-accessibility-compliance.md",
+          "sourcePath": "study-plans/courses/GDEV-303-performance-platforms-accessibility-compliance.md",
           "objectives": [
             {
               "objectiveId": "game-development:objectives/course/gdev-303/performance-profiling",
@@ -1174,7 +1177,7 @@ window.openEducationContentCatalog =
           "id": "game-development:study-plans/courses/GDEV-401-specialization-studio.md",
           "title": "GDEV-401 Specialization Studio",
           "sourceRepo": "open-education-game-development",
-          "sourcePath": "study-plans\\courses\\GDEV-401-specialization-studio.md",
+          "sourcePath": "study-plans/courses/GDEV-401-specialization-studio.md",
           "objectives": [
             {
               "objectiveId": "game-development:objectives/course/gdev-401/specialization-depth",
@@ -1190,7 +1193,7 @@ window.openEducationContentCatalog =
           "id": "game-development:study-plans/courses/GDEV-402-team-style-vertical-slice-studio.md",
           "title": "GDEV-402 Team-Style Vertical Slice Studio",
           "sourceRepo": "open-education-game-development",
-          "sourcePath": "study-plans\\courses\\GDEV-402-team-style-vertical-slice-studio.md",
+          "sourcePath": "study-plans/courses/GDEV-402-team-style-vertical-slice-studio.md",
           "objectives": [
             {
               "objectiveId": "game-development:objectives/course/gdev-402/vertical-slice-production",
@@ -1206,7 +1209,7 @@ window.openEducationContentCatalog =
           "id": "game-development:study-plans/courses/GDEV-499-capstone-launch.md",
           "title": "GDEV-499 Capstone Launch",
           "sourceRepo": "open-education-game-development",
-          "sourcePath": "study-plans\\courses\\GDEV-499-capstone-launch.md",
+          "sourcePath": "study-plans/courses/GDEV-499-capstone-launch.md",
           "objectives": [
             {
               "objectiveId": "game-development:objectives/course/gdev-499/capstone-launch",
@@ -1424,7 +1427,8 @@ window.openEducationContentCatalog =
           "objectiveId": "game-development:objectives/vr-comfort-basics",
           "label": "Vr Comfort Basics"
         }
-      ]
+      ],
+      "structuredPreviewCount": 0
     },
     {
       "sourceId": "mens-relationship-skills",
@@ -1436,7 +1440,7 @@ window.openEducationContentCatalog =
           "id": "mens-relationship-skills:study-plans/courses/MRS-010-onboarding-ethics-and-personal-code.md",
           "title": "MRS-010 - Onboarding, Ethics, And Personal Code",
           "sourceRepo": "open-education-mens-relationship-skills",
-          "sourcePath": "study-plans\\courses\\MRS-010-onboarding-ethics-and-personal-code.md",
+          "sourcePath": "study-plans/courses/MRS-010-onboarding-ethics-and-personal-code.md",
           "objectives": [
             {
               "objectiveId": "mens-relationship-skills:objectives/course/mrs-010/personal-code",
@@ -1452,7 +1456,7 @@ window.openEducationContentCatalog =
           "id": "mens-relationship-skills:study-plans/courses/MRS-101-inner-strength-and-grounded-confidence.md",
           "title": "MRS-101 - Inner Strength And Grounded Confidence",
           "sourceRepo": "open-education-mens-relationship-skills",
-          "sourcePath": "study-plans\\courses\\MRS-101-inner-strength-and-grounded-confidence.md",
+          "sourcePath": "study-plans/courses/MRS-101-inner-strength-and-grounded-confidence.md",
           "objectives": [
             {
               "objectiveId": "mens-relationship-skills:objectives/course/mrs-101/emotional-regulation",
@@ -1472,7 +1476,7 @@ window.openEducationContentCatalog =
           "id": "mens-relationship-skills:study-plans/courses/MRS-102-communication-and-social-intelligence.md",
           "title": "MRS-102 - Communication And Social Intelligence",
           "sourceRepo": "open-education-mens-relationship-skills",
-          "sourcePath": "study-plans\\courses\\MRS-102-communication-and-social-intelligence.md",
+          "sourcePath": "study-plans/courses/MRS-102-communication-and-social-intelligence.md",
           "objectives": [
             {
               "objectiveId": "mens-relationship-skills:objectives/course/mrs-102/active-listening",
@@ -1488,7 +1492,7 @@ window.openEducationContentCatalog =
           "id": "mens-relationship-skills:study-plans/courses/MRS-201-ethical-attraction-and-dating-practice.md",
           "title": "MRS-201 - Ethical Attraction And Dating Practice",
           "sourceRepo": "open-education-mens-relationship-skills",
-          "sourcePath": "study-plans\\courses\\MRS-201-ethical-attraction-and-dating-practice.md",
+          "sourcePath": "study-plans/courses/MRS-201-ethical-attraction-and-dating-practice.md",
           "objectives": [
             {
               "objectiveId": "mens-relationship-skills:objectives/course/mrs-201/ethical-attraction",
@@ -1504,7 +1508,7 @@ window.openEducationContentCatalog =
           "id": "mens-relationship-skills:study-plans/courses/MRS-301-relationship-discernment-and-commitment.md",
           "title": "MRS-301 - Relationship Discernment And Commitment",
           "sourceRepo": "open-education-mens-relationship-skills",
-          "sourcePath": "study-plans\\courses\\MRS-301-relationship-discernment-and-commitment.md",
+          "sourcePath": "study-plans/courses/MRS-301-relationship-discernment-and-commitment.md",
           "objectives": [
             {
               "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/partner-discernment",
@@ -1532,7 +1536,7 @@ window.openEducationContentCatalog =
           "id": "mens-relationship-skills:study-plans/courses/MRS-302-trust-fidelity-and-relationship-reality-checks.md",
           "title": "MRS-302 - Trust, Fidelity, And Relationship Reality Checks",
           "sourceRepo": "open-education-mens-relationship-skills",
-          "sourcePath": "study-plans\\courses\\MRS-302-trust-fidelity-and-relationship-reality-checks.md",
+          "sourcePath": "study-plans/courses/MRS-302-trust-fidelity-and-relationship-reality-checks.md",
           "objectives": [
             {
               "objectiveId": "mens-relationship-skills:objectives/course/mrs-302/trust-pattern-discernment",
@@ -1548,7 +1552,7 @@ window.openEducationContentCatalog =
           "id": "mens-relationship-skills:study-plans/courses/MRS-303-modern-dating-safety-sexual-health-and-practical-partnership.md",
           "title": "MRS-303 - Modern Dating Safety, Sexual Health, And Practical Partnership",
           "sourceRepo": "open-education-mens-relationship-skills",
-          "sourcePath": "study-plans\\courses\\MRS-303-modern-dating-safety-sexual-health-and-practical-partnership.md",
+          "sourcePath": "study-plans/courses/MRS-303-modern-dating-safety-sexual-health-and-practical-partnership.md",
           "objectives": [
             {
               "objectiveId": "mens-relationship-skills:objectives/course/mrs-303/online-dating-safety",
@@ -1576,7 +1580,7 @@ window.openEducationContentCatalog =
           "id": "mens-relationship-skills:study-plans/courses/MRS-304-healthy-sexuality-porn-reality-and-mutual-pleasure.md",
           "title": "MRS-304 - Healthy Sexuality, Porn Reality, And Mutual Pleasure",
           "sourceRepo": "open-education-mens-relationship-skills",
-          "sourcePath": "study-plans\\courses\\MRS-304-healthy-sexuality-porn-reality-and-mutual-pleasure.md",
+          "sourcePath": "study-plans/courses/MRS-304-healthy-sexuality-porn-reality-and-mutual-pleasure.md",
           "objectives": [
             {
               "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/porn-reality-and-body-confidence",
@@ -1612,7 +1616,7 @@ window.openEducationContentCatalog =
           "id": "mens-relationship-skills:study-plans/courses/MRS-401-marriage-preparation-and-relationship-practice.md",
           "title": "MRS-401 - Marriage Preparation And Relationship Practice",
           "sourceRepo": "open-education-mens-relationship-skills",
-          "sourcePath": "study-plans\\courses\\MRS-401-marriage-preparation-and-relationship-practice.md",
+          "sourcePath": "study-plans/courses/MRS-401-marriage-preparation-and-relationship-practice.md",
           "objectives": [
             {
               "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/marriage-readiness-self-audit",
@@ -1652,7 +1656,7 @@ window.openEducationContentCatalog =
           "id": "mens-relationship-skills:study-plans/courses/MRS-499-capstone-relational-character-portfolio.md",
           "title": "MRS-499 - Capstone Relational Character Portfolio",
           "sourceRepo": "open-education-mens-relationship-skills",
-          "sourcePath": "study-plans\\courses\\MRS-499-capstone-relational-character-portfolio.md",
+          "sourcePath": "study-plans/courses/MRS-499-capstone-relational-character-portfolio.md",
           "objectives": [
             {
               "objectiveId": "mens-relationship-skills:objectives/course/mrs-499/integrated-scenario-performance",
@@ -1826,7 +1830,8 @@ window.openEducationContentCatalog =
           "objectiveId": "mens-relationship-skills:objectives/course/mrs-499/portfolio-self-audit",
           "label": "Portfolio Self Audit"
         }
-      ]
+      ],
+      "structuredPreviewCount": 0
     },
     {
       "sourceId": "performing-arts",
@@ -1838,42 +1843,42 @@ window.openEducationContentCatalog =
           "id": "performing-arts:study-plans/courses/PERF-010-performance-onboarding-studio.md",
           "title": "PERF-010 - Performance Onboarding Studio",
           "sourceRepo": "open-education-performing-arts",
-          "sourcePath": "study-plans\\courses\\PERF-010-performance-onboarding-studio.md",
+          "sourcePath": "study-plans/courses/PERF-010-performance-onboarding-studio.md",
           "objectives": []
         },
         {
           "id": "performing-arts:study-plans/courses/PERF-101-voice-foundations.md",
           "title": "PERF-101 - Voice Foundations",
           "sourceRepo": "open-education-performing-arts",
-          "sourcePath": "study-plans\\courses\\PERF-101-voice-foundations.md",
+          "sourcePath": "study-plans/courses/PERF-101-voice-foundations.md",
           "objectives": []
         },
         {
           "id": "performing-arts:study-plans/courses/PERF-102-acting-foundations.md",
           "title": "PERF-102 - Acting Foundations",
           "sourceRepo": "open-education-performing-arts",
-          "sourcePath": "study-plans\\courses\\PERF-102-acting-foundations.md",
+          "sourcePath": "study-plans/courses/PERF-102-acting-foundations.md",
           "objectives": []
         },
         {
           "id": "performing-arts:study-plans/courses/PERF-201-voice-acting-and-character-performance.md",
           "title": "PERF-201 - Voice Acting and Character Performance",
           "sourceRepo": "open-education-performing-arts",
-          "sourcePath": "study-plans\\courses\\PERF-201-voice-acting-and-character-performance.md",
+          "sourcePath": "study-plans/courses/PERF-201-voice-acting-and-character-performance.md",
           "objectives": []
         },
         {
           "id": "performing-arts:study-plans/courses/PERF-301-camera-and-content-performance.md",
           "title": "PERF-301 - Camera and Content Performance",
           "sourceRepo": "open-education-performing-arts",
-          "sourcePath": "study-plans\\courses\\PERF-301-camera-and-content-performance.md",
+          "sourcePath": "study-plans/courses/PERF-301-camera-and-content-performance.md",
           "objectives": []
         },
         {
           "id": "performing-arts:study-plans/courses/PERF-499-capstone-performance-portfolio.md",
           "title": "PERF-499 - Capstone Performance Portfolio",
           "sourceRepo": "open-education-performing-arts",
-          "sourcePath": "study-plans\\courses\\PERF-499-capstone-performance-portfolio.md",
+          "sourcePath": "study-plans/courses/PERF-499-capstone-performance-portfolio.md",
           "objectives": []
         }
       ],
@@ -1926,7 +1931,8 @@ window.openEducationContentCatalog =
           "objectiveId": "performing-arts:objectives/course/perf-499/review-driven-professional-growth",
           "label": "Review Driven Professional Growth"
         }
-      ]
+      ],
+      "structuredPreviewCount": 0
     },
     {
       "sourceId": "software-development",
@@ -1938,7 +1944,7 @@ window.openEducationContentCatalog =
           "id": "software-development:study-plans/courses/SD-101-software-development-practice.md",
           "title": "SD-101 Software Development Practice",
           "sourceRepo": "open-education-software-development",
-          "sourcePath": "study-plans\\courses\\SD-101-software-development-practice.md",
+          "sourcePath": "study-plans/courses/SD-101-software-development-practice.md",
           "objectives": [
             {
               "objectiveId": "software-development:objectives/course/sd-101/problem-framing",
@@ -2036,7 +2042,8 @@ window.openEducationContentCatalog =
           "objectiveId": "software-development:objectives/version-control-basics",
           "label": "Version Control Basics"
         }
-      ]
+      ],
+      "structuredPreviewCount": 0
     },
     {
       "sourceId": "american-history",
@@ -2048,7 +2055,7 @@ window.openEducationContentCatalog =
           "id": "american-history:study-plans/courses/AMH-REFERENCE-PROGRAM.md",
           "title": "AMH-REFERENCE-PROGRAM American History: Evidence, Argument, And Research",
           "sourceRepo": "open-education-american-history",
-          "sourcePath": "study-plans\\courses\\AMH-REFERENCE-PROGRAM.md",
+          "sourcePath": "study-plans/courses/AMH-REFERENCE-PROGRAM.md",
           "objectives": [
             {
               "objectiveId": "american-history:objectives/course/amh-reference/diagnostic-restoration",
@@ -2118,19 +2125,20 @@ window.openEducationContentCatalog =
           "objectiveId": "american-history:objectives/course/amh-reference/research-prospectus-defense",
           "label": "Research Prospectus Defense"
         }
-      ]
+      ],
+      "structuredPreviewCount": 0
     },
     {
       "sourceId": "founder-level-civic-classical",
       "title": "Open Education Founder-Level Civic Classical",
       "sourceRepo": "open-education-founder-level-civic-classical",
-      "objectCount": 883,
+      "objectCount": 885,
       "courses": [
         {
           "id": "founder-level-civic-classical:study-plans/courses/FCC-FUTURE-READY-SYSTEMS-INNOVATION-K12.md",
           "title": "FCC-FUTURE-READY-SYSTEMS-INNOVATION-K12 — Future-Ready Systems, Innovation, And Stewardship K-12",
           "sourceRepo": "open-education-founder-level-civic-classical",
-          "sourcePath": "study-plans\\courses\\FCC-FUTURE-READY-SYSTEMS-INNOVATION-K12.md",
+          "sourcePath": "study-plans/courses/FCC-FUTURE-READY-SYSTEMS-INNOVATION-K12.md",
           "objectives": [
             {
               "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/systems-cascade-reasoning",
@@ -2182,7 +2190,7 @@ window.openEducationContentCatalog =
           "id": "founder-level-civic-classical:study-plans/courses/FCC-K12-founder-level-civic-classical.md",
           "title": "FCC-K12 Founder-Level Civic Classical Sequence",
           "sourceRepo": "open-education-founder-level-civic-classical",
-          "sourcePath": "study-plans\\courses\\FCC-K12-founder-level-civic-classical.md",
+          "sourcePath": "study-plans/courses/FCC-K12-founder-level-civic-classical.md",
           "objectives": [
             {
               "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/program-orientation",
@@ -2248,7 +2256,68 @@ window.openEducationContentCatalog =
               "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/face-to-face-communication-social-confidence",
               "label": "Face To Face Communication Social Confidence"
             }
-          ]
+          ],
+          "structuredPreview": {
+            "schemaVersion": 1,
+            "previewKind": "public-safe-structured-draft",
+            "courseId": "FCC-K-FOUNDATIONS",
+            "readinessStatus": "concrete-draft",
+            "lesson": {
+              "lessonId": "lesson-gk-cw12-d01",
+              "title": "Kindergarten CW12 D01: Source, vocabulary, and humanities anchor",
+              "dailyObjective": "Retell The Small Lantern in four ordered parts and cite one story detail.",
+              "status": "concrete-draft",
+              "retrievalPrompts": [
+                "Without notes, state one idea, skill, source, model, or correction from the prior lesson that may help today.",
+                "Name one word or step in today's focus that you can already explain and one that needs checking."
+              ],
+              "safetyAndPrivacy": "Use public-safe or synthetic examples. Do not disclose private family, medical, financial, school, legal, political, or religious records in exported work.",
+              "sourcePath": "study-plans/daily-lesson-packets/daily-lesson-packets.jsonl"
+            },
+            "reading": {
+              "assignmentId": "read-gk-t1-w12-d01",
+              "title": "K-T1-R12 The Small Lantern; repo-authored read-aloud above - Kindergarten Term 1 Week 12",
+              "status": "learner-ready",
+              "learnerAction": "Read twice, draw or arrange four event cards, rehearse once privately, narrate, then check against the text.",
+              "sourceTitle": "Kindergarten Term 1 Authored Daily Plan And Read-Alouds",
+              "sourceLocator": "K-T1-R12 The Small Lantern; repo-authored read-aloud above.; canonical objective, activity, and assessment at study-plans/grade-bands/term-delivery/grade-k-term-1-authored-daily-plan.md Week 12 Day 1",
+              "rightsBasis": "Repo-authored CC BY 4.0 curriculum text.",
+              "sourcePath": "study-plans/daily-reading-assignments/learner-materials/gk-t1-reading-guide.md"
+            },
+            "coverage": {
+              "recordId": "lesson-gk-cw12-d01",
+              "required": true,
+              "coverageStatus": "concrete-draft",
+              "missingArtifactKinds": [
+                "exact-external-source-enrichment",
+                "full-subject-lecture-and-worked-example-expansion",
+                "expanded-objective-specific-practice-and-assessment-bank",
+                "rendered-lecture-media-and-accessibility-qa",
+                "evaluated-tutor-transcript",
+                "external-review-and-pilot-evidence"
+              ],
+              "sourcePath": "resources/coverage-ledger/coverage-ledger.jsonl"
+            },
+            "assessmentItem": {
+              "bankId": "assessment-bank-gk-t1",
+              "itemId": "assess-gk-t1-src",
+              "title": "Story Sequence And Exact Detail",
+              "objective": "Retell a repo-authored source in chronological order, distinguish an exact detail from a guess, and correct the first sequence error.",
+              "learnerPrompt": "Order all four cards, retell at least three events in order, and point to or say one story detail that proves your retelling.",
+              "status": "concrete-draft-external-review-and-pilot-pending",
+              "sourcePath": "assessments/concrete-item-banks/gk-t1-assessment-items.json"
+            },
+            "aiKnowledge": {
+              "recordId": "fcc-program-architecture",
+              "title": "Founder-Level K-12 Program Architecture",
+              "kind": "course",
+              "summary": "Orientation record for the full K-12 civic classical program, including age-appropriate pacing, mastery evidence, primary-source study, finance and economics, operational intelligence, movement, and safeguards against unsupported credential claims.",
+              "tutorUse": "Use when a local tutor needs the overall program frame before answering scope, pacing, or graduation-evidence questions.",
+              "privacyClass": "public-course-seed",
+              "sourcePath": "study-plans/founder-level-k12-program.md"
+            },
+            "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-k-foundations"
+          }
         }
       ],
       "objectives": [
@@ -2360,7 +2429,8 @@ window.openEducationContentCatalog =
           "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/program-orientation",
           "label": "Program Orientation"
         }
-      ]
+      ],
+      "structuredPreviewCount": 1
     },
     {
       "sourceId": "leadership",
@@ -2372,7 +2442,7 @@ window.openEducationContentCatalog =
           "id": "leadership:study-plans/courses/LEAD-101-leadership-practice-and-judgment.md",
           "title": "LEAD-101 Leadership Practice and Judgment",
           "sourceRepo": "open-education-leadership",
-          "sourcePath": "study-plans\\courses\\LEAD-101-leadership-practice-and-judgment.md",
+          "sourcePath": "study-plans/courses/LEAD-101-leadership-practice-and-judgment.md",
           "objectives": [
             {
               "objectiveId": "leadership:objectives/course/lead-101/leadership-as-responsibility",
@@ -2474,7 +2544,8 @@ window.openEducationContentCatalog =
           "objectiveId": "leadership:objectives/course/lead-101/trust",
           "label": "Trust"
         }
-      ]
+      ],
+      "structuredPreviewCount": 0
     },
     {
       "sourceId": "comedy",
@@ -2486,7 +2557,7 @@ window.openEducationContentCatalog =
           "id": "comedy:study-plans/courses/COM-101-humor-writing-and-performance.md",
           "title": "COM-101 Humor Writing And Performance",
           "sourceRepo": "open-education-comedy",
-          "sourcePath": "study-plans\\courses\\COM-101-humor-writing-and-performance.md",
+          "sourcePath": "study-plans/courses/COM-101-humor-writing-and-performance.md",
           "objectives": [
             {
               "objectiveId": "comedy:objectives/course/com-101/humor-theories",
@@ -2620,7 +2691,8 @@ window.openEducationContentCatalog =
           "objectiveId": "comedy:objectives/course/com-101/wordplay-language",
           "label": "Wordplay Language"
         }
-      ]
+      ],
+      "structuredPreviewCount": 0
     }
   ]
 }

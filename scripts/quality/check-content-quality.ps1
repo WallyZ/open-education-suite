@@ -43,6 +43,9 @@ function Test-LocalMarkdownLinks {
                     if ([string]::IsNullOrWhiteSpace($withoutAnchor)) {
                         continue
                     }
+                    if ($withoutAnchor.StartsWith('/')) {
+                        continue
+                    }
                     $withoutAnchor = $withoutAnchor.Replace('/', '\')
 
                     if ([System.IO.Path]::IsPathRooted($withoutAnchor)) {

@@ -134,9 +134,12 @@
     {
       "expect_status": 200,
       "expect_text": [
-        "\"generatedFrom\": \"scripts/ingestion/scan-content-sources.ps1\"",
+        "\"generatedFrom\": \"scripts/teaching/content_catalog_adapter.py\"",
         "\"sourceId\": \"game-development\"",
         "\"sourceId\": \"software-development\"",
+        "\"sourceId\": \"founder-level-civic-classical\"",
+        "lesson-gk-cw12-d01",
+        "founder-level-civic-classical:objectives/course/fcc-k12/fcc-k-foundations",
         "game-development:objectives/course/gdev-102/programming-fundamentals",
         "software-development:objectives/debugging"
       ],

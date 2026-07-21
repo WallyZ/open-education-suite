@@ -48,6 +48,59 @@
           "target": "Debugging"
         },
         {
+          "description": "Browse to the Founder-Level Civic Classical content source",
+          "kind": "select_option",
+          "target": "#sourceSelect",
+          "value": "founder-level-civic-classical"
+        },
+        {
+          "description": "Open the FCC K-12 sequence that owns the semantic lesson preview",
+          "kind": "select_option",
+          "target": "#courseSelect",
+          "value": "founder-level-civic-classical:study-plans/courses/FCC-K12-founder-level-civic-classical.md"
+        },
+        {
+          "description": "Select the exact Kindergarten objective bound to the structured preview",
+          "kind": "click",
+          "target": "[data-objective-id=\"founder-level-civic-classical:objectives/course/fcc-k12/fcc-k-foundations\"]"
+        },
+        {
+          "description": "Confirm the selected objective matches the preview evidence",
+          "kind": "assert_visible_text",
+          "target": "founder-level-civic-classical:objectives/course/fcc-k12/fcc-k-foundations"
+        },
+        {
+          "description": "Confirm lesson, reading, coverage, item, and AI records render as a draft preview",
+          "kind": "assert_visible_text",
+          "target": "Structured draft preview: Kindergarten CW12 D01: Source, vocabulary, and humanities anchor. Reading: K-T1-R12 The Small Lantern; repo-authored read-aloud above - Kindergarten Term 1 Week 12. Coverage: concrete-draft. Assessment item: Story Sequence And Exact Detail. AI context: Founder-Level K-12 Program Architecture."
+        },
+        {
+          "description": "Confirm the live catalog uses the same public-safe semantic adapter",
+          "kind": "api_call",
+          "target": "GET /api/content/catalog",
+          "value": "{\"expect_status\":200,\"expect_json\":{\"generatedFrom\":\"scripts/teaching/content_catalog_adapter.py\"},\"expect_text\":[\"public-safe-structured-draft\",\"lesson-gk-cw12-d01\",\"read-gk-t1-w12-d01\",\"assess-gk-t1-src\",\"fcc-program-architecture\"],\"reject_text\":[\"resolvedPath\",\"answerKey\",\"calibration\",\"sampleResponse\",\":\\\\\"]}"
+        },
+        {
+          "description": "Open the FCC structured-draft lecture preview",
+          "kind": "click",
+          "target": "text=Lecture"
+        },
+        {
+          "description": "Confirm the semantic transcript uses the selected structured lesson",
+          "kind": "assert_visible_text",
+          "target": "Structured draft lesson: Kindergarten CW12 D01: Source, vocabulary, and humanities anchor."
+        },
+        {
+          "description": "Confirm the semantic transcript discloses its public AI context",
+          "kind": "assert_visible_text",
+          "target": "Public AI context: Founder-Level K-12 Program Architecture."
+        },
+        {
+          "description": "Return to the lesson workspace before continuing the generated lecture flow",
+          "kind": "click",
+          "target": "text=Lesson"
+        },
+        {
           "description": "Return to the game-development content source",
           "kind": "select_option",
           "target": "#sourceSelect",

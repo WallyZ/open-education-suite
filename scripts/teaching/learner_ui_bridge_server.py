@@ -2,7 +2,6 @@ import argparse
 import json
 import mimetypes
 import os
-import re
 import shutil
 import subprocess
 import sys
@@ -11,6 +10,8 @@ from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote, urlparse
+
+from content_catalog_adapter import build_content_catalog
 
 
 FIXED_NOW = "2026-05-25T12:00:00Z"
@@ -76,84 +77,6 @@ def build_default_state(path: Path) -> None:
         },
     }
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
-
-
-def objective_label(objective_id: str) -> str:
-    slug = str(objective_id).split("/")[-1]
-    return " ".join(part.capitalize() for part in slug.replace("-", " ").split())
-
-
-def catalog_objective(objective_id: str) -> dict:
-    return {"objectiveId": objective_id, "label": objective_label(objective_id)}
-
-
-def extract_objectives(path: Path) -> list[str]:
-    if not path.is_file():
-        return []
-    content = path.read_text(encoding="utf-8")
-    objective_ids = re.findall(r"`([^`]+:objectives/[^`]+)`", content)
-    return list(dict.fromkeys(objective_ids))
-
-
-def build_content_catalog(repo_root: Path) -> dict:
-    completed = subprocess.run(
-        [
-            "powershell",
-            "-NoProfile",
-            "-ExecutionPolicy",
-            "Bypass",
-            "-File",
-            str(repo_root / "scripts" / "ingestion" / "scan-content-sources.ps1"),
-        ],
-        cwd=repo_root,
-        check=True,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-    )
-    scan_report = json.loads(completed.stdout)
-    sources = []
-    for source in scan_report.get("sources", []):
-        objects = source.get("objects", [])
-        source_root = Path(source.get("resolvedPath", ""))
-        source_objectives: dict[str, dict] = {}
-        courses = []
-        for item in objects:
-            source_path = item.get("sourcePath", "")
-            if item.get("type") != "study-plan" or not source_path.lower().startswith("study-plans\\courses\\"):
-                continue
-            objective_ids = extract_objectives(source_root / source_path)
-            for objective_id in objective_ids:
-                source_objectives[objective_id] = catalog_objective(objective_id)
-            courses.append(
-                {
-                    "id": item.get("id"),
-                    "title": item.get("title"),
-                    "sourceRepo": item.get("sourceRepo"),
-                    "sourcePath": source_path,
-                    "objectives": [catalog_objective(objective_id) for objective_id in objective_ids],
-                }
-            )
-        for item in objects:
-            if item.get("type") == "objective":
-                for objective_id in extract_objectives(source_root / item.get("sourcePath", "")):
-                    source_objectives[objective_id] = catalog_objective(objective_id)
-        sources.append(
-            {
-                "sourceId": source.get("id"),
-                "title": source.get("title"),
-                "sourceRepo": objects[0].get("sourceRepo") if objects else source.get("id"),
-                "objectCount": source.get("objectCount", 0),
-                "courses": courses,
-                "objectives": [source_objectives[key] for key in sorted(source_objectives)],
-            }
-        )
-    return {
-        "schemaVersion": 1,
-        "generatedFrom": "scripts/ingestion/scan-content-sources.ps1",
-        "sourceCount": len(sources),
-        "sources": sources,
-    }
 
 
 def load_default_lecture_package(repo_root: Path) -> dict:
