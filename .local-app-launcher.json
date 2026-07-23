@@ -1,0 +1,150 @@
+{
+  "schema_version": "local-app-launcher/v1",
+  "launcher_id": "open-education-learner-ui-bridge",
+  "app": {
+    "repo_id": "open-education-suite",
+    "display_name": "Open Education Learner UI Bridge",
+    "description": "Consumer adapter for the local learner UI bridge server.",
+    "privacy_boundary": {
+      "contains_private_paths": false,
+      "contains_credentials": false,
+      "notes": "Manifest uses repo-relative commands and ignored runtime paths only; live AI remains opt-in outside this adapter."
+    }
+  },
+  "runtime": {
+    "cwd": ".",
+    "command": [
+      "powershell.exe",
+      "-NoProfile",
+      "-ExecutionPolicy",
+      "Bypass",
+      "-File",
+      "scripts/start_learner_ui_bridge.ps1"
+    ],
+    "environment": {
+      "OPEN_EDUCATION_LOCAL_APP_LAUNCHER": "1"
+    },
+    "pid_file": ".codex-cache/learner-ui/local_app_launcher.pid"
+  },
+  "ports": {
+    "live": {
+      "name": "learner_ui_bridge_live",
+      "host": "127.0.0.1",
+      "preferred_port": 8786,
+      "fallback_start": 8786,
+      "fallback_end": 8885
+    },
+    "test": {
+      "name": "learner_ui_bridge_test",
+      "host": "127.0.0.1",
+      "preferred_port": 8787,
+      "fallback_start": 8787,
+      "fallback_end": 8886
+    },
+    "reserved": [
+      8786,
+      8787
+    ]
+  },
+  "health": {
+    "url_template": "http://127.0.0.1:{port}/ui/learner/index.html",
+    "timeout_seconds": 10,
+    "expected_status": 200
+  },
+  "watchdog": {
+    "enabled": true,
+    "restart_on_exit": true,
+    "restart_on_unhealthy": true,
+    "restart_on_file_change": false,
+    "max_restarts_per_hour": 6,
+    "status_log_path": ".codex-cache/learner-ui/local_app_launcher_status.jsonl",
+    "exit_log_path": ".codex-cache/learner-ui/local_app_launcher_exit.jsonl"
+  },
+  "windows_startup": {
+    "supported": true,
+    "autostart_default": false,
+    "task_name": "open-education-learner-ui-bridge",
+    "run_level": "least_privilege"
+  },
+  "operations": {
+    "start": {
+      "command": [
+        "powershell.exe",
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "scripts/manage_learner_ui_launcher.ps1",
+        "-Action",
+        "Start"
+      ],
+      "requires_elevation": false,
+      "description": "Start the learner UI bridge through Local App Launcher Kit."
+    },
+    "stop": {
+      "command": [
+        "powershell.exe",
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "scripts/manage_learner_ui_launcher.ps1",
+        "-Action",
+        "Stop"
+      ],
+      "requires_elevation": false,
+      "description": "Stop the learner UI bridge process tracked by Local App Launcher Kit."
+    },
+    "restart": {
+      "command": [
+        "powershell.exe",
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "scripts/manage_learner_ui_launcher.ps1",
+        "-Action",
+        "Restart"
+      ],
+      "requires_elevation": false,
+      "description": "Restart the learner UI bridge through Local App Launcher Kit."
+    },
+    "status": {
+      "command": [
+        "powershell.exe",
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "scripts/manage_learner_ui_launcher.ps1",
+        "-Action",
+        "Status"
+      ],
+      "requires_elevation": false,
+      "description": "Show process, port, health, and launcher log status."
+    },
+    "monitor": {
+      "command": [
+        "powershell.exe",
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "scripts/manage_learner_ui_launcher.ps1",
+        "-Action",
+        "Watchdog",
+        "-Once"
+      ],
+      "requires_elevation": false,
+      "description": "Run one watchdog health/restart pass for the learner UI bridge."
+    }
+  },
+  "provenance": {
+    "source_repos": [
+      "open-education-suite",
+      "local-app-launcher-kit"
+    ],
+    "reviewed_at_utc": "2026-07-22T00:00:00Z",
+    "notes": "Generated from the learner UI bridge server defaults and QA Live workflow port."
+  }
+}

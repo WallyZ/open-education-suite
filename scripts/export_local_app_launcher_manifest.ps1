@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [string]$OutputPath = "",
-    [string]$ReviewedAtUtc = "2026-06-10T00:00:00Z",
+    [string]$ReviewedAtUtc = "2026-07-22T00:00:00Z",
     [string]$HostName = "127.0.0.1",
     [int]$LivePort = 8786,
     [int]$TestPort = 8787,
@@ -92,14 +92,14 @@ $manifest = [ordered]@{
     }
     ports = [ordered]@{
         live = [ordered]@{
-            name = "learner_ui_live"
+            name = "learner_ui_bridge_live"
             host = $HostName
             preferred_port = [int]$LivePort
             fallback_start = [int]$LivePort
             fallback_end = Get-FallbackEnd -Port ([int]$LivePort)
         }
         test = [ordered]@{
-            name = "learner_ui_test"
+            name = "learner_ui_bridge_test"
             host = $HostName
             preferred_port = [int]$TestPort
             fallback_start = [int]$TestPort
