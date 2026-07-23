@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "status": "passed",
+  "sourceId": "founder-level-civic-classical",
+  "exportVersion": "2026-07-23-v1",
+  "recordCounts": {
+    "public": 85522,
+    "restricted": 25688,
+    "total": 111210,
+    "references": 427616
+  },
+  "selection": {
+    "lessonId": "lesson:lesson-g1-cw10-d01",
+    "gradeCode": "g1",
+    "calendarWeek": 10,
+    "day": 1,
+    "initialAssessmentId": "assessment:assess-g1-t1-src-i1",
+    "retestAssessmentId": "assessment:assess-g1-t1-src-x1",
+    "delayedAssessmentId": "assessment:assess-g1-t1-src-d1",
+    "rubricId": "rubric:bank:assess-g1-t1-src"
+  },
+  "flow": {
+    "steps": [
+      "render-source-and-accessible-materials",
+      "record-initial-attempt",
+      "apply-exported-rubric",
+      "apply-correction-and-reteach",
+      "record-changed-retest",
+      "schedule-delayed-review",
+      "persist-export-import-state"
+    ],
+    "initialScoreLevel": 2,
+    "initialStatus": "needs-remediation",
+    "retestScoreLevel": 4,
+    "masteryStatus": "retest-passed-delayed-review-scheduled",
+    "delayedReviewDate": "2026-08-06",
+    "masteryImpact": "evidence-bearing",
+    "catalogPreviewUsed": false,
+    "proposalOnlyUsed": false,
+    "restrictedPayloadInLearnerRender": false,
+    "statePersisted": true,
+    "stateExportImported": true
+  }
+}

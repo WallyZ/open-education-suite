@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-education.local/schemas/founder-course-export.schema.json",
+  "title": "Founder Course All-Object Export And Mastery Flow Contract",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "exportVersion",
+    "sourceId",
+    "status",
+    "publicSchemaPath",
+    "restrictedSchemaPath",
+    "referentialIntegrityReportPath",
+    "files",
+    "publicRecordCount",
+    "restrictedRecordCount",
+    "totalRecordCount",
+    "answerKeySeparation",
+    "learnerPublicExportMayIncludeRestrictedPayload"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "exportVersion": {
+      "const": "2026-07-23-v1"
+    },
+    "sourceId": {
+      "const": "founder-level-civic-classical"
+    },
+    "status": {
+      "const": "complete-all-object-export-referential-integrity-passed"
+    },
+    "publicRecordCount": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "restrictedRecordCount": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "totalRecordCount": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "answerKeySeparation": {
+      "const": "restricted-answer-keys-physical-file-only"
+    },
+    "learnerPublicExportMayIncludeRestrictedPayload": {
+      "const": false
+    }
+  },
+  "x-exportContract": {
+    "requiredPublicObjectTypes": [
+      "course",
+      "module",
+      "lesson",
+      "reading",
+      "source-rights",
+      "delivery-package",
+      "activity",
+      "materials-safety",
+      "practice-item",
+      "assessment",
+      "rubric",
+      "portfolio-artifact",
+      "tutor-policy",
+      "tutor-evaluation",
+      "access-route",
+      "mastery-event",
+      "prerequisite",
+      "correction-reteach",
+      "progress-state"
+    ],
+    "forbiddenPublicKeys": [
+      "answer",
+      "answerKey",
+      "answerKeyText",
+      "calibration",
+      "sampleResponse",
+      "expectedEvidence",
+      "workedSteps",
+      "scoringNotes"
+    ],
+    "requiredAudienceOperations": [
+      "catalog",
+      "search",
+      "recommendation",
+      "export",
+      "import",
+      "tutor-context"
+    ],
+    "selectedFlow": {
+      "lessonId": "lesson:lesson-g1-cw10-d01",
+      "initialAssessmentId": "assessment:assess-g1-t1-src-i1",
+      "retestAssessmentId": "assessment:assess-g1-t1-src-x1",
+      "delayedAssessmentId": "assessment:assess-g1-t1-src-d1",
+      "rubricId": "rubric:bank:assess-g1-t1-src",
+      "initialExpectedLevel": 2,
+      "retestExpectedLevel": 4,
+      "masteryStatus": "retest-passed-delayed-review-scheduled"
+    }
+  },
+  "additionalProperties": true
+}
