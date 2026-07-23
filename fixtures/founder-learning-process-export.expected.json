@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "status": "passed",
+  "sourceId": "founder-level-civic-classical",
+  "exportVersion": "2026-07-23-v1",
+  "counts": {
+    "grades": 13,
+    "annualBootcamps": 13,
+    "annualBootcampDayRoutes": 78,
+    "termCheckpoints": 156,
+    "compressedTermCheckpointFallbacks": 26,
+    "uniquePortfolioArtifactSlots": 312,
+    "checkpointToArtifactRoutes": 936,
+    "requestedArtifactFamilySlots": 260,
+    "requestedArtifactFamilyRoutes": 780,
+    "delayedRetentionChecks": 624,
+    "methodChoiceRubrics": 156,
+    "scoredSyntheticCalibrationSamples": 624
+  },
+  "validation": {
+    "canonicalRoutesResolved": true,
+    "checkpointHashPassCount": 156,
+    "bootcampHashPassCount": 13,
+    "renderedGradeSampleCount": 13,
+    "fileRoundTripSampleCount": 13,
+    "actualLearnerArtifactCount": 0,
+    "actualLearnerScoreCount": 0,
+    "completedRetentionCheckCount": 0,
+    "masteryEarnedCount": 0,
+    "catalogPreviewUsedCount": 0,
+    "proposalOnlyUsedCount": 0
+  },
+  "gradeSamples": [
+    {
+      "gradeCode": "gk",
+      "bootcampId": "learning-bootcamp:gk",
+      "checkpointId": "learning-checkpoint:gk:t1:w04",
+      "anchorLessonId": "lesson-gk-cw04-d06"
+    },
+    {
+      "gradeCode": "g1",
+      "bootcampId": "learning-bootcamp:g1",
+      "checkpointId": "learning-checkpoint:g1:t1:w04",
+      "anchorLessonId": "lesson-g1-cw04-d06"
+    },
+    {
+      "gradeCode": "g2",
+      "bootcampId": "learning-bootcamp:g2",
+      "checkpointId": "learning-checkpoint:g2:t1:w04",
+      "anchorLessonId": "lesson-g2-cw04-d06"
+    },
+    {
+      "gradeCode": "g3",
+      "bootcampId": "learning-bootcamp:g3",
+      "checkpointId": "learning-checkpoint:g3:t1:w04",
+      "anchorLessonId": "lesson-g3-cw04-d06"
+    },
+    {
+      "gradeCode": "g4",
+      "bootcampId": "learning-bootcamp:g4",
+      "checkpointId": "learning-checkpoint:g4:t1:w04",
+      "anchorLessonId": "lesson-g4-cw04-d06"
+    },
+    {
+      "gradeCode": "g5",
+      "bootcampId": "learning-bootcamp:g5",
+      "checkpointId": "learning-checkpoint:g5:t1:w04",
+      "anchorLessonId": "lesson-g5-cw04-d06"
+    },
+    {
+      "gradeCode": "g6",
+      "bootcampId": "learning-bootcamp:g6",
+      "checkpointId": "learning-checkpoint:g6:t1:w04",
+      "anchorLessonId": "lesson-g6-cw04-d06"
+    },
+    {
+      "gradeCode": "g7",
+      "bootcampId": "learning-bootcamp:g7",
+      "checkpointId": "learning-checkpoint:g7:t1:w04",
+      "anchorLessonId": "lesson-g7-cw04-d06"
+    },
+    {
+      "gradeCode": "g8",
+      "bootcampId": "learning-bootcamp:g8",
+      "checkpointId": "learning-checkpoint:g8:t1:w04",
+      "anchorLessonId": "lesson-g8-cw04-d06"
+    },
+    {
+      "gradeCode": "g9",
+      "bootcampId": "learning-bootcamp:g9",
+      "checkpointId": "learning-checkpoint:g9:t1:w04",
+      "anchorLessonId": "lesson-g9-cw04-d06"
+    },
+    {
+      "gradeCode": "g10",
+      "bootcampId": "learning-bootcamp:g10",
+      "checkpointId": "learning-checkpoint:g10:t1:w04",
+      "anchorLessonId": "lesson-g10-cw04-d06"
+    },
+    {
+      "gradeCode": "g11",
+      "bootcampId": "learning-bootcamp:g11",
+      "checkpointId": "learning-checkpoint:g11:t1:w04",
+      "anchorLessonId": "lesson-g11-cw04-d06"
+    },
+    {
+      "gradeCode": "g12",
+      "bootcampId": "learning-bootcamp:g12",
+      "checkpointId": "learning-checkpoint:g12:t1:w04",
+      "anchorLessonId": "lesson-g12-cw04-d06"
+    }
+  ]
+}

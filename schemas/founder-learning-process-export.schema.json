@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-education.local/schemas/founder-learning-process-export.schema.json",
+  "title": "Founder Learning-Process And Memory-Mastery Export",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "exportVersion",
+    "checkpointId",
+    "status",
+    "sourceId",
+    "gradeCode",
+    "term",
+    "nominalTermWeek",
+    "scheduledTermWeek",
+    "anchorLessonId",
+    "actorSourceRoute",
+    "checkpointTasks",
+    "portfolioArtifactSlots",
+    "delayedRetentionChecks",
+    "methodChoiceRubric",
+    "canonicalRouting",
+    "initialEvidenceState",
+    "accessPrivacyAndFormation",
+    "recordSha256"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "exportVersion": {
+      "const": "2026-07-23-v1"
+    },
+    "checkpointId": {
+      "type": "string",
+      "pattern": "^learning-checkpoint:g(?:k|[1-9]|1[0-2]):t[1-4]:w(?:04|08|12)$"
+    },
+    "status": {
+      "const": "synthetic-learning-process-checkpoint-export-ready-real-learner-evidence-unearned"
+    },
+    "sourceId": {
+      "const": "founder-level-civic-classical"
+    },
+    "gradeCode": {
+      "enum": [
+        "gk",
+        "g1",
+        "g2",
+        "g3",
+        "g4",
+        "g5",
+        "g6",
+        "g7",
+        "g8",
+        "g9",
+        "g10",
+        "g11",
+        "g12"
+      ]
+    },
+    "term": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4
+    },
+    "nominalTermWeek": {
+      "enum": [
+        4,
+        8,
+        12
+      ]
+    },
+    "scheduledTermWeek": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 12
+    },
+    "recordSha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "x-learningProcessContract": {
+    "gradeCount": 13,
+    "annualBootcampCount": 13,
+    "annualBootcampDayRouteCount": 78,
+    "termCheckpointCount": 156,
+    "compressedTermCheckpointFallbackCount": 26,
+    "uniquePortfolioArtifactSlotCount": 312,
+    "checkpointToArtifactRouteCount": 936,
+    "requestedArtifactFamilySlotCount": 260,
+    "requestedArtifactFamilyRouteCount": 780,
+    "delayedRetentionCheckCount": 624,
+    "methodChoiceRubricCount": 156,
+    "scoredSyntheticCalibrationSampleCount": 624,
+    "actualLearnerArtifactCount": 0,
+    "actualLearnerScoreCount": 0,
+    "completedRetentionCheckCount": 0,
+    "masteryEarnedCount": 0,
+    "catalogPreviewUsedCount": 0,
+    "proposalOnlyUsedCount": 0
+  },
+  "additionalProperties": true
+}
