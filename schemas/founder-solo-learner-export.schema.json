@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-education.local/schemas/founder-solo-learner-export.schema.json",
+  "title": "Founder Solo Learner UI And State Export Contract",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "exportVersion",
+    "sessionId",
+    "status",
+    "sourceId",
+    "lessonId",
+    "gradeCode",
+    "courseId",
+    "moduleId",
+    "navigation",
+    "learnerView",
+    "sourceLinks",
+    "routing",
+    "soloHandoff",
+    "progressChecklistExport",
+    "privacyAndFormationBoundary",
+    "sessionSha256"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "exportVersion": {
+      "const": "2026-07-23-v1"
+    },
+    "status": {
+      "const": "synthetic-solo-learner-ui-route-and-initial-state-export-passed"
+    },
+    "sourceId": {
+      "const": "founder-level-civic-classical"
+    }
+  },
+  "x-soloLearnerContract": {
+    "requiredUiSections": [
+      "overview",
+      "source",
+      "instruction",
+      "activity",
+      "practice",
+      "assessment",
+      "feedback-correction",
+      "portfolio",
+      "progress-export",
+      "help-escalation"
+    ],
+    "requiredChecklistSteps": [
+      "open-source",
+      "retrieve-before-help",
+      "complete-instruction",
+      "complete-activity",
+      "preserve-first-attempt",
+      "review-public-rubric",
+      "correct-and-retest",
+      "schedule-delayed-review",
+      "save-private-portfolio",
+      "export-progress"
+    ],
+    "gradeCodes": [
+      "gk",
+      "g1",
+      "g2",
+      "g3",
+      "g4",
+      "g5",
+      "g6",
+      "g7",
+      "g8",
+      "g9",
+      "g10",
+      "g11",
+      "g12"
+    ],
+    "expectedCounts": {
+      "sessions": 3588,
+      "grades": 13,
+      "sessionsPerGrade": 276,
+      "checklistEntries": 35880,
+      "previousEdges": 3575,
+      "nextEdges": 3575,
+      "readingRoutes": 2925,
+      "packetFallbackRoutes": 663,
+      "facilitatorRequired": 828,
+      "facilitatorRecommended": 552,
+      "facilitatorAvailableIfNeeded": 2208,
+      "conditionalEscalationFlags": 17940
+    },
+    "forbiddenLearnerKeys": [
+      "answer",
+      "answerKey",
+      "answerKeyText",
+      "expectedEvidence",
+      "workedSteps",
+      "scoringNotes",
+      "calibration",
+      "sampleResponse"
+    ],
+    "requiredRestrictedVisibility": "restricted-facilitator-or-authorized-grader",
+    "requiredInitialMasteryStatus": "unearned"
+  },
+  "additionalProperties": true
+}

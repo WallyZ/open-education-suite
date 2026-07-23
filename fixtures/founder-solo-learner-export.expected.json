@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "status": "passed",
+  "sourceId": "founder-level-civic-classical",
+  "exportVersion": "2026-07-23-v1",
+  "counts": {
+    "sessions": 3588,
+    "grades": 13,
+    "sessionsPerGrade": 276,
+    "uiSectionsPerSession": 10,
+    "checklistStepsPerSession": 10,
+    "checklistEntries": 35880,
+    "previousEdges": 3575,
+    "nextEdges": 3575,
+    "readingRoutes": 2925,
+    "packetFallbackRoutes": 663,
+    "publicAssessmentRoutes": 3588,
+    "restrictedAnswerRoutes": 3588,
+    "publicRubricRoutes": 3588,
+    "correctionLogRoutes": 3588,
+    "portfolioRoutes": 3588,
+    "progressRoutes": 3588,
+    "portableStateExports": 3588,
+    "facilitatorRequired": 828,
+    "facilitatorRecommended": 552,
+    "facilitatorAvailableIfNeeded": 2208,
+    "conditionalEscalationFlags": 17940
+  },
+  "validation": {
+    "navigationGraphComplete": true,
+    "sourceAndRightsRoutesResolved": true,
+    "restrictedPayloadLeakCount": 0,
+    "progressStateHashPassCount": 3588,
+    "sessionHashPassCount": 3588,
+    "inMemoryRoundTripPassCount": 3588,
+    "renderedGradeSampleCount": 13,
+    "fileRoundTripSampleCount": 13,
+    "catalogPreviewUsedCount": 0,
+    "proposalOnlyUsedCount": 0,
+    "realLearnerStateCount": 0
+  },
+  "gradeSamples": [
+    {
+      "gradeCode": "gk",
+      "lessonId": "lesson-gk-cw01-d01",
+      "positionInGrade": 1,
+      "guardianOrFacilitator": "required"
+    },
+    {
+      "gradeCode": "g1",
+      "lessonId": "lesson-g1-cw01-d01",
+      "positionInGrade": 1,
+      "guardianOrFacilitator": "required"
+    },
+    {
+      "gradeCode": "g2",
+      "lessonId": "lesson-g2-cw01-d01",
+      "positionInGrade": 1,
+      "guardianOrFacilitator": "required"
+    },
+    {
+      "gradeCode": "g3",
+      "lessonId": "lesson-g3-cw01-d01",
+      "positionInGrade": 1,
+      "guardianOrFacilitator": "available-if-needed"
+    },
+    {
+      "gradeCode": "g4",
+      "lessonId": "lesson-g4-cw01-d01",
+      "positionInGrade": 1,
+      "guardianOrFacilitator": "available-if-needed"
+    },
+    {
+      "gradeCode": "g5",
+      "lessonId": "lesson-g5-cw01-d01",
+      "positionInGrade": 1,
+      "guardianOrFacilitator": "available-if-needed"
+    },
+    {
+      "gradeCode": "g6",
+      "lessonId": "lesson-g6-cw01-d01",
+      "positionInGrade": 1,
+      "guardianOrFacilitator": "available-if-needed"
+    },
+    {
+      "gradeCode": "g7",
+      "lessonId": "lesson-g7-cw01-d01",
+      "positionInGrade": 1,
+      "guardianOrFacilitator": "available-if-needed"
+    },
+    {
+      "gradeCode": "g8",
+      "lessonId": "lesson-g8-cw01-d01",
+      "positionInGrade": 1,
+      "guardianOrFacilitator": "available-if-needed"
+    },
+    {
+      "gradeCode": "g9",
+      "lessonId": "lesson-g9-cw01-d01",
+      "positionInGrade": 1,
+      "guardianOrFacilitator": "available-if-needed"
+    },
+    {
+      "gradeCode": "g10",
+      "lessonId": "lesson-g10-cw01-d01",
+      "positionInGrade": 1,
+      "guardianOrFacilitator": "available-if-needed"
+    },
+    {
+      "gradeCode": "g11",
+      "lessonId": "lesson-g11-cw01-d01",
+      "positionInGrade": 1,
+      "guardianOrFacilitator": "available-if-needed"
+    },
+    {
+      "gradeCode": "g12",
+      "lessonId": "lesson-g12-cw01-d01",
+      "positionInGrade": 1,
+      "guardianOrFacilitator": "available-if-needed"
+    }
+  ]
+}
