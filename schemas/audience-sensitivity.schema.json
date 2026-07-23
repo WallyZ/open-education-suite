@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-education.local/schemas/audience-sensitivity.schema.json",
+  "title": "Open Education Audience And Sensitivity Metadata",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schemaVersion",
+    "policyVersion",
+    "metadataId",
+    "contentKind",
+    "contentId",
+    "sourcePath",
+    "gradeBand",
+    "ageBand",
+    "audienceClassification",
+    "minorSafe",
+    "adultOnly",
+    "guardianOrFacilitatorRequirement",
+    "sensitiveTopicCategories",
+    "prerequisiteIds",
+    "permittedTutorContexts",
+    "allowedOperations",
+    "masteryAndSafetyPolicyId",
+    "status"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "policyVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "metadataId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "contentKind": {
+      "enum": [
+        "course",
+        "lesson",
+        "source",
+        "tutor-seed",
+        "assessment",
+        "handoff"
+      ]
+    },
+    "contentId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sourcePath": {
+      "type": "string",
+      "minLength": 1
+    },
+    "gradeBand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label",
+        "minGrade",
+        "maxGrade"
+      ],
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minGrade": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "maxGrade": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "ageBand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label",
+        "minAge",
+        "maxAge"
+      ],
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minAge": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "maxAge": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        }
+      }
+    },
+    "audienceClassification": {
+      "enum": [
+        "minor-safe",
+        "adult-only"
+      ]
+    },
+    "minorSafe": {
+      "type": "boolean"
+    },
+    "adultOnly": {
+      "type": "boolean"
+    },
+    "guardianOrFacilitatorRequirement": {
+      "enum": [
+        "none",
+        "guardian-or-facilitator-recommended",
+        "guardian-required",
+        "facilitator-required",
+        "guardian-or-facilitator-required",
+        "adult-confirmed-opt-in"
+      ]
+    },
+    "sensitiveTopicCategories": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prerequisiteIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "permittedTutorContexts": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "allowedOperations": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "catalog",
+          "search",
+          "recommendation",
+          "export",
+          "import",
+          "tutor-context"
+        ]
+      }
+    },
+    "masteryAndSafetyPolicyId": {
+      "const": "suite-equivalent-safety-and-mastery-v1"
+    },
+    "status": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "audienceClassification": {
+            "const": "adult-only"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "minorSafe": {
+            "const": false
+          },
+          "adultOnly": {
+            "const": true
+          },
+          "guardianOrFacilitatorRequirement": {
+            "const": "adult-confirmed-opt-in"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "minorSafe": {
+            "const": true
+          },
+          "adultOnly": {
+            "const": false
+          }
+        }
+      }
+    }
+  ]
+}

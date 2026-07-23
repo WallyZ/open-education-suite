@@ -141,7 +141,7 @@
         "lesson-gk-cw12-d01",
         "founder-level-civic-classical:objectives/course/fcc-k12/fcc-k-foundations",
         "game-development:objectives/course/gdev-102/programming-fundamentals",
-        "software-development:objectives/debugging"
+        "software-development:objectives/course/sd-101/debugging"
       ],
       "id": "learner-content-catalog-api",
       "path": "/api/content/catalog"

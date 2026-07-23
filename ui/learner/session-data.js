@@ -45,7 +45,22 @@ window.openEducationSessionOutput =
     ],
     "priorExperience": [
       "played-games-but-new-to-design"
-    ]
+    ],
+    "audienceContext": {
+      "audienceRole": "adult",
+      "grade": "adult",
+      "ageBand": {
+        "label": "ages-18-adult",
+        "minAge": 18,
+        "maxAge": null
+      },
+      "adultConfirmed": true,
+      "adultContentOptIn": false,
+      "guardianConfirmed": false,
+      "facilitatorPresent": false,
+      "blockedSensitiveTopicCategories": [],
+      "completedPrerequisiteIds": []
+    }
   },
   "mastery": [
     {
@@ -652,7 +667,12 @@ window.openEducationContentCatalog =
 {
   "schemaVersion": 1,
   "generatedFrom": "scripts/teaching/content_catalog_adapter.py",
-  "sourceCount": 11,
+  "sourceCount": 10,
+  "courseCount": 30,
+  "audienceEnforcement": "fail-closed-shared-policy",
+  "audienceOperation": "export",
+  "adultContentOptIn": false,
+  "storesBirthDate": false,
   "sources": [
     {
       "sourceId": "cybersecurity",
@@ -706,7 +726,52 @@ window.openEducationContentCatalog =
               "objectiveId": "cybersecurity:objectives/course/cyb-101/capstone-defense",
               "label": "Capstone Defense"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:cybersecurity:study-plans/courses/CYB-101-cybersecurity-defense-foundations.md",
+            "contentKind": "course",
+            "contentId": "cybersecurity:study-plans/courses/CYB-101-cybersecurity-defense-foundations.md",
+            "sourcePath": "study-plans/courses/CYB-101-cybersecurity-defense-foundations.md",
+            "title": "CYB-101 Cybersecurity Defense Foundations",
+            "gradeBand": {
+              "label": "grades-9-adult",
+              "minGrade": "9",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-14-adult",
+              "minAge": 14,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "digital-media-and-online-safety",
+              "cybersecurity-and-dual-use"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#cybersecurity",
+            "status": "source-default-reviewed"
+          }
         }
       ],
       "objectives": [
@@ -749,21 +814,10 @@ window.openEducationContentCatalog =
         {
           "objectiveId": "cybersecurity:objectives/course/cyb-101/threat-modeling",
           "label": "Threat Modeling"
-        },
-        {
-          "objectiveId": "cybersecurity:objectives/incident-triage",
-          "label": "Incident Triage"
-        },
-        {
-          "objectiveId": "cybersecurity:objectives/network-fundamentals",
-          "label": "Network Fundamentals"
-        },
-        {
-          "objectiveId": "cybersecurity:objectives/threat-modeling-basics",
-          "label": "Threat Modeling Basics"
         }
       ],
-      "structuredPreviewCount": 0
+      "structuredPreviewCount": 0,
+      "audienceDefaultStatus": "source-default-reviewed"
     },
     {
       "sourceId": "clear-reasoning",
@@ -817,7 +871,52 @@ window.openEducationContentCatalog =
               "objectiveId": "clear-reasoning:objectives/course/cr-101/capstone-defense",
               "label": "Capstone Defense"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:clear-reasoning:study-plans/courses/CR-101-clear-reasoning-foundations.md",
+            "contentKind": "course",
+            "contentId": "clear-reasoning:study-plans/courses/CR-101-clear-reasoning-foundations.md",
+            "sourcePath": "study-plans/courses/CR-101-clear-reasoning-foundations.md",
+            "title": "CR-101 Clear Reasoning Foundations",
+            "gradeBand": {
+              "label": "grades-6-adult",
+              "minGrade": "6",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-11-adult",
+              "minAge": 11,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "none",
+            "sensitiveTopicCategories": [
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#clear-reasoning",
+            "status": "source-default-reviewed"
+          }
         }
       ],
       "objectives": [
@@ -862,7 +961,8 @@ window.openEducationContentCatalog =
           "label": "Propositions And Contradiction"
         }
       ],
-      "structuredPreviewCount": 0
+      "structuredPreviewCount": 0,
+      "audienceDefaultStatus": "source-default-reviewed"
     },
     {
       "sourceId": "data-science",
@@ -916,7 +1016,51 @@ window.openEducationContentCatalog =
               "objectiveId": "data-science:objectives/course/ds-101/capstone-defense",
               "label": "Capstone Defense"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:data-science:study-plans/courses/DS-101-data-science-evidence-and-modeling.md",
+            "contentKind": "course",
+            "contentId": "data-science:study-plans/courses/DS-101-data-science-evidence-and-modeling.md",
+            "sourcePath": "study-plans/courses/DS-101-data-science-evidence-and-modeling.md",
+            "title": "DS-101 Data Science Evidence And Modeling",
+            "gradeBand": {
+              "label": "grades-8-adult",
+              "minGrade": "8",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-13-adult",
+              "minAge": 13,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "none",
+            "sensitiveTopicCategories": [
+              "general-academic"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#data-science",
+            "status": "source-default-reviewed"
+          }
         }
       ],
       "objectives": [
@@ -959,21 +1103,10 @@ window.openEducationContentCatalog =
         {
           "objectiveId": "data-science:objectives/course/ds-101/visual-reasoning",
           "label": "Visual Reasoning"
-        },
-        {
-          "objectiveId": "data-science:objectives/data-cleaning-basics",
-          "label": "Data Cleaning Basics"
-        },
-        {
-          "objectiveId": "data-science:objectives/regression-basics",
-          "label": "Regression Basics"
-        },
-        {
-          "objectiveId": "data-science:objectives/visualization-basics",
-          "label": "Visualization Basics"
         }
       ],
-      "structuredPreviewCount": 0
+      "structuredPreviewCount": 0,
+      "audienceDefaultStatus": "source-default-reviewed"
     },
     {
       "sourceId": "game-development",
@@ -995,7 +1128,51 @@ window.openEducationContentCatalog =
               "objectiveId": "game-development:objectives/course/gdev-010/build-discipline",
               "label": "Build Discipline"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:game-development:study-plans/courses/GDEV-010-onboarding-studio.md",
+            "contentKind": "course",
+            "contentId": "game-development:study-plans/courses/GDEV-010-onboarding-studio.md",
+            "sourcePath": "study-plans/courses/GDEV-010-onboarding-studio.md",
+            "title": "GDEV-010 Onboarding Studio",
+            "gradeBand": {
+              "label": "grades-8-adult",
+              "minGrade": "8",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-13-adult",
+              "minAge": 13,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "none",
+            "sensitiveTopicCategories": [
+              "digital-media-and-online-safety"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#game-development",
+            "status": "source-default-reviewed"
+          }
         },
         {
           "id": "game-development:study-plans/courses/GDEV-101-game-design-foundations.md",
@@ -1011,7 +1188,51 @@ window.openEducationContentCatalog =
               "objectiveId": "game-development:objectives/course/gdev-101/prototype-iteration",
               "label": "Prototype Iteration"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:game-development:study-plans/courses/GDEV-101-game-design-foundations.md",
+            "contentKind": "course",
+            "contentId": "game-development:study-plans/courses/GDEV-101-game-design-foundations.md",
+            "sourcePath": "study-plans/courses/GDEV-101-game-design-foundations.md",
+            "title": "GDEV-101 Game Design Foundations",
+            "gradeBand": {
+              "label": "grades-8-adult",
+              "minGrade": "8",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-13-adult",
+              "minAge": 13,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "none",
+            "sensitiveTopicCategories": [
+              "digital-media-and-online-safety"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#game-development",
+            "status": "source-default-reviewed"
+          }
         },
         {
           "id": "game-development:study-plans/courses/GDEV-102-programming-for-games.md",
@@ -1027,7 +1248,51 @@ window.openEducationContentCatalog =
               "objectiveId": "game-development:objectives/course/gdev-102/code-architecture-basics",
               "label": "Code Architecture Basics"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:game-development:study-plans/courses/GDEV-102-programming-for-games.md",
+            "contentKind": "course",
+            "contentId": "game-development:study-plans/courses/GDEV-102-programming-for-games.md",
+            "sourcePath": "study-plans/courses/GDEV-102-programming-for-games.md",
+            "title": "GDEV-102 Programming for Games",
+            "gradeBand": {
+              "label": "grades-8-adult",
+              "minGrade": "8",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-13-adult",
+              "minAge": 13,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "none",
+            "sensitiveTopicCategories": [
+              "digital-media-and-online-safety"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#game-development",
+            "status": "source-default-reviewed"
+          }
         },
         {
           "id": "game-development:study-plans/courses/GDEV-103-game-math-physics.md",
@@ -1043,7 +1308,51 @@ window.openEducationContentCatalog =
               "objectiveId": "game-development:objectives/course/gdev-103/game-physics",
               "label": "Game Physics"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:game-development:study-plans/courses/GDEV-103-game-math-physics.md",
+            "contentKind": "course",
+            "contentId": "game-development:study-plans/courses/GDEV-103-game-math-physics.md",
+            "sourcePath": "study-plans/courses/GDEV-103-game-math-physics.md",
+            "title": "GDEV-103 Game Math and Physics",
+            "gradeBand": {
+              "label": "grades-8-adult",
+              "minGrade": "8",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-13-adult",
+              "minAge": 13,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "none",
+            "sensitiveTopicCategories": [
+              "digital-media-and-online-safety"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#game-development",
+            "status": "source-default-reviewed"
+          }
         },
         {
           "id": "game-development:study-plans/courses/GDEV-104-engine-tools-workflows.md",
@@ -1059,7 +1368,51 @@ window.openEducationContentCatalog =
               "objectiveId": "game-development:objectives/course/gdev-104/source-control-workflow",
               "label": "Source Control Workflow"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:game-development:study-plans/courses/GDEV-104-engine-tools-workflows.md",
+            "contentKind": "course",
+            "contentId": "game-development:study-plans/courses/GDEV-104-engine-tools-workflows.md",
+            "sourcePath": "study-plans/courses/GDEV-104-engine-tools-workflows.md",
+            "title": "GDEV-104 Engine Tools and Workflows",
+            "gradeBand": {
+              "label": "grades-8-adult",
+              "minGrade": "8",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-13-adult",
+              "minAge": 13,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "none",
+            "sensitiveTopicCategories": [
+              "digital-media-and-online-safety"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#game-development",
+            "status": "source-default-reviewed"
+          }
         },
         {
           "id": "game-development:study-plans/courses/GDEV-201-gameplay-systems-architecture.md",
@@ -1075,7 +1428,51 @@ window.openEducationContentCatalog =
               "objectiveId": "game-development:objectives/course/gdev-201/technical-writing",
               "label": "Technical Writing"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:game-development:study-plans/courses/GDEV-201-gameplay-systems-architecture.md",
+            "contentKind": "course",
+            "contentId": "game-development:study-plans/courses/GDEV-201-gameplay-systems-architecture.md",
+            "sourcePath": "study-plans/courses/GDEV-201-gameplay-systems-architecture.md",
+            "title": "GDEV-201 Gameplay Systems Architecture",
+            "gradeBand": {
+              "label": "grades-8-adult",
+              "minGrade": "8",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-13-adult",
+              "minAge": 13,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "none",
+            "sensitiveTopicCategories": [
+              "digital-media-and-online-safety"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#game-development",
+            "status": "source-default-reviewed"
+          }
         },
         {
           "id": "game-development:study-plans/courses/GDEV-202-level-design-ux-narrative.md",
@@ -1091,7 +1488,51 @@ window.openEducationContentCatalog =
               "objectiveId": "game-development:objectives/course/gdev-202/ux-research",
               "label": "Ux Research"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:game-development:study-plans/courses/GDEV-202-level-design-ux-narrative.md",
+            "contentKind": "course",
+            "contentId": "game-development:study-plans/courses/GDEV-202-level-design-ux-narrative.md",
+            "sourcePath": "study-plans/courses/GDEV-202-level-design-ux-narrative.md",
+            "title": "GDEV-202 Level Design, UX, and Narrative",
+            "gradeBand": {
+              "label": "grades-8-adult",
+              "minGrade": "8",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-13-adult",
+              "minAge": 13,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "none",
+            "sensitiveTopicCategories": [
+              "digital-media-and-online-safety"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#game-development",
+            "status": "source-default-reviewed"
+          }
         },
         {
           "id": "game-development:study-plans/courses/GDEV-203-art-animation-audio-ui-pipeline.md",
@@ -1107,7 +1548,51 @@ window.openEducationContentCatalog =
               "objectiveId": "game-development:objectives/course/gdev-203/feedback-polish",
               "label": "Feedback Polish"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:game-development:study-plans/courses/GDEV-203-art-animation-audio-ui-pipeline.md",
+            "contentKind": "course",
+            "contentId": "game-development:study-plans/courses/GDEV-203-art-animation-audio-ui-pipeline.md",
+            "sourcePath": "study-plans/courses/GDEV-203-art-animation-audio-ui-pipeline.md",
+            "title": "GDEV-203 Art, Animation, Audio, and UI Pipeline",
+            "gradeBand": {
+              "label": "grades-8-adult",
+              "minGrade": "8",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-13-adult",
+              "minAge": 13,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "none",
+            "sensitiveTopicCategories": [
+              "digital-media-and-online-safety"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#game-development",
+            "status": "source-default-reviewed"
+          }
         },
         {
           "id": "game-development:study-plans/courses/GDEV-204-ai-simulation-procedural-systems.md",
@@ -1123,7 +1608,51 @@ window.openEducationContentCatalog =
               "objectiveId": "game-development:objectives/course/gdev-204/procedural-systems",
               "label": "Procedural Systems"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:game-development:study-plans/courses/GDEV-204-ai-simulation-procedural-systems.md",
+            "contentKind": "course",
+            "contentId": "game-development:study-plans/courses/GDEV-204-ai-simulation-procedural-systems.md",
+            "sourcePath": "study-plans/courses/GDEV-204-ai-simulation-procedural-systems.md",
+            "title": "GDEV-204 AI, Simulation, and Procedural Systems",
+            "gradeBand": {
+              "label": "grades-8-adult",
+              "minGrade": "8",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-13-adult",
+              "minAge": 13,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "none",
+            "sensitiveTopicCategories": [
+              "digital-media-and-online-safety"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#game-development",
+            "status": "source-default-reviewed"
+          }
         },
         {
           "id": "game-development:study-plans/courses/GDEV-301-production-qa-analytics-live-ops.md",
@@ -1139,7 +1668,51 @@ window.openEducationContentCatalog =
               "objectiveId": "game-development:objectives/course/gdev-301/qa-analytics-liveops",
               "label": "Qa Analytics Liveops"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:game-development:study-plans/courses/GDEV-301-production-qa-analytics-live-ops.md",
+            "contentKind": "course",
+            "contentId": "game-development:study-plans/courses/GDEV-301-production-qa-analytics-live-ops.md",
+            "sourcePath": "study-plans/courses/GDEV-301-production-qa-analytics-live-ops.md",
+            "title": "GDEV-301 Production, QA, Analytics, and Live Operations",
+            "gradeBand": {
+              "label": "grades-8-adult",
+              "minGrade": "8",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-13-adult",
+              "minAge": 13,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "none",
+            "sensitiveTopicCategories": [
+              "digital-media-and-online-safety"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#game-development",
+            "status": "source-default-reviewed"
+          }
         },
         {
           "id": "game-development:study-plans/courses/GDEV-302-multiplayer-online-systems.md",
@@ -1155,7 +1728,51 @@ window.openEducationContentCatalog =
               "objectiveId": "game-development:objectives/course/gdev-302/networked-prototype",
               "label": "Networked Prototype"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:game-development:study-plans/courses/GDEV-302-multiplayer-online-systems.md",
+            "contentKind": "course",
+            "contentId": "game-development:study-plans/courses/GDEV-302-multiplayer-online-systems.md",
+            "sourcePath": "study-plans/courses/GDEV-302-multiplayer-online-systems.md",
+            "title": "GDEV-302 Multiplayer and Online Systems",
+            "gradeBand": {
+              "label": "grades-8-adult",
+              "minGrade": "8",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-13-adult",
+              "minAge": 13,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "none",
+            "sensitiveTopicCategories": [
+              "digital-media-and-online-safety"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#game-development",
+            "status": "source-default-reviewed"
+          }
         },
         {
           "id": "game-development:study-plans/courses/GDEV-303-performance-platforms-accessibility-compliance.md",
@@ -1171,7 +1788,51 @@ window.openEducationContentCatalog =
               "objectiveId": "game-development:objectives/course/gdev-303/accessibility-compliance",
               "label": "Accessibility Compliance"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:game-development:study-plans/courses/GDEV-303-performance-platforms-accessibility-compliance.md",
+            "contentKind": "course",
+            "contentId": "game-development:study-plans/courses/GDEV-303-performance-platforms-accessibility-compliance.md",
+            "sourcePath": "study-plans/courses/GDEV-303-performance-platforms-accessibility-compliance.md",
+            "title": "GDEV-303 Performance, Platforms, Accessibility, and Compliance",
+            "gradeBand": {
+              "label": "grades-8-adult",
+              "minGrade": "8",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-13-adult",
+              "minAge": 13,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "none",
+            "sensitiveTopicCategories": [
+              "digital-media-and-online-safety"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#game-development",
+            "status": "source-default-reviewed"
+          }
         },
         {
           "id": "game-development:study-plans/courses/GDEV-401-specialization-studio.md",
@@ -1187,7 +1848,51 @@ window.openEducationContentCatalog =
               "objectiveId": "game-development:objectives/course/gdev-401/external-critique",
               "label": "External Critique"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:game-development:study-plans/courses/GDEV-401-specialization-studio.md",
+            "contentKind": "course",
+            "contentId": "game-development:study-plans/courses/GDEV-401-specialization-studio.md",
+            "sourcePath": "study-plans/courses/GDEV-401-specialization-studio.md",
+            "title": "GDEV-401 Specialization Studio",
+            "gradeBand": {
+              "label": "grades-8-adult",
+              "minGrade": "8",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-13-adult",
+              "minAge": 13,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "none",
+            "sensitiveTopicCategories": [
+              "digital-media-and-online-safety"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#game-development",
+            "status": "source-default-reviewed"
+          }
         },
         {
           "id": "game-development:study-plans/courses/GDEV-402-team-style-vertical-slice-studio.md",
@@ -1203,7 +1908,51 @@ window.openEducationContentCatalog =
               "objectiveId": "game-development:objectives/course/gdev-402/interdisciplinary-handoff",
               "label": "Interdisciplinary Handoff"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:game-development:study-plans/courses/GDEV-402-team-style-vertical-slice-studio.md",
+            "contentKind": "course",
+            "contentId": "game-development:study-plans/courses/GDEV-402-team-style-vertical-slice-studio.md",
+            "sourcePath": "study-plans/courses/GDEV-402-team-style-vertical-slice-studio.md",
+            "title": "GDEV-402 Team-Style Vertical Slice Studio",
+            "gradeBand": {
+              "label": "grades-8-adult",
+              "minGrade": "8",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-13-adult",
+              "minAge": 13,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "none",
+            "sensitiveTopicCategories": [
+              "digital-media-and-online-safety"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#game-development",
+            "status": "source-default-reviewed"
+          }
         },
         {
           "id": "game-development:study-plans/courses/GDEV-499-capstone-launch.md",
@@ -1219,30 +1968,54 @@ window.openEducationContentCatalog =
               "objectiveId": "game-development:objectives/course/gdev-499/portfolio-case-study",
               "label": "Portfolio Case Study"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:game-development:study-plans/courses/GDEV-499-capstone-launch.md",
+            "contentKind": "course",
+            "contentId": "game-development:study-plans/courses/GDEV-499-capstone-launch.md",
+            "sourcePath": "study-plans/courses/GDEV-499-capstone-launch.md",
+            "title": "GDEV-499 Capstone Launch",
+            "gradeBand": {
+              "label": "grades-8-adult",
+              "minGrade": "8",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-13-adult",
+              "minAge": 13,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "none",
+            "sensitiveTopicCategories": [
+              "digital-media-and-online-safety"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#game-development",
+            "status": "source-default-reviewed"
+          }
         }
       ],
       "objectives": [
-        {
-          "objectiveId": "game-development:objectives/accessibility-aware-design",
-          "label": "Accessibility Aware Design"
-        },
-        {
-          "objectiveId": "game-development:objectives/art-pipeline-literacy",
-          "label": "Art Pipeline Literacy"
-        },
-        {
-          "objectiveId": "game-development:objectives/audio-feedback-literacy",
-          "label": "Audio Feedback Literacy"
-        },
-        {
-          "objectiveId": "game-development:objectives/blueprint-to-cpp",
-          "label": "Blueprint To Cpp"
-        },
-        {
-          "objectiveId": "game-development:objectives/capstone-launch",
-          "label": "Capstone Launch"
-        },
         {
           "objectiveId": "game-development:objectives/course/gdev-010/build-discipline",
           "label": "Build Discipline"
@@ -1362,476 +2135,10 @@ window.openEducationContentCatalog =
         {
           "objectiveId": "game-development:objectives/course/gdev-499/portfolio-case-study",
           "label": "Portfolio Case Study"
-        },
-        {
-          "objectiveId": "game-development:objectives/design-core-loop",
-          "label": "Design Core Loop"
-        },
-        {
-          "objectiveId": "game-development:objectives/game-ai-simulation",
-          "label": "Game Ai Simulation"
-        },
-        {
-          "objectiveId": "game-development:objectives/game-math-and-physics",
-          "label": "Game Math And Physics"
-        },
-        {
-          "objectiveId": "game-development:objectives/gameplay-architecture",
-          "label": "Gameplay Architecture"
-        },
-        {
-          "objectiveId": "game-development:objectives/level-flow",
-          "label": "Level Flow"
-        },
-        {
-          "objectiveId": "game-development:objectives/performance-profiling",
-          "label": "Performance Profiling"
-        },
-        {
-          "objectiveId": "game-development:objectives/playtest-driven-iteration",
-          "label": "Playtest Driven Iteration"
-        },
-        {
-          "objectiveId": "game-development:objectives/portfolio-case-study",
-          "label": "Portfolio Case Study"
-        },
-        {
-          "objectiveId": "game-development:objectives/qa-release-readiness",
-          "label": "Qa Release Readiness"
-        },
-        {
-          "objectiveId": "game-development:objectives/scope-control",
-          "label": "Scope Control"
-        },
-        {
-          "objectiveId": "game-development:objectives/team-style-handoff",
-          "label": "Team Style Handoff"
-        },
-        {
-          "objectiveId": "game-development:objectives/tools-and-pipeline",
-          "label": "Tools And Pipeline"
-        },
-        {
-          "objectiveId": "game-development:objectives/ui-ux-game-feedback",
-          "label": "Ui Ux Game Feedback"
-        },
-        {
-          "objectiveId": "game-development:objectives/unreal-basics",
-          "label": "Unreal Basics"
-        },
-        {
-          "objectiveId": "game-development:objectives/vertical-slice-production",
-          "label": "Vertical Slice Production"
-        },
-        {
-          "objectiveId": "game-development:objectives/vr-comfort-basics",
-          "label": "Vr Comfort Basics"
         }
       ],
-      "structuredPreviewCount": 0
-    },
-    {
-      "sourceId": "mens-relationship-skills",
-      "title": "Open Education Men's Relationship Skills",
-      "sourceRepo": "open-education-mens-relationship-skills",
-      "objectCount": 85,
-      "courses": [
-        {
-          "id": "mens-relationship-skills:study-plans/courses/MRS-010-onboarding-ethics-and-personal-code.md",
-          "title": "MRS-010 - Onboarding, Ethics, And Personal Code",
-          "sourceRepo": "open-education-mens-relationship-skills",
-          "sourcePath": "study-plans/courses/MRS-010-onboarding-ethics-and-personal-code.md",
-          "objectives": [
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-010/personal-code",
-              "label": "Personal Code"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-010/ethical-guardrails",
-              "label": "Ethical Guardrails"
-            }
-          ]
-        },
-        {
-          "id": "mens-relationship-skills:study-plans/courses/MRS-101-inner-strength-and-grounded-confidence.md",
-          "title": "MRS-101 - Inner Strength And Grounded Confidence",
-          "sourceRepo": "open-education-mens-relationship-skills",
-          "sourcePath": "study-plans/courses/MRS-101-inner-strength-and-grounded-confidence.md",
-          "objectives": [
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-101/emotional-regulation",
-              "label": "Emotional Regulation"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-101/competence-confidence",
-              "label": "Competence Confidence"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-101/fellowship-and-elevation",
-              "label": "Fellowship And Elevation"
-            }
-          ]
-        },
-        {
-          "id": "mens-relationship-skills:study-plans/courses/MRS-102-communication-and-social-intelligence.md",
-          "title": "MRS-102 - Communication And Social Intelligence",
-          "sourceRepo": "open-education-mens-relationship-skills",
-          "sourcePath": "study-plans/courses/MRS-102-communication-and-social-intelligence.md",
-          "objectives": [
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-102/active-listening",
-              "label": "Active Listening"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-102/conversational-reciprocity",
-              "label": "Conversational Reciprocity"
-            }
-          ]
-        },
-        {
-          "id": "mens-relationship-skills:study-plans/courses/MRS-201-ethical-attraction-and-dating-practice.md",
-          "title": "MRS-201 - Ethical Attraction And Dating Practice",
-          "sourceRepo": "open-education-mens-relationship-skills",
-          "sourcePath": "study-plans/courses/MRS-201-ethical-attraction-and-dating-practice.md",
-          "objectives": [
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-201/ethical-attraction",
-              "label": "Ethical Attraction"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-201/initiative-and-boundaries",
-              "label": "Initiative And Boundaries"
-            }
-          ]
-        },
-        {
-          "id": "mens-relationship-skills:study-plans/courses/MRS-301-relationship-discernment-and-commitment.md",
-          "title": "MRS-301 - Relationship Discernment And Commitment",
-          "sourceRepo": "open-education-mens-relationship-skills",
-          "sourcePath": "study-plans/courses/MRS-301-relationship-discernment-and-commitment.md",
-          "objectives": [
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/partner-discernment",
-              "label": "Partner Discernment"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/presentation-vs-character-discernment",
-              "label": "Presentation Vs Character Discernment"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/healthy-commitment",
-              "label": "Healthy Commitment"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/family-template-discernment",
-              "label": "Family Template Discernment"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/values-aligned-partner-search",
-              "label": "Values Aligned Partner Search"
-            }
-          ]
-        },
-        {
-          "id": "mens-relationship-skills:study-plans/courses/MRS-302-trust-fidelity-and-relationship-reality-checks.md",
-          "title": "MRS-302 - Trust, Fidelity, And Relationship Reality Checks",
-          "sourceRepo": "open-education-mens-relationship-skills",
-          "sourcePath": "study-plans/courses/MRS-302-trust-fidelity-and-relationship-reality-checks.md",
-          "objectives": [
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-302/trust-pattern-discernment",
-              "label": "Trust Pattern Discernment"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-302/fidelity-response-plan",
-              "label": "Fidelity Response Plan"
-            }
-          ]
-        },
-        {
-          "id": "mens-relationship-skills:study-plans/courses/MRS-303-modern-dating-safety-sexual-health-and-practical-partnership.md",
-          "title": "MRS-303 - Modern Dating Safety, Sexual Health, And Practical Partnership",
-          "sourceRepo": "open-education-mens-relationship-skills",
-          "sourcePath": "study-plans/courses/MRS-303-modern-dating-safety-sexual-health-and-practical-partnership.md",
-          "objectives": [
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-303/online-dating-safety",
-              "label": "Online Dating Safety"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-303/sexual-health-family-planning",
-              "label": "Sexual Health Family Planning"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-303/breakup-recovery",
-              "label": "Breakup Recovery"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-303/practical-partnership",
-              "label": "Practical Partnership"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-303/safety-referral-boundaries",
-              "label": "Safety Referral Boundaries"
-            }
-          ]
-        },
-        {
-          "id": "mens-relationship-skills:study-plans/courses/MRS-304-healthy-sexuality-porn-reality-and-mutual-pleasure.md",
-          "title": "MRS-304 - Healthy Sexuality, Porn Reality, And Mutual Pleasure",
-          "sourceRepo": "open-education-mens-relationship-skills",
-          "sourcePath": "study-plans/courses/MRS-304-healthy-sexuality-porn-reality-and-mutual-pleasure.md",
-          "objectives": [
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/porn-reality-and-body-confidence",
-              "label": "Porn Reality And Body Confidence"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/sexual-habit-recovery",
-              "label": "Sexual Habit Recovery"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/anatomy-function-and-medical-humility",
-              "label": "Anatomy Function And Medical Humility"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/consent-and-pleasure-communication",
-              "label": "Consent And Pleasure Communication"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/arousal-pacing-and-self-command",
-              "label": "Arousal Pacing And Self Command"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/fantasy-boundaries-and-values",
-              "label": "Fantasy Boundaries And Values"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/mutual-attention-and-feedback",
-              "label": "Mutual Attention And Feedback"
-            }
-          ]
-        },
-        {
-          "id": "mens-relationship-skills:study-plans/courses/MRS-401-marriage-preparation-and-relationship-practice.md",
-          "title": "MRS-401 - Marriage Preparation And Relationship Practice",
-          "sourceRepo": "open-education-mens-relationship-skills",
-          "sourcePath": "study-plans/courses/MRS-401-marriage-preparation-and-relationship-practice.md",
-          "objectives": [
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/marriage-readiness-self-audit",
-              "label": "Marriage Readiness Self Audit"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/opposite-sex-social-practice",
-              "label": "Opposite Sex Social Practice"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/courtship-intention-and-pacing",
-              "label": "Courtship Intention And Pacing"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/hard-conversation-readiness",
-              "label": "Hard Conversation Readiness"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/marriage-conflict-repair",
-              "label": "Marriage Conflict Repair"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/shared-life-systems",
-              "label": "Shared Life Systems"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/family-and-community-integration",
-              "label": "Family And Community Integration"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/commitment-discernment-and-exit",
-              "label": "Commitment Discernment And Exit"
-            }
-          ]
-        },
-        {
-          "id": "mens-relationship-skills:study-plans/courses/MRS-499-capstone-relational-character-portfolio.md",
-          "title": "MRS-499 - Capstone Relational Character Portfolio",
-          "sourceRepo": "open-education-mens-relationship-skills",
-          "sourcePath": "study-plans/courses/MRS-499-capstone-relational-character-portfolio.md",
-          "objectives": [
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-499/integrated-scenario-performance",
-              "label": "Integrated Scenario Performance"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-499/portfolio-self-audit",
-              "label": "Portfolio Self Audit"
-            },
-            {
-              "objectiveId": "mens-relationship-skills:objectives/course/mrs-499/fellowship-leadership",
-              "label": "Fellowship Leadership"
-            }
-          ]
-        }
-      ],
-      "objectives": [
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-010/ethical-guardrails",
-          "label": "Ethical Guardrails"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-010/personal-code",
-          "label": "Personal Code"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-101/competence-confidence",
-          "label": "Competence Confidence"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-101/emotional-regulation",
-          "label": "Emotional Regulation"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-101/fellowship-and-elevation",
-          "label": "Fellowship And Elevation"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-102/active-listening",
-          "label": "Active Listening"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-102/conversational-reciprocity",
-          "label": "Conversational Reciprocity"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-201/ethical-attraction",
-          "label": "Ethical Attraction"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-201/initiative-and-boundaries",
-          "label": "Initiative And Boundaries"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/family-template-discernment",
-          "label": "Family Template Discernment"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/healthy-commitment",
-          "label": "Healthy Commitment"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/partner-discernment",
-          "label": "Partner Discernment"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/presentation-vs-character-discernment",
-          "label": "Presentation Vs Character Discernment"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-301/values-aligned-partner-search",
-          "label": "Values Aligned Partner Search"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-302/fidelity-response-plan",
-          "label": "Fidelity Response Plan"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-302/trust-pattern-discernment",
-          "label": "Trust Pattern Discernment"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-303/breakup-recovery",
-          "label": "Breakup Recovery"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-303/online-dating-safety",
-          "label": "Online Dating Safety"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-303/practical-partnership",
-          "label": "Practical Partnership"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-303/safety-referral-boundaries",
-          "label": "Safety Referral Boundaries"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-303/sexual-health-family-planning",
-          "label": "Sexual Health Family Planning"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/anatomy-function-and-medical-humility",
-          "label": "Anatomy Function And Medical Humility"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/arousal-pacing-and-self-command",
-          "label": "Arousal Pacing And Self Command"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/consent-and-pleasure-communication",
-          "label": "Consent And Pleasure Communication"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/fantasy-boundaries-and-values",
-          "label": "Fantasy Boundaries And Values"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/mutual-attention-and-feedback",
-          "label": "Mutual Attention And Feedback"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/porn-reality-and-body-confidence",
-          "label": "Porn Reality And Body Confidence"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-304/sexual-habit-recovery",
-          "label": "Sexual Habit Recovery"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/commitment-discernment-and-exit",
-          "label": "Commitment Discernment And Exit"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/courtship-intention-and-pacing",
-          "label": "Courtship Intention And Pacing"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/family-and-community-integration",
-          "label": "Family And Community Integration"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/hard-conversation-readiness",
-          "label": "Hard Conversation Readiness"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/marriage-conflict-repair",
-          "label": "Marriage Conflict Repair"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/marriage-readiness-self-audit",
-          "label": "Marriage Readiness Self Audit"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/opposite-sex-social-practice",
-          "label": "Opposite Sex Social Practice"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-401/shared-life-systems",
-          "label": "Shared Life Systems"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-499/fellowship-leadership",
-          "label": "Fellowship Leadership"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-499/integrated-scenario-performance",
-          "label": "Integrated Scenario Performance"
-        },
-        {
-          "objectiveId": "mens-relationship-skills:objectives/course/mrs-499/portfolio-self-audit",
-          "label": "Portfolio Self Audit"
-        }
-      ],
-      "structuredPreviewCount": 0
+      "structuredPreviewCount": 0,
+      "audienceDefaultStatus": "source-default-reviewed"
     },
     {
       "sourceId": "performing-arts",
@@ -1844,95 +2151,311 @@ window.openEducationContentCatalog =
           "title": "PERF-010 - Performance Onboarding Studio",
           "sourceRepo": "open-education-performing-arts",
           "sourcePath": "study-plans/courses/PERF-010-performance-onboarding-studio.md",
-          "objectives": []
+          "objectives": [],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:performing-arts:study-plans/courses/PERF-010-performance-onboarding-studio.md",
+            "contentKind": "course",
+            "contentId": "performing-arts:study-plans/courses/PERF-010-performance-onboarding-studio.md",
+            "sourcePath": "study-plans/courses/PERF-010-performance-onboarding-studio.md",
+            "title": "PERF-010 - Performance Onboarding Studio",
+            "gradeBand": {
+              "label": "grades-6-adult",
+              "minGrade": "6",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-11-adult",
+              "minAge": 11,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "public-expression-and-content-boundaries"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#performing-arts",
+            "status": "source-default-reviewed"
+          }
         },
         {
           "id": "performing-arts:study-plans/courses/PERF-101-voice-foundations.md",
           "title": "PERF-101 - Voice Foundations",
           "sourceRepo": "open-education-performing-arts",
           "sourcePath": "study-plans/courses/PERF-101-voice-foundations.md",
-          "objectives": []
+          "objectives": [],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:performing-arts:study-plans/courses/PERF-101-voice-foundations.md",
+            "contentKind": "course",
+            "contentId": "performing-arts:study-plans/courses/PERF-101-voice-foundations.md",
+            "sourcePath": "study-plans/courses/PERF-101-voice-foundations.md",
+            "title": "PERF-101 - Voice Foundations",
+            "gradeBand": {
+              "label": "grades-6-adult",
+              "minGrade": "6",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-11-adult",
+              "minAge": 11,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "public-expression-and-content-boundaries"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#performing-arts",
+            "status": "source-default-reviewed"
+          }
         },
         {
           "id": "performing-arts:study-plans/courses/PERF-102-acting-foundations.md",
           "title": "PERF-102 - Acting Foundations",
           "sourceRepo": "open-education-performing-arts",
           "sourcePath": "study-plans/courses/PERF-102-acting-foundations.md",
-          "objectives": []
+          "objectives": [],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:performing-arts:study-plans/courses/PERF-102-acting-foundations.md",
+            "contentKind": "course",
+            "contentId": "performing-arts:study-plans/courses/PERF-102-acting-foundations.md",
+            "sourcePath": "study-plans/courses/PERF-102-acting-foundations.md",
+            "title": "PERF-102 - Acting Foundations",
+            "gradeBand": {
+              "label": "grades-6-adult",
+              "minGrade": "6",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-11-adult",
+              "minAge": 11,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "public-expression-and-content-boundaries"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#performing-arts",
+            "status": "source-default-reviewed"
+          }
         },
         {
           "id": "performing-arts:study-plans/courses/PERF-201-voice-acting-and-character-performance.md",
           "title": "PERF-201 - Voice Acting and Character Performance",
           "sourceRepo": "open-education-performing-arts",
           "sourcePath": "study-plans/courses/PERF-201-voice-acting-and-character-performance.md",
-          "objectives": []
+          "objectives": [],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:performing-arts:study-plans/courses/PERF-201-voice-acting-and-character-performance.md",
+            "contentKind": "course",
+            "contentId": "performing-arts:study-plans/courses/PERF-201-voice-acting-and-character-performance.md",
+            "sourcePath": "study-plans/courses/PERF-201-voice-acting-and-character-performance.md",
+            "title": "PERF-201 - Voice Acting and Character Performance",
+            "gradeBand": {
+              "label": "grades-6-adult",
+              "minGrade": "6",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-11-adult",
+              "minAge": 11,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "public-expression-and-content-boundaries"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#performing-arts",
+            "status": "source-default-reviewed"
+          }
         },
         {
           "id": "performing-arts:study-plans/courses/PERF-301-camera-and-content-performance.md",
           "title": "PERF-301 - Camera and Content Performance",
           "sourceRepo": "open-education-performing-arts",
           "sourcePath": "study-plans/courses/PERF-301-camera-and-content-performance.md",
-          "objectives": []
+          "objectives": [],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:performing-arts:study-plans/courses/PERF-301-camera-and-content-performance.md",
+            "contentKind": "course",
+            "contentId": "performing-arts:study-plans/courses/PERF-301-camera-and-content-performance.md",
+            "sourcePath": "study-plans/courses/PERF-301-camera-and-content-performance.md",
+            "title": "PERF-301 - Camera and Content Performance",
+            "gradeBand": {
+              "label": "grades-6-adult",
+              "minGrade": "6",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-11-adult",
+              "minAge": 11,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "public-expression-and-content-boundaries"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#performing-arts",
+            "status": "source-default-reviewed"
+          }
         },
         {
           "id": "performing-arts:study-plans/courses/PERF-499-capstone-performance-portfolio.md",
           "title": "PERF-499 - Capstone Performance Portfolio",
           "sourceRepo": "open-education-performing-arts",
           "sourcePath": "study-plans/courses/PERF-499-capstone-performance-portfolio.md",
-          "objectives": []
+          "objectives": [],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:performing-arts:study-plans/courses/PERF-499-capstone-performance-portfolio.md",
+            "contentKind": "course",
+            "contentId": "performing-arts:study-plans/courses/PERF-499-capstone-performance-portfolio.md",
+            "sourcePath": "study-plans/courses/PERF-499-capstone-performance-portfolio.md",
+            "title": "PERF-499 - Capstone Performance Portfolio",
+            "gradeBand": {
+              "label": "grades-6-adult",
+              "minGrade": "6",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-11-adult",
+              "minAge": 11,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "public-expression-and-content-boundaries"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#performing-arts",
+            "status": "source-default-reviewed"
+          }
         }
       ],
-      "objectives": [
-        {
-          "objectiveId": "performing-arts:objectives/course/perf-010/baseline-performance-map",
-          "label": "Baseline Performance Map"
-        },
-        {
-          "objectiveId": "performing-arts:objectives/course/perf-010/deliberate-practice-plan",
-          "label": "Deliberate Practice Plan"
-        },
-        {
-          "objectiveId": "performing-arts:objectives/course/perf-101/healthy-resonant-voice",
-          "label": "Healthy Resonant Voice"
-        },
-        {
-          "objectiveId": "performing-arts:objectives/course/perf-101/listenable-pacing-and-articulation",
-          "label": "Listenable Pacing And Articulation"
-        },
-        {
-          "objectiveId": "performing-arts:objectives/course/perf-102/objective-tactic-listening",
-          "label": "Objective Tactic Listening"
-        },
-        {
-          "objectiveId": "performing-arts:objectives/course/perf-102/truthful-adjustment-under-direction",
-          "label": "Truthful Adjustment Under Direction"
-        },
-        {
-          "objectiveId": "performing-arts:objectives/course/perf-201/character-contrast-and-vocal-choice",
-          "label": "Character Contrast And Vocal Choice"
-        },
-        {
-          "objectiveId": "performing-arts:objectives/course/perf-201/microphone-performance-and-direction",
-          "label": "Microphone Performance And Direction"
-        },
-        {
-          "objectiveId": "performing-arts:objectives/course/perf-301/camera-presence-and-eyeline",
-          "label": "Camera Presence And Eyeline"
-        },
-        {
-          "objectiveId": "performing-arts:objectives/course/perf-301/teaching-and-creator-performance",
-          "label": "Teaching And Creator Performance"
-        },
-        {
-          "objectiveId": "performing-arts:objectives/course/perf-499/multi-format-performance-reel",
-          "label": "Multi Format Performance Reel"
-        },
-        {
-          "objectiveId": "performing-arts:objectives/course/perf-499/review-driven-professional-growth",
-          "label": "Review Driven Professional Growth"
-        }
-      ],
-      "structuredPreviewCount": 0
+      "objectives": [],
+      "structuredPreviewCount": 0,
+      "audienceDefaultStatus": "source-default-reviewed"
     },
     {
       "sourceId": "software-development",
@@ -1986,7 +2509,51 @@ window.openEducationContentCatalog =
               "objectiveId": "software-development:objectives/course/sd-101/capstone-defense",
               "label": "Capstone Defense"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:software-development:study-plans/courses/SD-101-software-development-practice.md",
+            "contentKind": "course",
+            "contentId": "software-development:study-plans/courses/SD-101-software-development-practice.md",
+            "sourcePath": "study-plans/courses/SD-101-software-development-practice.md",
+            "title": "SD-101 Software Development Practice",
+            "gradeBand": {
+              "label": "grades-8-adult",
+              "minGrade": "8",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-13-adult",
+              "minAge": 13,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "none",
+            "sensitiveTopicCategories": [
+              "digital-media-and-online-safety"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#software-development",
+            "status": "source-default-reviewed"
+          }
         }
       ],
       "objectives": [
@@ -2029,21 +2596,10 @@ window.openEducationContentCatalog =
         {
           "objectiveId": "software-development:objectives/course/sd-101/version-control",
           "label": "Version Control"
-        },
-        {
-          "objectiveId": "software-development:objectives/debugging",
-          "label": "Debugging"
-        },
-        {
-          "objectiveId": "software-development:objectives/testable-functions",
-          "label": "Testable Functions"
-        },
-        {
-          "objectiveId": "software-development:objectives/version-control-basics",
-          "label": "Version Control Basics"
         }
       ],
-      "structuredPreviewCount": 0
+      "structuredPreviewCount": 0,
+      "audienceDefaultStatus": "source-default-reviewed"
     },
     {
       "sourceId": "american-history",
@@ -2089,7 +2645,53 @@ window.openEducationContentCatalog =
               "objectiveId": "american-history:objectives/course/amh-reference/research-prospectus-defense",
               "label": "Research Prospectus Defense"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:american-history:study-plans/courses/AMH-REFERENCE-PROGRAM.md",
+            "contentKind": "course",
+            "contentId": "american-history:study-plans/courses/AMH-REFERENCE-PROGRAM.md",
+            "sourcePath": "study-plans/courses/AMH-REFERENCE-PROGRAM.md",
+            "title": "AMH-REFERENCE-PROGRAM American History: Evidence, Argument, And Research",
+            "gradeBand": {
+              "label": "grades-6-adult",
+              "minGrade": "6",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-11-adult",
+              "minAge": 11,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "violence-crime-and-war",
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#american-history",
+            "status": "source-default-reviewed"
+          }
         }
       ],
       "objectives": [
@@ -2126,13 +2728,14 @@ window.openEducationContentCatalog =
           "label": "Research Prospectus Defense"
         }
       ],
-      "structuredPreviewCount": 0
+      "structuredPreviewCount": 0,
+      "audienceDefaultStatus": "source-default-reviewed"
     },
     {
       "sourceId": "founder-level-civic-classical",
       "title": "Open Education Founder-Level Civic Classical",
       "sourceRepo": "open-education-founder-level-civic-classical",
-      "objectCount": 885,
+      "objectCount": 907,
       "courses": [
         {
           "id": "founder-level-civic-classical:study-plans/courses/FCC-FUTURE-READY-SYSTEMS-INNOVATION-K12.md",
@@ -2184,7 +2787,60 @@ window.openEducationContentCatalog =
               "objectiveId": "founder-level-civic-classical:objectives/course/fcc-future-ready-k12/values-institutional-stewardship",
               "label": "Values Institutional Stewardship"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:founder-level-civic-classical:study-plans/courses/FCC-FUTURE-READY-SYSTEMS-INNOVATION-K12.md",
+            "contentKind": "course",
+            "contentId": "founder-level-civic-classical:study-plans/courses/FCC-FUTURE-READY-SYSTEMS-INNOVATION-K12.md",
+            "sourcePath": "study-plans/courses/FCC-FUTURE-READY-SYSTEMS-INNOVATION-K12.md",
+            "title": "FCC-FUTURE-READY-SYSTEMS-INNOVATION-K12 — Future-Ready Systems, Innovation, And Stewardship K-12",
+            "gradeBand": {
+              "label": "ages-3-5-companion-and-k-12",
+              "minGrade": "K",
+              "maxGrade": "12"
+            },
+            "ageBand": {
+              "label": "ages-3-18",
+              "minAge": 3,
+              "maxAge": 18
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "faith-and-worldview",
+              "health-and-human-development",
+              "relationships-and-sexuality",
+              "substance-use-and-addiction",
+              "violence-crime-and-war",
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict",
+              "digital-media-and-online-safety"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context",
+              "family-community-discussion"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#founder-level-civic-classical",
+            "status": "source-default-reviewed-object-registry-required"
+          }
         },
         {
           "id": "founder-level-civic-classical:study-plans/courses/FCC-K12-founder-level-civic-classical.md",
@@ -2255,8 +2911,65 @@ window.openEducationContentCatalog =
             {
               "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/face-to-face-communication-social-confidence",
               "label": "Face To Face Communication Social Confidence"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/health-nutrition-substance-safety",
+              "label": "Health Nutrition Substance Safety"
             }
           ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:founder-level-civic-classical:study-plans/courses/FCC-K12-founder-level-civic-classical.md",
+            "contentKind": "course",
+            "contentId": "founder-level-civic-classical:study-plans/courses/FCC-K12-founder-level-civic-classical.md",
+            "sourcePath": "study-plans/courses/FCC-K12-founder-level-civic-classical.md",
+            "title": "FCC-K12 Founder-Level Civic Classical Sequence",
+            "gradeBand": {
+              "label": "ages-3-5-companion-and-k-12",
+              "minGrade": "K",
+              "maxGrade": "12"
+            },
+            "ageBand": {
+              "label": "ages-3-18",
+              "minAge": 3,
+              "maxAge": 18
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "faith-and-worldview",
+              "health-and-human-development",
+              "relationships-and-sexuality",
+              "substance-use-and-addiction",
+              "violence-crime-and-war",
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict",
+              "digital-media-and-online-safety"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context",
+              "family-community-discussion"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#founder-level-civic-classical",
+            "status": "source-default-reviewed-object-registry-required"
+          },
           "structuredPreview": {
             "schemaVersion": 1,
             "previewKind": "public-safe-structured-draft",
@@ -2426,11 +3139,16 @@ window.openEducationContentCatalog =
           "label": "Fcc K Foundations"
         },
         {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/health-nutrition-substance-safety",
+          "label": "Health Nutrition Substance Safety"
+        },
+        {
           "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/program-orientation",
           "label": "Program Orientation"
         }
       ],
-      "structuredPreviewCount": 1
+      "structuredPreviewCount": 1,
+      "audienceDefaultStatus": "source-default-reviewed-object-registry-required"
     },
     {
       "sourceId": "leadership",
@@ -2484,17 +3202,57 @@ window.openEducationContentCatalog =
               "objectiveId": "leadership:objectives/course/lead-101/capstone-defense",
               "label": "Capstone Defense"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:leadership:study-plans/courses/LEAD-101-leadership-practice-and-judgment.md",
+            "contentKind": "course",
+            "contentId": "leadership:study-plans/courses/LEAD-101-leadership-practice-and-judgment.md",
+            "sourcePath": "study-plans/courses/LEAD-101-leadership-practice-and-judgment.md",
+            "title": "LEAD-101 Leadership Practice and Judgment",
+            "gradeBand": {
+              "label": "grades-8-adult",
+              "minGrade": "8",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-13-adult",
+              "minAge": 13,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "none",
+            "sensitiveTopicCategories": [
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#leadership",
+            "status": "source-default-reviewed"
+          }
         }
       ],
       "objectives": [
         {
           "objectiveId": "leadership:objectives/course/lead-101/capstone-defense",
           "label": "Capstone Defense"
-        },
-        {
-          "objectiveId": "leadership:objectives/course/lead-101/change-leadership",
-          "label": "Change Leadership"
         },
         {
           "objectiveId": "leadership:objectives/course/lead-101/coaching-feedback",
@@ -2509,20 +3267,12 @@ window.openEducationContentCatalog =
           "label": "Conflict Repair"
         },
         {
-          "objectiveId": "leadership:objectives/course/lead-101/crisis-aar",
-          "label": "Crisis Aar"
-        },
-        {
           "objectiveId": "leadership:objectives/course/lead-101/decision-quality",
           "label": "Decision Quality"
         },
         {
           "objectiveId": "leadership:objectives/course/lead-101/ethical-pressure",
           "label": "Ethical Pressure"
-        },
-        {
-          "objectiveId": "leadership:objectives/course/lead-101/inclusion-fairness",
-          "label": "Inclusion Fairness"
         },
         {
           "objectiveId": "leadership:objectives/course/lead-101/leadership-as-responsibility",
@@ -2533,10 +3283,6 @@ window.openEducationContentCatalog =
           "label": "Listening Sensemaking"
         },
         {
-          "objectiveId": "leadership:objectives/course/lead-101/self-command",
-          "label": "Self Command"
-        },
-        {
           "objectiveId": "leadership:objectives/course/lead-101/team-systems",
           "label": "Team Systems"
         },
@@ -2545,7 +3291,8 @@ window.openEducationContentCatalog =
           "label": "Trust"
         }
       ],
-      "structuredPreviewCount": 0
+      "structuredPreviewCount": 0,
+      "audienceDefaultStatus": "source-default-reviewed"
     },
     {
       "sourceId": "comedy",
@@ -2623,7 +3370,51 @@ window.openEducationContentCatalog =
               "objectiveId": "comedy:objectives/course/com-101/capstone-showcase",
               "label": "Capstone Showcase"
             }
-          ]
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:comedy:study-plans/courses/COM-101-humor-writing-and-performance.md",
+            "contentKind": "course",
+            "contentId": "comedy:study-plans/courses/COM-101-humor-writing-and-performance.md",
+            "sourcePath": "study-plans/courses/COM-101-humor-writing-and-performance.md",
+            "title": "COM-101 Humor Writing And Performance",
+            "gradeBand": {
+              "label": "grades-8-adult",
+              "minGrade": "8",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-13-adult",
+              "minAge": 13,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "public-expression-and-content-boundaries"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#comedy",
+            "status": "source-default-reviewed"
+          }
         }
       ],
       "objectives": [
@@ -2692,7 +3483,8 @@ window.openEducationContentCatalog =
           "label": "Wordplay Language"
         }
       ],
-      "structuredPreviewCount": 0
+      "structuredPreviewCount": 0,
+      "audienceDefaultStatus": "source-default-reviewed"
     }
   ]
 }

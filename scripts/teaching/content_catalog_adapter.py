@@ -12,8 +12,16 @@ import json
 import re
 import shutil
 import subprocess
+import sys
+from copy import deepcopy
 from pathlib import Path
 from typing import Any, Iterator
+
+AUDIENCE_SCRIPT_ROOT = Path(__file__).resolve().parents[1] / "audience"
+if str(AUDIENCE_SCRIPT_ROOT) not in sys.path:
+    sys.path.insert(0, str(AUDIENCE_SCRIPT_ROOT))
+
+from audience_policy import filter_records
 
 
 def objective_label(objective_id: str) -> str:
@@ -49,6 +57,54 @@ def public_source_path(source_root: Path, value: Any) -> str:
 def load_json(path: Path) -> dict[str, Any]:
     payload = json.loads(path.read_text(encoding="utf-8-sig"))
     return payload if isinstance(payload, dict) else {}
+
+
+def load_source_audience_defaults(repo_root: Path) -> dict[str, dict[str, Any]]:
+    registry = load_json(repo_root / "audience-sources.json")
+    defaults: dict[str, dict[str, Any]] = {}
+    for record in registry.get("sources", []):
+        if isinstance(record, dict) and str(record.get("sourceId", "")).strip():
+            defaults[str(record["sourceId"])] = record
+    return defaults
+
+
+def materialize_course_audience_metadata(
+    source_id: str,
+    course_id: str,
+    title: str,
+    source_path: str,
+    source_default: dict[str, Any] | None,
+) -> dict[str, Any] | None:
+    if not source_default:
+        return None
+    return {
+        "schemaVersion": 1,
+        "policyVersion": str(source_default.get("policyVersion", "2026-07-23-v1")),
+        "metadataId": f"suite:course:{course_id}",
+        "contentKind": "course",
+        "contentId": course_id,
+        "sourcePath": source_path,
+        "title": title,
+        "gradeBand": deepcopy(source_default.get("gradeBand")),
+        "ageBand": deepcopy(source_default.get("ageBand")),
+        "audienceClassification": source_default.get("audienceClassification"),
+        "minorSafe": source_default.get("minorSafe"),
+        "adultOnly": source_default.get("adultOnly"),
+        "guardianOrFacilitatorRequirement": source_default.get(
+            "guardianOrFacilitatorRequirement"
+        ),
+        "sensitiveTopicCategories": list(
+            source_default.get("sensitiveTopicCategories", [])
+        ),
+        "prerequisiteIds": list(source_default.get("prerequisiteIds", [])),
+        "permittedTutorContexts": list(
+            source_default.get("permittedTutorContexts", [])
+        ),
+        "allowedOperations": list(source_default.get("allowedOperations", [])),
+        "masteryAndSafetyPolicyId": source_default.get("masteryAndSafetyPolicyId"),
+        "inheritedFrom": f"audience-sources.json#{source_id}",
+        "status": str(source_default.get("status", "source-default-unreviewed")),
+    }
 
 
 def iter_jsonl(path: Path) -> Iterator[dict[str, Any]]:
@@ -242,10 +298,15 @@ def build_semantic_preview(source_root: Path, manifest: dict[str, Any]) -> dict[
     }
 
 
-def build_source_catalog(source: dict[str, Any]) -> dict[str, Any]:
+def build_source_catalog(
+    source: dict[str, Any],
+    audience_defaults: dict[str, dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     objects = source.get("objects", [])
     if not isinstance(objects, list):
         objects = []
+    source_id = str(source.get("id", ""))
+    source_audience_default = (audience_defaults or {}).get(source_id)
     source_root = Path(str(source.get("resolvedPath", "")))
     manifest_path = Path(str(source.get("manifestPath", "")))
     source_objectives: dict[str, dict[str, str]] = {}
@@ -281,6 +342,15 @@ def build_source_catalog(source: dict[str, Any]) -> dict[str, Any]:
             "sourcePath": safe_source_path,
             "objectives": [catalog_objective(objective_id) for objective_id in objective_ids],
         }
+        course_audience = materialize_course_audience_metadata(
+            source_id,
+            str(course["id"]),
+            str(course["title"]),
+            safe_source_path,
+            source_audience_default,
+        )
+        if course_audience:
+            course["audienceMetadata"] = course_audience
         if preview and not preview_attached and preview.get("courseId"):
             try:
                 course_content = course_path.read_text(encoding="utf-8-sig")
@@ -313,13 +383,18 @@ def build_source_catalog(source: dict[str, Any]) -> dict[str, Any]:
 
     source_repo = objects[0].get("sourceRepo") if objects and isinstance(objects[0], dict) else source.get("id")
     return {
-        "sourceId": source.get("id"),
+        "sourceId": source_id,
         "title": source.get("title"),
         "sourceRepo": source_repo,
         "objectCount": source.get("objectCount", 0),
         "courses": courses,
         "objectives": [source_objectives[key] for key in sorted(source_objectives)],
         "structuredPreviewCount": 1 if preview_attached else 0,
+        "audienceDefaultStatus": (
+            str(source_audience_default.get("status"))
+            if source_audience_default
+            else "missing-deny"
+        ),
     }
 
 
@@ -346,26 +421,143 @@ def scan_content_sources(repo_root: Path) -> dict[str, Any]:
     return payload if isinstance(payload, dict) else {}
 
 
-def build_content_catalog(repo_root: Path) -> dict[str, Any]:
+def default_general_audience_context() -> dict[str, Any]:
+    return {
+        "audienceRole": "adult",
+        "grade": "adult",
+        "ageBand": {"label": "ages-18-adult", "minAge": 18, "maxAge": None},
+        "adultConfirmed": True,
+        "adultContentOptIn": False,
+        "guardianConfirmed": False,
+        "facilitatorPresent": False,
+        "blockedSensitiveTopicCategories": [],
+        "completedPrerequisiteIds": [],
+    }
+
+
+def filter_catalog_sources(
+    sources: list[dict[str, Any]],
+    context: dict[str, Any],
+    operation: str,
+    *,
+    query: str = "",
+    requested_tutor_context: str = "",
+) -> list[dict[str, Any]]:
+    all_courses = [
+        course
+        for source in sources
+        for course in source.get("courses", [])
+        if isinstance(course, dict)
+    ]
+    metadata_records = [
+        course["audienceMetadata"]
+        for course in all_courses
+        if isinstance(course.get("audienceMetadata"), dict)
+    ]
+    allowed_metadata = filter_records(
+        metadata_records,
+        context,
+        operation,
+        query=query,
+        requested_tutor_context=requested_tutor_context,
+    )
+    allowed_ids = {str(record["contentId"]) for record in allowed_metadata}
+
+    filtered_sources: list[dict[str, Any]] = []
+    for source in sources:
+        visible_courses = [
+            course
+            for course in source.get("courses", [])
+            if str(course.get("id", "")) in allowed_ids
+        ]
+        if not visible_courses:
+            continue
+        visible_objectives: dict[str, dict[str, str]] = {}
+        for course in visible_courses:
+            for objective in course.get("objectives", []):
+                if isinstance(objective, dict) and objective.get("objectiveId"):
+                    visible_objectives[str(objective["objectiveId"])] = objective
+        filtered_source = dict(source)
+        filtered_source["courses"] = visible_courses
+        filtered_source["objectives"] = [
+            visible_objectives[key] for key in sorted(visible_objectives)
+        ]
+        filtered_source["structuredPreviewCount"] = sum(
+            1 for course in visible_courses if course.get("structuredPreview")
+        )
+        filtered_sources.append(filtered_source)
+    return filtered_sources
+
+
+def build_content_catalog(
+    repo_root: Path,
+    audience_context: dict[str, Any] | None = None,
+    operation: str = "catalog",
+    *,
+    query: str = "",
+    requested_tutor_context: str = "",
+    operator_unfiltered: bool = False,
+) -> dict[str, Any]:
     scan_report = scan_content_sources(repo_root)
+    audience_defaults = load_source_audience_defaults(repo_root)
     sources = [
-        build_source_catalog(source)
+        build_source_catalog(source, audience_defaults)
         for source in scan_report.get("sources", [])
         if isinstance(source, dict)
     ]
+    context = audience_context or default_general_audience_context()
+    if not operator_unfiltered:
+        sources = filter_catalog_sources(
+            sources,
+            context,
+            operation,
+            query=query,
+            requested_tutor_context=requested_tutor_context,
+        )
     return {
         "schemaVersion": 1,
         "generatedFrom": "scripts/teaching/content_catalog_adapter.py",
         "sourceCount": len(sources),
+        "courseCount": sum(len(source.get("courses", [])) for source in sources),
+        "audienceEnforcement": (
+            "operator-unfiltered-explicit"
+            if operator_unfiltered
+            else "fail-closed-shared-policy"
+        ),
+        "audienceOperation": operation,
+        "adultContentOptIn": bool(context.get("adultContentOptIn", False)),
+        "storesBirthDate": False,
         "sources": sources,
     }
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Build the public-safe learner content catalog")
+    parser = argparse.ArgumentParser(description="Build the audience-filtered learner content catalog")
     parser.add_argument("--repo-root", default=".", help="Open Education Suite repository root")
+    parser.add_argument("--audience-context-path", default="")
+    parser.add_argument(
+        "--operation",
+        default="catalog",
+        choices=("catalog", "search", "recommendation", "export", "import", "tutor-context"),
+    )
+    parser.add_argument("--query", default="")
+    parser.add_argument("--tutor-context", default="")
+    parser.add_argument("--operator-unfiltered", action="store_true")
     args = parser.parse_args()
-    payload = build_content_catalog(Path(args.repo_root).resolve())
+    repo_root = Path(args.repo_root).resolve()
+    context = (
+        load_json(Path(args.audience_context_path).resolve())
+        if args.audience_context_path
+        else default_general_audience_context()
+    )
+    payload = build_content_catalog(
+        repo_root,
+        context,
+        args.operation,
+        query=args.query,
+        requested_tutor_context=args.tutor_context,
+        operator_unfiltered=args.operator_unfiltered,
+    )
     print(json.dumps(payload, indent=2, ensure_ascii=False))
     return 0
 

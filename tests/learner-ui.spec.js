@@ -22,7 +22,7 @@ test.describe("learner workspace", () => {
     await expect(page.getByText("open-education-game-development / study-plans\\courses\\GDEV-010-onboarding-studio.md")).toBeVisible();
   });
 
-  test("switches sources and courses into the active local lesson and remembers the last course", async ({ page }) => {
+  test("switches safe sources, remembers the last course, and omits adult-only sources without opt-in", async ({ page }) => {
     await expect(page.getByRole("heading", { name: "Catalog" })).toBeVisible();
     await expect(page.locator("#courseSelect")).toHaveValue("game-development:study-plans/courses/GDEV-010-onboarding-studio.md");
 
@@ -31,18 +31,16 @@ test.describe("learner workspace", () => {
     await expect(page.locator("#objectiveId")).toHaveText("software-development:objectives/debugging");
     await expect(page.getByRole("heading", { name: "Start debugging" })).toBeVisible();
 
-    await page.locator("#sourceSelect").selectOption("mens-relationship-skills");
-    await page.locator("#courseSelect").selectOption("mens-relationship-skills:study-plans/courses/MRS-303-modern-dating-safety-sexual-health-and-practical-partnership.md");
-    await expect(page.getByRole("button", { name: "Online Dating Safety" })).toBeVisible();
-    await expect(page.locator("#objectiveId")).toHaveText("mens-relationship-skills:objectives/course/mrs-303/online-dating-safety");
-    await expect(page.getByRole("heading", { name: "Start MRS-303 online dating safety" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "MRS-303 - Modern Dating Safety, Sexual Health, And Practical Partnership" })).toBeVisible();
-    await expect(page.getByText("Begin MRS-303 - Modern Dating Safety")).toBeVisible();
+    await expect(page.locator('#sourceSelect option[value="mens-relationship-skills"]')).toHaveCount(0);
+    const catalog = await page.evaluate(() => window.openEducationContentCatalog);
+    expect(catalog.audienceEnforcement).toBe("fail-closed-shared-policy");
+    expect(catalog.adultContentOptIn).toBe(false);
+    expect(JSON.stringify(catalog)).not.toContain("mens-relationship-skills");
 
     await page.reload();
-    await expect(page.locator("#sourceSelect")).toHaveValue("mens-relationship-skills");
-    await expect(page.locator("#courseSelect")).toHaveValue("mens-relationship-skills:study-plans/courses/MRS-303-modern-dating-safety-sexual-health-and-practical-partnership.md");
-    await expect(page.locator("#objectiveId")).toHaveText("mens-relationship-skills:objectives/course/mrs-303/online-dating-safety");
+    await expect(page.locator("#sourceSelect")).toHaveValue("software-development");
+    await expect(page.locator("#courseSelect")).toHaveValue("software-development:study-plans/courses/SD-101-software-development-practice.md");
+    await expect(page.locator("#objectiveId")).toHaveText("software-development:objectives/debugging");
   });
 
   test("loads localization scaffolding for labels, dates, objectives, and feedback", async ({ page }) => {

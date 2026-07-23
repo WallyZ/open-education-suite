@@ -191,7 +191,7 @@ class LearnerBridgeHandler(BaseHTTPRequestHandler):
             self.write_json(self.server.session_payload)
             return
         if parsed.path == "/api/content/catalog":
-            self.write_json(build_content_catalog(self.server.repo_root))
+            self.write_json(self.server.session_payload["contentCatalog"])
             return
         if parsed.path == "/":
             self.send_response(HTTPStatus.FOUND)
