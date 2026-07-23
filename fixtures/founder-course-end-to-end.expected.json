@@ -4,10 +4,10 @@
   "sourceId": "founder-level-civic-classical",
   "exportVersion": "2026-07-23-v1",
   "recordCounts": {
-    "public": 85522,
+    "public": 89110,
     "restricted": 25688,
-    "total": 111210,
-    "references": 427616
+    "total": 114798,
+    "references": 434792
   },
   "selection": {
     "lessonId": "lesson:lesson-g1-cw10-d01",
