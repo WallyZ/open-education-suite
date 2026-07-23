@@ -167,9 +167,10 @@ try {
     $lecturePackage = Get-Content -LiteralPath $resolvedLecturePath -Raw | ConvertFrom-Json
     $lectureContentRoot = Get-LectureContentRoot -ManifestPath $resolvedLecturePath
     $lectureContentRootUri = [System.Uri](([System.IO.Path]::GetFullPath($lectureContentRoot)).TrimEnd('\') + '\')
+    $lectureContentRepoSlug = Split-Path -Leaf ([System.IO.Path]::GetFullPath($lectureContentRoot).TrimEnd('\'))
     $lecturePackage | Add-Member -MemberType NoteProperty -Name contentRepoRoot -Value $lectureContentRoot -Force
     $lecturePackage | Add-Member -MemberType NoteProperty -Name contentRepoWebRoot -Value $lectureContentRootUri.AbsoluteUri -Force
-    $lecturePackage | Add-Member -MemberType NoteProperty -Name contentRepoHttpRoot -Value '/content-repos/open-education-game-development/' -Force
+    $lecturePackage | Add-Member -MemberType NoteProperty -Name contentRepoHttpRoot -Value "/content-repos/$lectureContentRepoSlug/" -Force
     $lecturePackage | Add-Member -MemberType NoteProperty -Name sourcePackagePath -Value (ConvertTo-LectureContentRelativePath -ContentRoot $lectureContentRoot -Path $resolvedLecturePath) -Force
     $contentCatalog = Invoke-ContentCatalogAdapter -RepoRoot $repo -AudienceContextPath $audienceContextPath
 

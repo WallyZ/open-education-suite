@@ -2735,7 +2735,7 @@ window.openEducationContentCatalog =
       "sourceId": "founder-level-civic-classical",
       "title": "Open Education Founder-Level Civic Classical",
       "sourceRepo": "open-education-founder-level-civic-classical",
-      "objectCount": 907,
+      "objectCount": 908,
       "courses": [
         {
           "id": "founder-level-civic-classical:study-plans/courses/FCC-FUTURE-READY-SYSTEMS-INNOVATION-K12.md",
