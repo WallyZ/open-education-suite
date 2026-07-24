@@ -388,6 +388,7 @@ try {
     Assert-FileExists '.\schemas\generated-instructor-persona.schema.json'
     Assert-FileExists '.\schemas\subject-brain.schema.json'
     Assert-FileExists '.\schemas\subject-brain-corpus.schema.json'
+    Assert-FileExists '.\schemas\subject-brain-domain-cards.schema.json'
     Assert-FileExists '.\schemas\subject-brain-query.schema.json'
     Assert-FileExists '.\schemas\subject-brain-registry.schema.json'
     Assert-FileExists '.\fixtures\learner-scenarios.json'
@@ -554,6 +555,52 @@ try {
         $calculator.safety.retrievedProseTreatedAsComputation -ne $false
     ) {
         throw 'Subject-brain checked calculator did not return the exact unit conversion and safety contract.'
+    }
+
+    $domainCardSelfTestOutput = & .\scripts\ai\subject-brain.ps1 -Action domain-card-self-test 2>&1
+    $domainCardSelfTestOutput | Tee-Object -FilePath $logPath -Append
+    if ($LASTEXITCODE -ne 0) {
+        throw "Subject-brain domain-card self-test failed with exit code $LASTEXITCODE."
+    }
+    $domainCardSelfTest = ($domainCardSelfTestOutput | Out-String) | ConvertFrom-Json -Depth 50
+    $requiredDomainCardTypes = @('argument', 'evidence-study', 'source-claim', 'equation-proof', 'experiment', 'historical-document', 'economic-claim', 'financial-scenario', 'code-api', 'health-safety', 'artwork-performance', 'practical-procedure')
+    $missingDomainCardTypes = @($requiredDomainCardTypes | Where-Object { $_ -notin @($domainCardSelfTest.cardTypes) })
+    $failedDomainCardChecks = @($domainCardSelfTest.checks.PSObject.Properties | Where-Object { $_.Value -ne $true })
+    if (
+        $domainCardSelfTest.schemaVersion -ne 'open-education/subject-brain-domain-card-self-test/v1' -or
+        $domainCardSelfTest.passed -ne $true -or
+        $domainCardSelfTest.cardTypeCount -ne 12 -or
+        $missingDomainCardTypes.Count -ne 0 -or
+        $failedDomainCardChecks.Count -ne 0 -or
+        $domainCardSelfTest.validResult.boundaries.citationsRequired -ne $true -or
+        $domainCardSelfTest.validResult.boundaries.uncertaintyAndLimitsRequired -ne $true -or
+        $domainCardSelfTest.validResult.boundaries.privateFinancialDataAllowed -ne $false -or
+        $domainCardSelfTest.validResult.boundaries.healthDiagnosisAllowed -ne $false -or
+        $domainCardSelfTest.validResult.boundaries.professionalReviewPreserved -ne $true -or
+        $domainCardSelfTest.validResult.boundaries.durableLearnerStateMutationAllowed -ne $false
+    ) {
+        throw "Subject-brain domain-card self-test failed required types or boundaries: missing=$($missingDomainCardTypes -join ', ') failed=$($failedDomainCardChecks.Name -join ', ')."
+    }
+    $domainCardSamplePath = Join-Path $tmpRoot 'subject-brain-domain-cards.sample.json'
+    [System.IO.File]::WriteAllText(
+        $domainCardSamplePath,
+        ($domainCardSelfTest.sampleDocument | ConvertTo-Json -Depth 50),
+        [System.Text.UTF8Encoding]::new($false)
+    )
+    $domainCardValidationOutput = & .\scripts\ai\subject-brain.ps1 -Action validate-domain-cards -CardsPath $domainCardSamplePath 2>&1
+    $domainCardValidationOutput | Tee-Object -FilePath $logPath -Append
+    if ($LASTEXITCODE -ne 0) {
+        throw "Subject-brain domain-card validation action failed with exit code $LASTEXITCODE."
+    }
+    $domainCardValidation = ($domainCardValidationOutput | Out-String) | ConvertFrom-Json -Depth 30
+    if (
+        $domainCardValidation.schemaVersion -ne 'open-education/subject-brain-domain-card-validation/v1' -or
+        $domainCardValidation.passed -ne $true -or
+        $domainCardValidation.cardCount -ne 12 -or
+        $domainCardValidation.cardTypeCount -ne 12 -or
+        @($domainCardValidation.errors).Count -ne 0
+    ) {
+        throw 'Subject-brain domain-card validation action did not accept the exact twelve-type exemplar.'
     }
 
     $brainPlanOutput = & .\scripts\ai\subject-brain.ps1 -Action plan-query -RegistryPath '.\subject-brains.json' -Question 'compare biblical teaching with psychological learning science and memory' -GradeBand '9-12' -Limit 3 2>&1

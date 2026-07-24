@@ -36,8 +36,12 @@ QUERY_PLAN_SCHEMA = "open-education/subject-brain-query-plan/v1"
 TOOL_REQUEST_SCHEMA = "open-education/subject-brain-tool-request/v1"
 TOOL_RESULT_SCHEMA = "open-education/subject-brain-tool-result/v1"
 TOOL_SELF_TEST_SCHEMA = "open-education/subject-brain-tool-self-test/v1"
+DOMAIN_CARDS_SCHEMA = "open-education/subject-brain-domain-cards/v1"
+DOMAIN_CARD_VALIDATION_SCHEMA = "open-education/subject-brain-domain-card-validation/v1"
+DOMAIN_CARD_SELF_TEST_SCHEMA = "open-education/subject-brain-domain-card-self-test/v1"
 MAX_TOOL_REQUEST_BYTES = 2_000_000
 MAX_CITATION_SOURCE_CHARS = 1_000_000
+MAX_DOMAIN_CARDS_BYTES = 5_000_000
 VECTOR_ALGORITHM = "deterministic-hashed-concept-vector/v1"
 VECTOR_DIMENSIONS = 256
 READY_STATUSES = {"contract-ready", "starter-corpus-ready", "pilot-ready", "production-ready"}
@@ -2160,6 +2164,484 @@ def tool_self_test() -> dict[str, Any]:
     }
 
 
+DOMAIN_CARD_TYPES = (
+    "argument",
+    "evidence-study",
+    "source-claim",
+    "equation-proof",
+    "experiment",
+    "historical-document",
+    "economic-claim",
+    "financial-scenario",
+    "code-api",
+    "health-safety",
+    "artwork-performance",
+    "practical-procedure",
+)
+
+DOMAIN_CARD_PAYLOAD_FIELDS = {
+    "argument": ("conclusion", "premises", "validityStatus", "strongestObjection"),
+    "evidence-study": (
+        "researchQuestion",
+        "design",
+        "population",
+        "measures",
+        "findings",
+        "limitations",
+        "causalClaimAllowed",
+    ),
+    "source-claim": (
+        "claim",
+        "sourcePosition",
+        "quotation",
+        "verificationStatus",
+        "interpretation",
+    ),
+    "equation-proof": (
+        "statement",
+        "notation",
+        "derivationSteps",
+        "checkedResult",
+        "assumptions",
+    ),
+    "experiment": (
+        "question",
+        "hypothesis",
+        "variables",
+        "procedure",
+        "observations",
+        "result",
+        "safetyNotes",
+    ),
+    "historical-document": (
+        "creator",
+        "date",
+        "documentType",
+        "audience",
+        "context",
+        "excerpt",
+        "provenance",
+        "interpretations",
+    ),
+    "economic-claim": (
+        "claim",
+        "mechanism",
+        "assumptions",
+        "indicators",
+        "counterevidence",
+        "timeHorizon",
+        "distributionalEffects",
+    ),
+    "financial-scenario": (
+        "syntheticOnly",
+        "goal",
+        "assumptions",
+        "inputs",
+        "calculation",
+        "risks",
+        "privacyDataRequested",
+        "notPersonalAdvice",
+    ),
+    "code-api": (
+        "language",
+        "interface",
+        "preconditions",
+        "example",
+        "expectedOutput",
+        "failureModes",
+        "securityNotes",
+    ),
+    "health-safety": (
+        "scope",
+        "hazard",
+        "prevention",
+        "warningSigns",
+        "escalation",
+        "notDiagnosis",
+        "qualifiedReviewRequired",
+    ),
+    "artwork-performance": (
+        "medium",
+        "work",
+        "elements",
+        "interpretation",
+        "alternatives",
+        "practiceNotes",
+        "attribution",
+    ),
+    "practical-procedure": (
+        "goal",
+        "prerequisites",
+        "materials",
+        "steps",
+        "hazards",
+        "verification",
+        "stopConditions",
+    ),
+}
+
+
+def validate_domain_cards(document: Any) -> dict[str, Any]:
+    errors: list[str] = []
+
+    def check(condition: bool, message: str) -> None:
+        if not condition:
+            errors.append(message)
+
+    def has_text(value: Any) -> bool:
+        return isinstance(value, str) and bool(value.strip())
+
+    def has_text_list(value: Any, minimum: int = 1) -> bool:
+        return (
+            isinstance(value, list)
+            and len(value) >= minimum
+            and all(has_text(item) for item in value)
+        )
+
+    check(isinstance(document, dict), "domain-card document must be an object")
+    if not isinstance(document, dict):
+        return {
+            "schemaVersion": DOMAIN_CARD_VALIDATION_SCHEMA,
+            "passed": False,
+            "cardCount": 0,
+            "cardTypeCount": 0,
+            "cardTypes": [],
+            "errors": errors,
+        }
+    check(
+        set(document) == {"schemaVersion", "brainId", "updatedAt", "cards"},
+        "domain-card document contains missing or unsupported top-level fields",
+    )
+    check(document.get("schemaVersion") == DOMAIN_CARDS_SCHEMA, f"schemaVersion must be {DOMAIN_CARDS_SCHEMA}")
+    brain_id = document.get("brainId")
+    check(
+        isinstance(brain_id, str) and bool(re.fullmatch(r"[a-z0-9][a-z0-9-]*", brain_id)),
+        "brainId must be a lowercase slug",
+    )
+    updated_at = document.get("updatedAt")
+    try:
+        date.fromisoformat(updated_at if isinstance(updated_at, str) else "")
+    except ValueError:
+        errors.append("updatedAt must be an ISO date")
+    cards = document.get("cards")
+    check(isinstance(cards, list) and 1 <= len(cards) <= 5000, "cards must contain 1-5000 entries")
+    if not isinstance(cards, list):
+        cards = []
+    card_ids: set[str] = set()
+    card_types: list[str] = []
+    common_fields = (
+        "cardId",
+        "cardType",
+        "title",
+        "summary",
+        "gradeBands",
+        "topics",
+        "sourceRefs",
+        "status",
+        "uncertainties",
+        "limits",
+        "professionalReviewRequired",
+        "payload",
+    )
+    for index, card in enumerate(cards):
+        label = f"cards[{index}]"
+        check(isinstance(card, dict), f"{label} must be an object")
+        if not isinstance(card, dict):
+            continue
+        for field in common_fields:
+            check(field in card, f"{label} is missing {field}")
+        check(set(card) == set(common_fields), f"{label} contains unsupported fields")
+        card_id = card.get("cardId")
+        check(
+            isinstance(card_id, str) and bool(re.fullmatch(r"[a-z0-9][a-z0-9._-]*", card_id)),
+            f"{label}.cardId must be a lowercase identifier",
+        )
+        check(card_id not in card_ids, f"{label}.cardId must be unique")
+        if isinstance(card_id, str):
+            card_ids.add(card_id)
+        card_type = card.get("cardType")
+        check(card_type in DOMAIN_CARD_TYPES, f"{label}.cardType is unsupported")
+        if card_type in DOMAIN_CARD_TYPES:
+            card_types.append(card_type)
+        check(has_text(card.get("title")), f"{label}.title must be non-empty")
+        check(has_text(card.get("summary")), f"{label}.summary must be non-empty")
+        grade_bands = card.get("gradeBands")
+        check(
+            isinstance(grade_bands, list)
+            and bool(grade_bands)
+            and len(set(grade_bands)) == len(grade_bands)
+            and all(band in {"K-2", "3-5", "6-8", "9-12", "adult"} for band in grade_bands),
+            f"{label}.gradeBands must contain unique supported bands",
+        )
+        check(has_text_list(card.get("topics")), f"{label}.topics must be non-empty strings")
+        source_refs = card.get("sourceRefs")
+        check(isinstance(source_refs, list) and bool(source_refs), f"{label}.sourceRefs must be non-empty")
+        if isinstance(source_refs, list):
+            for ref_index, source_ref in enumerate(source_refs):
+                ref_label = f"{label}.sourceRefs[{ref_index}]"
+                check(isinstance(source_ref, dict), f"{ref_label} must be an object")
+                if not isinstance(source_ref, dict):
+                    continue
+                check(
+                    isinstance(source_ref.get("sourceId"), str)
+                    and bool(re.fullmatch(r"[a-z0-9][a-z0-9._-]*", source_ref.get("sourceId", ""))),
+                    f"{ref_label}.sourceId must be a lowercase identifier",
+                )
+                check(has_text(source_ref.get("locator")), f"{ref_label}.locator must be non-empty")
+                check(has_text(source_ref.get("claimScope")), f"{ref_label}.claimScope must be non-empty")
+                check(source_ref.get("citationRequired") is True, f"{ref_label}.citationRequired must be true")
+                check(
+                    set(source_ref).issubset({"sourceId", "locator", "claimScope", "citationRequired", "sha256"}),
+                    f"{ref_label} contains unsupported fields",
+                )
+                if "sha256" in source_ref:
+                    check(
+                        isinstance(source_ref["sha256"], str)
+                        and bool(re.fullmatch(r"[a-f0-9]{64}", source_ref["sha256"])),
+                        f"{ref_label}.sha256 must be a lowercase SHA-256",
+                    )
+        check(card.get("status") in {"draft", "reviewed"}, f"{label}.status is unsupported")
+        check(has_text_list(card.get("uncertainties"), 0), f"{label}.uncertainties must be strings")
+        check(has_text_list(card.get("limits")), f"{label}.limits must contain at least one limit")
+        check(
+            isinstance(card.get("professionalReviewRequired"), bool),
+            f"{label}.professionalReviewRequired must be boolean",
+        )
+        payload = card.get("payload")
+        check(isinstance(payload, dict), f"{label}.payload must be an object")
+        if isinstance(payload, dict) and card_type in DOMAIN_CARD_PAYLOAD_FIELDS:
+            required_payload_fields = set(DOMAIN_CARD_PAYLOAD_FIELDS[card_type])
+            missing_fields = sorted(required_payload_fields - set(payload))
+            check(not missing_fields, f"{label}.payload is missing: {', '.join(missing_fields)}")
+            unexpected_fields = sorted(set(payload) - required_payload_fields)
+            check(not unexpected_fields, f"{label}.payload has unsupported fields: {', '.join(unexpected_fields)}")
+            for field, value in payload.items():
+                if field in {"causalClaimAllowed", "syntheticOnly", "privacyDataRequested", "notPersonalAdvice", "notDiagnosis", "qualifiedReviewRequired"}:
+                    check(isinstance(value, bool), f"{label}.payload.{field} must be boolean")
+                elif field == "variables":
+                    check(
+                        isinstance(value, dict)
+                        and set(value) == {"independent", "dependent", "controls"}
+                        and has_text(value.get("independent"))
+                        and has_text(value.get("dependent"))
+                        and has_text_list(value.get("controls")),
+                        f"{label}.payload.variables must contain independent, dependent, and non-empty controls",
+                    )
+                elif isinstance(value, list):
+                    check(has_text_list(value), f"{label}.payload.{field} must contain non-empty strings")
+                else:
+                    check(has_text(value), f"{label}.payload.{field} must be non-empty")
+            if card_type == "financial-scenario":
+                check(payload.get("syntheticOnly") is True, f"{label} must use a synthetic financial scenario")
+                check(payload.get("privacyDataRequested") is False, f"{label} must not request private financial data")
+                check(payload.get("notPersonalAdvice") is True, f"{label} must disclose that it is not personal advice")
+            if card_type == "health-safety":
+                check(payload.get("notDiagnosis") is True, f"{label} must disclose that it is not a diagnosis")
+                check(payload.get("qualifiedReviewRequired") is True, f"{label} must require qualified review")
+                check(card.get("professionalReviewRequired") is True, f"{label} must require professional review")
+            if card_type == "source-claim":
+                check(
+                    payload.get("verificationStatus") in {"verified-exact-text", "not-verified", "disputed"},
+                    f"{label}.payload.verificationStatus is unsupported",
+                )
+            if card_type == "argument":
+                check(
+                    payload.get("validityStatus") in {"valid", "invalid", "indeterminate"},
+                    f"{label}.payload.validityStatus is unsupported",
+                )
+    return {
+        "schemaVersion": DOMAIN_CARD_VALIDATION_SCHEMA,
+        "passed": not errors,
+        "cardCount": len(cards),
+        "cardTypeCount": len(set(card_types)),
+        "cardTypes": sorted(set(card_types)),
+        "errors": errors,
+        "boundaries": {
+            "citationsRequired": True,
+            "uncertaintyAndLimitsRequired": True,
+            "privateFinancialDataAllowed": False,
+            "healthDiagnosisAllowed": False,
+            "professionalReviewPreserved": True,
+            "durableLearnerStateMutationAllowed": False,
+        },
+    }
+
+
+def domain_card_sample_document() -> dict[str, Any]:
+    source_ref = {
+        "sourceId": "sample-source",
+        "locator": "section 1",
+        "claimScope": "supports the bounded sample claim",
+        "citationRequired": True,
+    }
+    payloads = {
+        "argument": {
+            "conclusion": "The conclusion follows from the stated premises.",
+            "premises": ["If P then Q.", "P."],
+            "validityStatus": "valid",
+            "strongestObjection": "A premise may be false even when the form is valid.",
+        },
+        "evidence-study": {
+            "researchQuestion": "Does spaced practice improve delayed recall?",
+            "design": "randomized comparison",
+            "population": "synthetic classroom sample",
+            "measures": ["delayed recall score"],
+            "findings": ["the spaced group scored higher in the sample"],
+            "limitations": ["synthetic demonstration data"],
+            "causalClaimAllowed": True,
+        },
+        "source-claim": {
+            "claim": "The cited sentence states the bounded claim.",
+            "sourcePosition": "section 1",
+            "quotation": "The cited sentence states the bounded claim.",
+            "verificationStatus": "verified-exact-text",
+            "interpretation": "The quotation supports only the stated scope.",
+        },
+        "equation-proof": {
+            "statement": "Two plus two equals four.",
+            "notation": ["2 + 2", "4"],
+            "derivationSteps": ["Add two units to two units."],
+            "checkedResult": "4",
+            "assumptions": ["ordinary integer arithmetic"],
+        },
+        "experiment": {
+            "question": "How does light affect a model plant response?",
+            "hypothesis": "More light increases the measured response.",
+            "variables": {
+                "independent": "light duration",
+                "dependent": "measured response",
+                "controls": ["water", "temperature"],
+            },
+            "procedure": ["set equal controls", "change light duration", "record results"],
+            "observations": ["the longer-light trial had a larger response"],
+            "result": "the sample result is consistent with the hypothesis",
+            "safetyNotes": ["use cool low-voltage lights with adult supervision"],
+        },
+        "historical-document": {
+            "creator": "sample public official",
+            "date": "1787-09-17",
+            "documentType": "public document",
+            "audience": "the public",
+            "context": "constitutional ratification era",
+            "excerpt": "A short, source-bounded excerpt.",
+            "provenance": "official transcription",
+            "interpretations": ["plain-text reading", "historical-context reading"],
+        },
+        "economic-claim": {
+            "claim": "A price change can alter quantity demanded, other things equal.",
+            "mechanism": "buyers respond to opportunity cost",
+            "assumptions": ["other relevant conditions are held constant"],
+            "indicators": ["price", "quantity demanded"],
+            "counterevidence": ["a simultaneous income change can confound the pattern"],
+            "timeHorizon": "short run",
+            "distributionalEffects": "effects can differ among buyers and sellers",
+        },
+        "financial-scenario": {
+            "syntheticOnly": True,
+            "goal": "compare two fictional savings plans",
+            "assumptions": ["fixed stated interest rates"],
+            "inputs": ["fictional principal", "fictional term"],
+            "calculation": "compare exact future values",
+            "risks": ["rates and inflation can change"],
+            "privacyDataRequested": False,
+            "notPersonalAdvice": True,
+        },
+        "code-api": {
+            "language": "Python",
+            "interface": "add(a, b)",
+            "preconditions": ["a and b are integers"],
+            "example": "add(2, 3)",
+            "expectedOutput": "5",
+            "failureModes": ["non-integer input"],
+            "securityNotes": ["no files, network, imports, or subprocesses"],
+        },
+        "health-safety": {
+            "scope": "general classroom first-aid awareness",
+            "hazard": "a learner reports a serious warning sign",
+            "prevention": ["follow reviewed classroom safety procedures"],
+            "warningSigns": ["difficulty breathing"],
+            "escalation": "seek a responsible adult and qualified emergency help",
+            "notDiagnosis": True,
+            "qualifiedReviewRequired": True,
+        },
+        "artwork-performance": {
+            "medium": "theater",
+            "work": "a public-domain scene",
+            "elements": ["voice", "movement", "timing"],
+            "interpretation": "the scene presents a conflict between duty and desire",
+            "alternatives": ["the conflict can also be staged as public versus private duty"],
+            "practiceNotes": ["rehearse diction slowly before adding tempo"],
+            "attribution": "public-domain work and student interpretation",
+        },
+        "practical-procedure": {
+            "goal": "assemble a simple supervised classroom model",
+            "prerequisites": ["adult-approved workspace"],
+            "materials": ["paper", "tape"],
+            "steps": ["review the model", "assemble parts", "inspect joints"],
+            "hazards": ["paper cuts"],
+            "verification": ["all joints remain attached"],
+            "stopConditions": ["stop if materials or instructions appear unsafe"],
+        },
+    }
+    cards = []
+    for card_type in DOMAIN_CARD_TYPES:
+        cards.append(
+            {
+                "cardId": f"sample-{card_type}",
+                "cardType": card_type,
+                "title": f"Sample {card_type} card",
+                "summary": "A bounded validation exemplar.",
+                "gradeBands": ["9-12"],
+                "topics": ["validation"],
+                "sourceRefs": [dict(source_ref)],
+                "status": "reviewed",
+                "uncertainties": ["The exemplar is synthetic and limited to validation."],
+                "limits": ["Do not generalize beyond the stated source and scope."],
+                "professionalReviewRequired": card_type == "health-safety",
+                "payload": payloads[card_type],
+            }
+        )
+    return {
+        "schemaVersion": DOMAIN_CARDS_SCHEMA,
+        "brainId": "domain-card-self-test",
+        "updatedAt": "2026-07-24",
+        "cards": cards,
+    }
+
+
+def domain_card_self_test() -> dict[str, Any]:
+    sample_document = domain_card_sample_document()
+    valid_result = validate_domain_cards(sample_document)
+    unsafe_finance = json.loads(json.dumps(sample_document))
+    unsafe_finance["cards"][7]["payload"]["privacyDataRequested"] = True
+    unsafe_finance_result = validate_domain_cards(unsafe_finance)
+    unsafe_health = json.loads(json.dumps(sample_document))
+    unsafe_health["cards"][9]["payload"]["notDiagnosis"] = False
+    unsafe_health_result = validate_domain_cards(unsafe_health)
+    uncited = json.loads(json.dumps(sample_document))
+    uncited["cards"][0]["sourceRefs"][0]["citationRequired"] = False
+    uncited_result = validate_domain_cards(uncited)
+    checks = {
+        "allTwelveTypesValid": (
+            valid_result["passed"]
+            and valid_result["cardTypeCount"] == len(DOMAIN_CARD_TYPES)
+            and valid_result["cardTypes"] == sorted(DOMAIN_CARD_TYPES)
+        ),
+        "unsafeFinancialPrivacyRejected": not unsafe_finance_result["passed"],
+        "healthDiagnosisBoundaryRejected": not unsafe_health_result["passed"],
+        "uncitedCardRejected": not uncited_result["passed"],
+    }
+    return {
+        "schemaVersion": DOMAIN_CARD_SELF_TEST_SCHEMA,
+        "passed": all(checks.values()),
+        "cardTypeCount": len(DOMAIN_CARD_TYPES),
+        "cardTypes": list(DOMAIN_CARD_TYPES),
+        "checks": checks,
+        "validResult": valid_result,
+        "sampleDocument": sample_document,
+    }
+
+
 def print_result(value: dict[str, Any]) -> None:
     print(json.dumps(value, indent=2, sort_keys=True))
 
@@ -2198,6 +2680,9 @@ def main() -> int:
     tool_parser = subparsers.add_parser("run-tool")
     tool_parser.add_argument("--request", required=True)
     subparsers.add_parser("tool-self-test")
+    domain_cards_parser = subparsers.add_parser("validate-domain-cards")
+    domain_cards_parser.add_argument("--cards", required=True)
+    subparsers.add_parser("domain-card-self-test")
 
     args = parser.parse_args()
     try:
@@ -2261,6 +2746,19 @@ def main() -> int:
             return 0
         if args.command == "tool-self-test":
             result = tool_self_test()
+            print_result(result)
+            return 0 if result["passed"] else 1
+        if args.command == "validate-domain-cards":
+            cards_path = Path(args.cards)
+            require_tool(
+                cards_path.stat().st_size <= MAX_DOMAIN_CARDS_BYTES,
+                f"domain-card document must not exceed {MAX_DOMAIN_CARDS_BYTES} bytes",
+            )
+            result = validate_domain_cards(json.loads(cards_path.read_text(encoding="utf-8")))
+            print_result(result)
+            return 0 if result["passed"] else 1
+        if args.command == "domain-card-self-test":
+            result = domain_card_self_test()
             print_result(result)
             return 0 if result["passed"] else 1
     except (SubjectBrainError, OSError, sqlite3.Error, zipfile.BadZipFile, json.JSONDecodeError) as exc:

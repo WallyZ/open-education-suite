@@ -1,0 +1,255 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-education.local/schemas/subject-brain-domain-cards.schema.json",
+  "title": "Open Education Subject Brain Domain Cards",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "brainId", "updatedAt", "cards"],
+  "properties": {
+    "schemaVersion": { "const": "open-education/subject-brain-domain-cards/v1" },
+    "brainId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "updatedAt": { "type": "string", "format": "date" },
+    "cards": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5000,
+      "items": { "$ref": "#/$defs/card" }
+    }
+  },
+  "$defs": {
+    "nonEmptyString": { "type": "string", "minLength": 1 },
+    "nonEmptyStrings": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/nonEmptyString" }
+    },
+    "sourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceId", "locator", "claimScope", "citationRequired"],
+      "properties": {
+        "sourceId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$" },
+        "locator": { "$ref": "#/$defs/nonEmptyString" },
+        "claimScope": { "$ref": "#/$defs/nonEmptyString" },
+        "citationRequired": { "const": true },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "argumentPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["conclusion", "premises", "validityStatus", "strongestObjection"],
+      "properties": {
+        "conclusion": { "$ref": "#/$defs/nonEmptyString" },
+        "premises": { "$ref": "#/$defs/nonEmptyStrings" },
+        "validityStatus": { "enum": ["valid", "invalid", "indeterminate"] },
+        "strongestObjection": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "evidenceStudyPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["researchQuestion", "design", "population", "measures", "findings", "limitations", "causalClaimAllowed"],
+      "properties": {
+        "researchQuestion": { "$ref": "#/$defs/nonEmptyString" },
+        "design": { "$ref": "#/$defs/nonEmptyString" },
+        "population": { "$ref": "#/$defs/nonEmptyString" },
+        "measures": { "$ref": "#/$defs/nonEmptyStrings" },
+        "findings": { "$ref": "#/$defs/nonEmptyStrings" },
+        "limitations": { "$ref": "#/$defs/nonEmptyStrings" },
+        "causalClaimAllowed": { "type": "boolean" }
+      }
+    },
+    "sourceClaimPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim", "sourcePosition", "quotation", "verificationStatus", "interpretation"],
+      "properties": {
+        "claim": { "$ref": "#/$defs/nonEmptyString" },
+        "sourcePosition": { "$ref": "#/$defs/nonEmptyString" },
+        "quotation": { "$ref": "#/$defs/nonEmptyString" },
+        "verificationStatus": { "enum": ["verified-exact-text", "not-verified", "disputed"] },
+        "interpretation": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "equationProofPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["statement", "notation", "derivationSteps", "checkedResult", "assumptions"],
+      "properties": {
+        "statement": { "$ref": "#/$defs/nonEmptyString" },
+        "notation": { "$ref": "#/$defs/nonEmptyStrings" },
+        "derivationSteps": { "$ref": "#/$defs/nonEmptyStrings" },
+        "checkedResult": { "$ref": "#/$defs/nonEmptyString" },
+        "assumptions": { "$ref": "#/$defs/nonEmptyStrings" }
+      }
+    },
+    "experimentPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["question", "hypothesis", "variables", "procedure", "observations", "result", "safetyNotes"],
+      "properties": {
+        "question": { "$ref": "#/$defs/nonEmptyString" },
+        "hypothesis": { "$ref": "#/$defs/nonEmptyString" },
+        "variables": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["independent", "dependent", "controls"],
+          "properties": {
+            "independent": { "$ref": "#/$defs/nonEmptyString" },
+            "dependent": { "$ref": "#/$defs/nonEmptyString" },
+            "controls": { "$ref": "#/$defs/nonEmptyStrings" }
+          }
+        },
+        "procedure": { "$ref": "#/$defs/nonEmptyStrings" },
+        "observations": { "$ref": "#/$defs/nonEmptyStrings" },
+        "result": { "$ref": "#/$defs/nonEmptyString" },
+        "safetyNotes": { "$ref": "#/$defs/nonEmptyStrings" }
+      }
+    },
+    "historicalDocumentPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["creator", "date", "documentType", "audience", "context", "excerpt", "provenance", "interpretations"],
+      "properties": {
+        "creator": { "$ref": "#/$defs/nonEmptyString" },
+        "date": { "$ref": "#/$defs/nonEmptyString" },
+        "documentType": { "$ref": "#/$defs/nonEmptyString" },
+        "audience": { "$ref": "#/$defs/nonEmptyString" },
+        "context": { "$ref": "#/$defs/nonEmptyString" },
+        "excerpt": { "$ref": "#/$defs/nonEmptyString" },
+        "provenance": { "$ref": "#/$defs/nonEmptyString" },
+        "interpretations": { "$ref": "#/$defs/nonEmptyStrings" }
+      }
+    },
+    "economicClaimPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim", "mechanism", "assumptions", "indicators", "counterevidence", "timeHorizon", "distributionalEffects"],
+      "properties": {
+        "claim": { "$ref": "#/$defs/nonEmptyString" },
+        "mechanism": { "$ref": "#/$defs/nonEmptyString" },
+        "assumptions": { "$ref": "#/$defs/nonEmptyStrings" },
+        "indicators": { "$ref": "#/$defs/nonEmptyStrings" },
+        "counterevidence": { "$ref": "#/$defs/nonEmptyStrings" },
+        "timeHorizon": { "$ref": "#/$defs/nonEmptyString" },
+        "distributionalEffects": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "financialScenarioPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["syntheticOnly", "goal", "assumptions", "inputs", "calculation", "risks", "privacyDataRequested", "notPersonalAdvice"],
+      "properties": {
+        "syntheticOnly": { "const": true },
+        "goal": { "$ref": "#/$defs/nonEmptyString" },
+        "assumptions": { "$ref": "#/$defs/nonEmptyStrings" },
+        "inputs": { "$ref": "#/$defs/nonEmptyStrings" },
+        "calculation": { "$ref": "#/$defs/nonEmptyString" },
+        "risks": { "$ref": "#/$defs/nonEmptyStrings" },
+        "privacyDataRequested": { "const": false },
+        "notPersonalAdvice": { "const": true }
+      }
+    },
+    "codeApiPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["language", "interface", "preconditions", "example", "expectedOutput", "failureModes", "securityNotes"],
+      "properties": {
+        "language": { "$ref": "#/$defs/nonEmptyString" },
+        "interface": { "$ref": "#/$defs/nonEmptyString" },
+        "preconditions": { "$ref": "#/$defs/nonEmptyStrings" },
+        "example": { "$ref": "#/$defs/nonEmptyString" },
+        "expectedOutput": { "$ref": "#/$defs/nonEmptyString" },
+        "failureModes": { "$ref": "#/$defs/nonEmptyStrings" },
+        "securityNotes": { "$ref": "#/$defs/nonEmptyStrings" }
+      }
+    },
+    "healthSafetyPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope", "hazard", "prevention", "warningSigns", "escalation", "notDiagnosis", "qualifiedReviewRequired"],
+      "properties": {
+        "scope": { "$ref": "#/$defs/nonEmptyString" },
+        "hazard": { "$ref": "#/$defs/nonEmptyString" },
+        "prevention": { "$ref": "#/$defs/nonEmptyStrings" },
+        "warningSigns": { "$ref": "#/$defs/nonEmptyStrings" },
+        "escalation": { "$ref": "#/$defs/nonEmptyString" },
+        "notDiagnosis": { "const": true },
+        "qualifiedReviewRequired": { "const": true }
+      }
+    },
+    "artworkPerformancePayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["medium", "work", "elements", "interpretation", "alternatives", "practiceNotes", "attribution"],
+      "properties": {
+        "medium": { "$ref": "#/$defs/nonEmptyString" },
+        "work": { "$ref": "#/$defs/nonEmptyString" },
+        "elements": { "$ref": "#/$defs/nonEmptyStrings" },
+        "interpretation": { "$ref": "#/$defs/nonEmptyString" },
+        "alternatives": { "$ref": "#/$defs/nonEmptyStrings" },
+        "practiceNotes": { "$ref": "#/$defs/nonEmptyStrings" },
+        "attribution": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "practicalProcedurePayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["goal", "prerequisites", "materials", "steps", "hazards", "verification", "stopConditions"],
+      "properties": {
+        "goal": { "$ref": "#/$defs/nonEmptyString" },
+        "prerequisites": { "$ref": "#/$defs/nonEmptyStrings" },
+        "materials": { "$ref": "#/$defs/nonEmptyStrings" },
+        "steps": { "$ref": "#/$defs/nonEmptyStrings" },
+        "hazards": { "$ref": "#/$defs/nonEmptyStrings" },
+        "verification": { "$ref": "#/$defs/nonEmptyStrings" },
+        "stopConditions": { "$ref": "#/$defs/nonEmptyStrings" }
+      }
+    },
+    "card": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cardId", "cardType", "title", "summary", "gradeBands", "topics", "sourceRefs", "status", "uncertainties", "limits", "professionalReviewRequired", "payload"],
+      "properties": {
+        "cardId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$" },
+        "cardType": {
+          "enum": ["argument", "evidence-study", "source-claim", "equation-proof", "experiment", "historical-document", "economic-claim", "financial-scenario", "code-api", "health-safety", "artwork-performance", "practical-procedure"]
+        },
+        "title": { "$ref": "#/$defs/nonEmptyString" },
+        "summary": { "$ref": "#/$defs/nonEmptyString" },
+        "gradeBands": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["K-2", "3-5", "6-8", "9-12", "adult"] }
+        },
+        "topics": { "$ref": "#/$defs/nonEmptyStrings" },
+        "sourceRefs": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/sourceRef" }
+        },
+        "status": { "enum": ["draft", "reviewed"] },
+        "uncertainties": { "type": "array", "items": { "$ref": "#/$defs/nonEmptyString" } },
+        "limits": { "$ref": "#/$defs/nonEmptyStrings" },
+        "professionalReviewRequired": { "type": "boolean" },
+        "payload": { "type": "object" }
+      },
+      "oneOf": [
+        { "properties": { "cardType": { "const": "argument" }, "payload": { "$ref": "#/$defs/argumentPayload" } } },
+        { "properties": { "cardType": { "const": "evidence-study" }, "payload": { "$ref": "#/$defs/evidenceStudyPayload" } } },
+        { "properties": { "cardType": { "const": "source-claim" }, "payload": { "$ref": "#/$defs/sourceClaimPayload" } } },
+        { "properties": { "cardType": { "const": "equation-proof" }, "payload": { "$ref": "#/$defs/equationProofPayload" } } },
+        { "properties": { "cardType": { "const": "experiment" }, "payload": { "$ref": "#/$defs/experimentPayload" } } },
+        { "properties": { "cardType": { "const": "historical-document" }, "payload": { "$ref": "#/$defs/historicalDocumentPayload" } } },
+        { "properties": { "cardType": { "const": "economic-claim" }, "payload": { "$ref": "#/$defs/economicClaimPayload" } } },
+        { "properties": { "cardType": { "const": "financial-scenario" }, "payload": { "$ref": "#/$defs/financialScenarioPayload" } } },
+        { "properties": { "cardType": { "const": "code-api" }, "payload": { "$ref": "#/$defs/codeApiPayload" } } },
+        { "properties": { "cardType": { "const": "health-safety" }, "payload": { "$ref": "#/$defs/healthSafetyPayload" } } },
+        { "properties": { "cardType": { "const": "artwork-performance" }, "payload": { "$ref": "#/$defs/artworkPerformancePayload" } } },
+        { "properties": { "cardType": { "const": "practical-procedure" }, "payload": { "$ref": "#/$defs/practicalProcedurePayload" } } }
+      ]
+    }
+  }
+}
