@@ -11,6 +11,7 @@ import argparse
 import csv
 import hashlib
 import json
+import math
 import re
 import sqlite3
 import sys
@@ -27,6 +28,9 @@ REGISTRY_SCHEMA = "open-education/subject-brain-registry/v1"
 QUERY_SCHEMA = "open-education/subject-brain-query-result/v1"
 INDEX_SCHEMA = "open-education/subject-brain-index/v1"
 LOCATOR_SCHEMA = "open-education/subject-brain-locator/v1"
+QUERY_PLAN_SCHEMA = "open-education/subject-brain-query-plan/v1"
+VECTOR_ALGORITHM = "deterministic-hashed-concept-vector/v1"
+VECTOR_DIMENSIONS = 256
 READY_STATUSES = {"contract-ready", "starter-corpus-ready", "pilot-ready", "production-ready"}
 INDEX_RIGHTS_STATUS = "approved-for-local-index"
 LOCAL_ACQUISITION_STATUSES = {"local-ready", "local-pending-extraction"}
@@ -45,6 +49,36 @@ STOP_WORDS = {
     "in", "is", "it", "of", "on", "or", "that", "the", "this", "to", "what",
     "when", "where", "which", "who", "why", "with",
 }
+CONCEPT_EXPANSIONS = {
+    "argument": ("logic", "premise", "conclusion", "reasoning", "evidence"),
+    "deductive": ("logic", "validity", "premise", "conclusion", "inference"),
+    "rhetoric": ("argument", "persuasion", "composition", "language"),
+    "scripture": ("bible", "theology", "verse", "religious-literacy"),
+    "biblical": ("bible", "theology", "scripture", "religious-literacy"),
+    "memory": ("psychology", "learning-science", "retention", "development"),
+    "learning": ("education", "memory", "psychology", "practice"),
+    "algebra": ("mathematics", "equation", "proof", "quantitative"),
+    "geometry": ("mathematics", "proof", "shape", "quantitative"),
+    "physics": ("science", "engineering", "equation", "experiment"),
+    "biology": ("science", "life-science", "experiment", "evidence"),
+    "government": ("civics", "history", "law", "politics"),
+    "constitution": ("civics", "government", "law", "history"),
+    "budget": ("finance", "economics", "money", "accounting"),
+    "investing": ("finance", "economics", "risk", "business"),
+    "software": ("computing", "code", "programming", "computer-science"),
+    "cybersecurity": ("computing", "security", "software", "digital-citizenship"),
+    "nutrition": ("health", "fitness", "safety", "biology"),
+    "music": ("arts", "performance", "theory", "design"),
+    "leadership": ("communication", "ethics", "relationships", "conflict-resolution"),
+    "marriage": ("relationships", "family", "communication", "ethics"),
+    "career": ("work", "practical-life", "project-management", "consumer-skills"),
+    "emergency": ("safety", "first-aid", "readiness", "practical-life"),
+}
+EVIDENCE_TIER_WEIGHTS = (
+    (("systematic", "meta-analysis", "official", "primary-source", "peer-reviewed"), 1.0),
+    (("scholarly", "academic", "reference", "textbook", "standard"), 0.85),
+    (("curated", "practice-guide", "professional", "instructional"), 0.72),
+)
 
 
 class SubjectBrainError(RuntimeError):
@@ -713,6 +747,275 @@ def locator_self_test() -> dict[str, Any]:
     }
 
 
+def retrieval_tokens(text: str, expand_concepts: bool = False) -> list[str]:
+    tokens = [
+        token
+        for token in re.findall(r"[a-z0-9]+", text.lower().replace("-", " "))
+        if len(token) > 1 and token not in STOP_WORDS
+    ]
+    if expand_concepts:
+        expanded = list(tokens)
+        for token in tokens:
+            expanded.extend(CONCEPT_EXPANSIONS.get(token, ()))
+        tokens = expanded
+    return tokens
+
+
+def feature_vector(text: str, expand_concepts: bool = False) -> dict[int, float]:
+    tokens = retrieval_tokens(text, expand_concepts)
+    features = [f"word:{token}" for token in tokens]
+    features.extend(f"pair:{left}:{right}" for left, right in zip(tokens, tokens[1:]))
+    counts: dict[int, float] = {}
+    for feature in features:
+        digest = hashlib.sha256(feature.encode("utf-8")).digest()
+        slot = int.from_bytes(digest[:4], "big") % VECTOR_DIMENSIONS
+        counts[slot] = counts.get(slot, 0.0) + 1.0
+    weighted = {slot: 1.0 + math.log(value) for slot, value in counts.items()}
+    magnitude = math.sqrt(sum(value * value for value in weighted.values()))
+    if magnitude == 0:
+        return {}
+    return {slot: round(value / magnitude, 8) for slot, value in weighted.items()}
+
+
+def vector_json(vector: dict[int, float]) -> str:
+    return json.dumps({str(key): value for key, value in sorted(vector.items())}, separators=(",", ":"))
+
+
+def parse_vector(value: str) -> dict[int, float]:
+    return {int(key): float(item) for key, item in json.loads(value).items()}
+
+
+def cosine_similarity(left: dict[int, float], right: dict[int, float]) -> float:
+    if not left or not right:
+        return 0.0
+    if len(left) > len(right):
+        left, right = right, left
+    return max(0.0, min(1.0, sum(value * right.get(key, 0.0) for key, value in left.items())))
+
+
+def stable_key(value: str) -> str:
+    return "-".join(retrieval_tokens(value)) or "untitled"
+
+
+def source_work_key(source: dict[str, Any]) -> str:
+    return str(source.get("workKey") or source.get("versionOf") or stable_key(str(source.get("title") or "")))
+
+
+def evidence_tier_score(value: str) -> float:
+    normalized = value.lower()
+    for markers, score in EVIDENCE_TIER_WEIGHTS:
+        if any(marker in normalized for marker in markers):
+            return score
+    return 0.6
+
+
+def publication_year(value: str) -> int:
+    match = re.search(r"\b(1[0-9]{3}|20[0-9]{2}|21[0-9]{2})\b", value)
+    return int(match.group(1)) if match else 0
+
+
+def candidate_score(candidate: dict[str, Any], retrieval_mode: str) -> tuple[float, dict[str, float]]:
+    lexical_score = float(candidate.get("lexicalScore") or 0.0)
+    vector_score = float(candidate.get("vectorScore") or 0.0)
+    evidence_score = evidence_tier_score(str(candidate.get("evidenceTier") or ""))
+    topic_score = float(candidate.get("topicScore") or 0.0)
+    edition_score = 1.0 if candidate.get("preferredEdition") else min(publication_year(str(candidate.get("publicationDate") or "")) / 2200.0, 0.95)
+    if retrieval_mode == "lexical":
+        weights = {"lexical": 0.72, "vector": 0.0, "evidence": 0.16, "topic": 0.08, "edition": 0.04}
+    else:
+        weights = {"lexical": 0.43, "vector": 0.34, "evidence": 0.13, "topic": 0.06, "edition": 0.04}
+    breakdown = {
+        "lexical": round(lexical_score * weights["lexical"], 8),
+        "vector": round(vector_score * weights["vector"], 8),
+        "evidenceStrength": round(evidence_score * weights["evidence"], 8),
+        "topicMatch": round(topic_score * weights["topic"], 8),
+        "editionPreference": round(edition_score * weights["edition"], 8),
+    }
+    return round(sum(breakdown.values()), 8), breakdown
+
+
+def resolve_duplicates_and_editions(candidates: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], dict[str, int]]:
+    selected: list[dict[str, Any]] = []
+    seen_content: set[str] = set()
+    seen_passages: set[str] = set()
+    duplicate_count = 0
+    superseded_edition_count = 0
+    for candidate in candidates:
+        content_hash = str(candidate.get("contentHash") or "")
+        passage_key = str(candidate.get("passageKey") or "")
+        if content_hash and content_hash in seen_content:
+            duplicate_count += 1
+            continue
+        if passage_key and passage_key in seen_passages:
+            superseded_edition_count += 1
+            continue
+        selected.append(candidate)
+        if content_hash:
+            seen_content.add(content_hash)
+        if passage_key:
+            seen_passages.add(passage_key)
+    return selected, {
+        "exactDuplicateSuppressedCount": duplicate_count,
+        "supersededEditionSuppressedCount": superseded_edition_count,
+    }
+
+
+def diversify_coverage(candidates: list[dict[str, Any]], limit: int) -> list[dict[str, Any]]:
+    selected: list[dict[str, Any]] = []
+    remaining = list(candidates)
+    seen_viewpoints: set[str] = set()
+    seen_traditions: set[str] = set()
+    while remaining and len(selected) < limit:
+        if not selected:
+            choice_index = 0
+        else:
+            choice_index = max(
+                range(len(remaining)),
+                key=lambda index: (
+                    bool(set(remaining[index].get("viewpointTags") or []) - seen_viewpoints)
+                    + bool(set(remaining[index].get("traditionTags") or []) - seen_traditions),
+                    float(remaining[index].get("score") or 0.0),
+                ),
+            )
+        choice = remaining.pop(choice_index)
+        selected.append(choice)
+        seen_viewpoints.update(choice.get("viewpointTags") or [])
+        seen_traditions.update(choice.get("traditionTags") or [])
+    return selected
+
+
+def plan_query(registry_path: Path, question: str, grade_band: str | None, limit: int) -> dict[str, Any]:
+    registry, errors = validate_registry(registry_path)
+    if errors:
+        raise SubjectBrainError("Subject-brain registry validation failed:\n- " + "\n- ".join(errors))
+    question_tokens = set(retrieval_tokens(question, True))
+    question_vector = feature_vector(question, True)
+    candidates: list[dict[str, Any]] = []
+    for brain in registry.get("brains") or []:
+        if brain.get("status") == "planned":
+            continue
+        grade_bands = brain.get("gradeBands") or []
+        if grade_band and grade_band not in grade_bands:
+            continue
+        subject_tags = brain.get("subjectTags") or []
+        routing_text = " ".join([str(brain.get("title") or ""), *subject_tags])
+        routing_tokens = set(retrieval_tokens(routing_text, True))
+        exact_tags = sorted(question_tokens & routing_tokens)
+        vector_score = cosine_similarity(question_vector, feature_vector(routing_text, True))
+        score = round(min(1.0, len(exact_tags) * 0.18 + vector_score * 0.55), 8)
+        candidates.append(
+            {
+                "brainId": brain["brainId"],
+                "title": brain["title"],
+                "status": brain["status"],
+                "gradeBands": grade_bands,
+                "subjectTags": subject_tags,
+                "matchedTerms": exact_tags,
+                "routingScore": score,
+                "role": "candidate",
+                "query": question,
+            }
+        )
+    candidates.sort(key=lambda item: (-float(item["routingScore"]), str(item["brainId"])))
+    selected = [item for item in candidates if item["routingScore"] > 0][:limit]
+    if not selected and candidates:
+        selected = candidates[:1]
+    for index, item in enumerate(selected):
+        item["role"] = "primary" if index == 0 else "supporting"
+    return {
+        "schemaVersion": QUERY_PLAN_SCHEMA,
+        "registryId": registry["registryId"],
+        "query": question,
+        "gradeBand": grade_band,
+        "plannedBrainCount": len(selected),
+        "plans": selected,
+        "routingPolicy": {
+            "lessonContentFirst": True,
+            "maximumSpecialistBrains": limit,
+            "queryEachBrainIndependently": True,
+            "mergeRequiresCitations": True,
+            "crossSourceDisagreementMustBeDisclosed": True,
+            "offlineLexicalFallbackAvailable": True,
+            "durableLearnerStateMutationAllowed": False,
+        },
+    }
+
+
+def retrieval_self_test() -> dict[str, Any]:
+    question_vector = feature_vector("deductive reasoning", True)
+    semantic_vector_score = cosine_similarity(question_vector, feature_vector("logic validity premise conclusion", False))
+    candidates = [
+        {
+            "sourceId": "weak-old",
+            "contentHash": "duplicate-content",
+            "passageKey": "shared-work:section:1",
+            "evidenceTier": "informal-curated",
+            "preferredEdition": False,
+            "publicationDate": "2010",
+            "lexicalScore": 1.0,
+            "vectorScore": 0.8,
+            "topicScore": 1.0,
+            "viewpointTags": ["viewpoint-a"],
+            "traditionTags": ["tradition-a"],
+        },
+        {
+            "sourceId": "strong-new",
+            "contentHash": "duplicate-content",
+            "passageKey": "shared-work:section:1",
+            "evidenceTier": "peer-reviewed",
+            "preferredEdition": True,
+            "publicationDate": "2026",
+            "lexicalScore": 1.0,
+            "vectorScore": 0.8,
+            "topicScore": 1.0,
+            "viewpointTags": ["viewpoint-a"],
+            "traditionTags": ["tradition-a"],
+        },
+        {
+            "sourceId": "independent-b",
+            "contentHash": "independent-content",
+            "passageKey": "independent-work:section:1",
+            "evidenceTier": "official-primary-source",
+            "preferredEdition": True,
+            "publicationDate": "2025",
+            "lexicalScore": 0.7,
+            "vectorScore": 0.7,
+            "topicScore": 0.8,
+            "viewpointTags": ["viewpoint-b"],
+            "traditionTags": ["tradition-b"],
+        },
+    ]
+    for candidate in candidates:
+        candidate["score"], candidate["scoreBreakdown"] = candidate_score(candidate, "hybrid")
+    candidates.sort(key=lambda item: (-float(item["score"]), str(item["sourceId"])))
+    resolved, resolution = resolve_duplicates_and_editions(candidates)
+    diversified = diversify_coverage(resolved, 2)
+    selected_ids = [item["sourceId"] for item in diversified]
+    observed_viewpoints = sorted({tag for item in diversified for tag in item["viewpointTags"]})
+    observed_traditions = sorted({tag for item in diversified for tag in item["traditionTags"]})
+    checks = {
+        "semanticVectorMatchedExpandedConcept": semantic_vector_score > 0,
+        "preferredStrongEditionSelected": "strong-new" in selected_ids and "weak-old" not in selected_ids,
+        "duplicateOrEditionSuppressed": sum(resolution.values()) == 1,
+        "viewpointCoverageDiversified": observed_viewpoints == ["viewpoint-a", "viewpoint-b"],
+        "traditionCoverageDiversified": observed_traditions == ["tradition-a", "tradition-b"],
+        "evidenceStrengthReranked": candidates[0]["sourceId"] == "strong-new",
+        "lexicalFallbackAvailable": True,
+    }
+    return {
+        "schemaVersion": "open-education/subject-brain-retrieval-self-test/v1",
+        "vectorAlgorithm": VECTOR_ALGORITHM,
+        "vectorDimensions": VECTOR_DIMENSIONS,
+        "checks": checks,
+        "semanticVectorScore": round(semantic_vector_score, 8),
+        "duplicateResolution": resolution,
+        "selectedSourceIds": selected_ids,
+        "observedViewpoints": observed_viewpoints,
+        "observedTraditions": observed_traditions,
+        "passed": all(checks.values()),
+    }
+
+
 def build_index(brain_root: Path, output_path: Path, replace: bool, strict_formats: bool) -> dict[str, Any]:
     manifest, corpus, errors = validate_brain(brain_root)
     if errors:
@@ -737,13 +1040,18 @@ def build_index(brain_root: Path, output_path: Path, replace: bool, strict_forma
             """CREATE TABLE sources (
                 source_id TEXT PRIMARY KEY, title TEXT NOT NULL, source_path TEXT NOT NULL,
                 canonical_url TEXT NOT NULL, license_id TEXT NOT NULL, sha256 TEXT NOT NULL,
-                grade_bands_json TEXT NOT NULL, topics_json TEXT NOT NULL, source_json TEXT NOT NULL
+                grade_bands_json TEXT NOT NULL, topics_json TEXT NOT NULL,
+                source_type TEXT NOT NULL, evidence_tier TEXT NOT NULL,
+                viewpoint_tags_json TEXT NOT NULL, tradition_tags_json TEXT NOT NULL,
+                edition TEXT NOT NULL, work_key TEXT NOT NULL, preferred_edition INTEGER NOT NULL,
+                publication_date TEXT NOT NULL, source_json TEXT NOT NULL
             )"""
         )
         connection.execute(
             """CREATE TABLE chunks (
                  chunk_id INTEGER PRIMARY KEY, source_id TEXT NOT NULL, locator TEXT NOT NULL,
                  locator_kind TEXT NOT NULL, locator_json TEXT NOT NULL, chunk_text TEXT NOT NULL,
+                 vector_json TEXT NOT NULL, content_hash TEXT NOT NULL, passage_key TEXT NOT NULL,
                  FOREIGN KEY(source_id) REFERENCES sources(source_id)
              )"""
         )
@@ -770,7 +1078,12 @@ def build_index(brain_root: Path, output_path: Path, replace: bool, strict_forma
                 continue
             source_id = str(source["sourceId"])
             connection.execute(
-                "INSERT INTO sources VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                """INSERT INTO sources(
+                       source_id, title, source_path, canonical_url, license_id, sha256,
+                       grade_bands_json, topics_json, source_type, evidence_tier,
+                       viewpoint_tags_json, tradition_tags_json, edition, work_key,
+                       preferred_edition, publication_date, source_json
+                   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     source_id,
                     source["title"],
@@ -780,6 +1093,14 @@ def build_index(brain_root: Path, output_path: Path, replace: bool, strict_forma
                     source["sha256"],
                     json.dumps(source.get("gradeBands") or []),
                     json.dumps(source.get("topics") or []),
+                    str(source.get("sourceType") or ""),
+                    str(source.get("evidenceTier") or ""),
+                    json.dumps(source.get("viewpointTags") or ["unclassified"]),
+                    json.dumps(source.get("traditionTags") or ["unclassified"]),
+                    str(source.get("edition") or ""),
+                    source_work_key(source),
+                    1 if source.get("isPreferredEdition") else 0,
+                    str(source.get("publicationDate") or source.get("reviewedAt") or ""),
                     json.dumps(source, sort_keys=True),
                 ),
             )
@@ -788,9 +1109,33 @@ def build_index(brain_root: Path, output_path: Path, replace: bool, strict_forma
             for locator, text in chunks:
                 locator_kind = str(locator["kind"])
                 locator_text = locator_label(locator)
+                content_hash = hashlib.sha256(normalize_text(text).lower().encode("utf-8")).hexdigest()
+                passage_key = hashlib.sha256(
+                    "|".join(
+                        (
+                            source_work_key(source),
+                            locator_kind,
+                            str(locator.get("label") or ""),
+                            str(locator.get("chunkIndex") or 1),
+                        )
+                    ).encode("utf-8")
+                ).hexdigest()
+                chunk_vector = feature_vector(f"{source['title']} {topics} {text}")
                 cursor = connection.execute(
-                    "INSERT INTO chunks(source_id, locator, locator_kind, locator_json, chunk_text) VALUES (?, ?, ?, ?, ?)",
-                    (source_id, locator_text, locator_kind, json.dumps(locator, sort_keys=True), text),
+                    """INSERT INTO chunks(
+                           source_id, locator, locator_kind, locator_json, chunk_text,
+                           vector_json, content_hash, passage_key
+                       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                    (
+                        source_id,
+                        locator_text,
+                        locator_kind,
+                        json.dumps(locator, sort_keys=True),
+                        text,
+                        vector_json(chunk_vector),
+                        content_hash,
+                        passage_key,
+                    ),
                 )
                 chunk_id = int(cursor.lastrowid)
                 connection.execute(
@@ -817,7 +1162,13 @@ def build_index(brain_root: Path, output_path: Path, replace: bool, strict_forma
             "chunkCount": chunk_count,
             "locatorSchemaVersion": LOCATOR_SCHEMA,
             "locatorKindCounts": dict(sorted(locator_kind_counts.items())),
-            "retrievalMode": "lexical-fts",
+            "retrievalMode": "hybrid-lexical-vector",
+            "vectorAlgorithm": VECTOR_ALGORITHM,
+            "vectorDimensions": VECTOR_DIMENSIONS,
+            "lexicalFallbackAvailable": True,
+            "duplicateAndEditionResolution": True,
+            "viewpointAndTraditionDiversification": True,
+            "evidenceStrengthReranking": True,
             "answerGenerationMode": "retrieval-context-only",
         }
         connection.execute("INSERT INTO metadata(key, value_json) VALUES (?, ?)", ("manifest", json.dumps(metadata, sort_keys=True)))
@@ -841,6 +1192,10 @@ def build_index(brain_root: Path, output_path: Path, replace: bool, strict_forma
         "chunkCount": chunk_count,
         "locatorSchemaVersion": LOCATOR_SCHEMA,
         "locatorKindCounts": dict(sorted(locator_kind_counts.items())),
+        "retrievalMode": "hybrid-lexical-vector",
+        "vectorAlgorithm": VECTOR_ALGORITHM,
+        "vectorDimensions": VECTOR_DIMENSIONS,
+        "lexicalFallbackAvailable": True,
         "indexedSources": indexed_sources,
         "skippedSources": skipped_sources,
     }
@@ -859,62 +1214,204 @@ def fts_expression(question: str) -> str:
     return " OR ".join(f'"{term}"*' for term in terms)
 
 
-def query_index(index_path: Path, question: str, limit: int, grade_band: str | None) -> dict[str, Any]:
+def query_index(index_path: Path, question: str, limit: int, grade_band: str | None, retrieval_mode: str) -> dict[str, Any]:
     index_path = index_path.resolve()
     if not index_path.is_file():
         raise SubjectBrainError(f"Missing subject-brain index: {index_path}")
+    candidate_pool_size = max(limit * 20, 100)
+    query_vector = feature_vector(question, True)
+    query_tokens = set(retrieval_tokens(question, True))
     with sqlite3.connect(index_path) as connection:
         connection.row_factory = sqlite3.Row
         metadata_row = connection.execute("SELECT value_json FROM metadata WHERE key = 'manifest'").fetchone()
         if not metadata_row:
             raise SubjectBrainError("Index is missing its manifest")
         metadata = json.loads(metadata_row["value_json"])
-        rows = connection.execute(
-            """SELECT c.chunk_id, c.locator, c.locator_kind, c.locator_json,
-                      c.chunk_text, s.source_id, s.title,
-                      s.source_path, s.canonical_url, s.license_id, s.sha256,
-                      s.grade_bands_json, bm25(chunk_fts) AS rank
-               FROM chunk_fts
-               JOIN chunks c ON c.chunk_id = chunk_fts.rowid
-               JOIN sources s ON s.source_id = c.source_id
-               WHERE chunk_fts MATCH ?
-               ORDER BY rank
-               LIMIT ?""",
-            (fts_expression(question), max(limit * 4, limit)),
+        select_columns = """
+            c.chunk_id, c.locator, c.locator_kind, c.locator_json, c.chunk_text,
+            c.vector_json, c.content_hash, c.passage_key,
+            s.source_id, s.title, s.source_path, s.canonical_url, s.license_id,
+            s.sha256, s.grade_bands_json, s.topics_json, s.source_type,
+            s.evidence_tier, s.viewpoint_tags_json, s.tradition_tags_json,
+            s.edition, s.work_key, s.preferred_edition, s.publication_date
+        """
+        lexical_rows = connection.execute(
+            f"""SELECT {select_columns}, bm25(chunk_fts) AS rank
+                FROM chunk_fts
+                JOIN chunks c ON c.chunk_id = chunk_fts.rowid
+                JOIN sources s ON s.source_id = c.source_id
+                WHERE chunk_fts MATCH ?
+                ORDER BY rank
+                LIMIT ?""",
+            (fts_expression(question), candidate_pool_size),
         ).fetchall()
+        vector_rows = []
+        if retrieval_mode == "hybrid":
+            vector_rows = connection.execute(
+                f"""SELECT {select_columns}
+                    FROM chunks c
+                    JOIN sources s ON s.source_id = c.source_id"""
+            ).fetchall()
 
-    results: list[dict[str, Any]] = []
-    for row in rows:
+    def row_candidate(row: sqlite3.Row) -> dict[str, Any] | None:
         grade_bands = json.loads(row["grade_bands_json"])
         if grade_band and grade_band not in grade_bands:
+            return None
+        topics = json.loads(row["topics_json"])
+        source_tokens = set(retrieval_tokens(f"{row['title']} {' '.join(topics)}", True))
+        topic_score = len(query_tokens & source_tokens) / max(len(query_tokens), 1)
+        return {
+            "chunkId": int(row["chunk_id"]),
+            "sourceId": row["source_id"],
+            "sourceRepo": metadata["brainId"],
+            "sourcePath": row["source_path"],
+            "sourceType": row["source_type"],
+            "title": row["title"],
+            "locator": row["locator"],
+            "locatorKind": row["locator_kind"],
+            "locatorData": json.loads(row["locator_json"]),
+            "chunkText": row["chunk_text"],
+            "canonicalUrl": row["canonical_url"],
+            "licenseId": row["license_id"],
+            "sha256": row["sha256"],
+            "gradeBands": grade_bands,
+            "topics": topics,
+            "evidenceTier": row["evidence_tier"],
+            "viewpointTags": json.loads(row["viewpoint_tags_json"]),
+            "traditionTags": json.loads(row["tradition_tags_json"]),
+            "edition": row["edition"] or None,
+            "workKey": row["work_key"],
+            "preferredEdition": bool(row["preferred_edition"]),
+            "publicationDate": row["publication_date"] or None,
+            "contentHash": row["content_hash"],
+            "passageKey": row["passage_key"],
+            "lexicalScore": 0.0,
+            "vectorScore": 0.0,
+            "topicScore": topic_score,
+        }
+
+    candidates_by_id: dict[int, dict[str, Any]] = {}
+    lexical_count = len(lexical_rows)
+    for index, row in enumerate(lexical_rows):
+        candidate = row_candidate(row)
+        if candidate is None:
             continue
+        candidate["lexicalScore"] = round(1.0 - index / max(lexical_count, 1), 8)
+        candidates_by_id[candidate["chunkId"]] = candidate
+
+    if retrieval_mode == "hybrid":
+        vector_candidates: list[tuple[float, sqlite3.Row]] = []
+        for row in vector_rows:
+            grade_bands = json.loads(row["grade_bands_json"])
+            if grade_band and grade_band not in grade_bands:
+                continue
+            similarity = cosine_similarity(query_vector, parse_vector(row["vector_json"]))
+            if similarity > 0:
+                vector_candidates.append((similarity, row))
+        vector_candidates.sort(key=lambda item: (-item[0], int(item[1]["chunk_id"])))
+        for similarity, row in vector_candidates[:candidate_pool_size]:
+            chunk_id = int(row["chunk_id"])
+            candidate = candidates_by_id.get(chunk_id) or row_candidate(row)
+            if candidate is None:
+                continue
+            candidate["vectorScore"] = round(similarity, 8)
+            candidates_by_id[chunk_id] = candidate
+
+    candidates = list(candidates_by_id.values())
+    for candidate in candidates:
+        candidate["score"], candidate["scoreBreakdown"] = candidate_score(candidate, retrieval_mode)
+    candidates.sort(
+        key=lambda item: (
+            -float(item["score"]),
+            -int(bool(item["preferredEdition"])),
+            -publication_year(str(item.get("publicationDate") or "")),
+            str(item["sourceId"]),
+            int(item["chunkId"]),
+        )
+    )
+    resolved, duplicate_resolution = resolve_duplicates_and_editions(candidates)
+    selected = diversify_coverage(resolved, limit)
+    results: list[dict[str, Any]] = []
+    for candidate in selected:
         results.append(
             {
-                "sourceId": row["source_id"],
-                "sourceRepo": metadata["brainId"],
-                "sourcePath": row["source_path"],
-                "title": row["title"],
-                "locator": row["locator"],
-                "locatorKind": row["locator_kind"],
-                "locatorData": json.loads(row["locator_json"]),
-                "excerpt": row["chunk_text"][:1600],
-                "canonicalUrl": row["canonical_url"],
-                "licenseId": row["license_id"],
-                "sha256": row["sha256"],
+                "sourceId": candidate["sourceId"],
+                "sourceRepo": candidate["sourceRepo"],
+                "sourcePath": candidate["sourcePath"],
+                "sourceType": candidate["sourceType"],
+                "title": candidate["title"],
+                "locator": candidate["locator"],
+                "locatorKind": candidate["locatorKind"],
+                "locatorData": candidate["locatorData"],
+                "excerpt": candidate["chunkText"][:1600],
+                "canonicalUrl": candidate["canonicalUrl"],
+                "licenseId": candidate["licenseId"],
+                "sha256": candidate["sha256"],
+                "evidenceTier": candidate["evidenceTier"],
+                "evidenceStrengthScore": evidence_tier_score(str(candidate["evidenceTier"])),
+                "viewpointTags": candidate["viewpointTags"],
+                "traditionTags": candidate["traditionTags"],
+                "edition": candidate["edition"],
+                "workKey": candidate["workKey"],
+                "preferredEdition": candidate["preferredEdition"],
+                "publicationDate": candidate["publicationDate"],
+                "retrievalScore": candidate["score"],
+                "scoreBreakdown": candidate["scoreBreakdown"],
+                "retrievalSignals": {
+                    "lexicalMatched": candidate["lexicalScore"] > 0,
+                    "vectorMatched": candidate["vectorScore"] > 0,
+                },
                 "citationRequired": True,
             }
         )
-        if len(results) >= limit:
-            break
+    observed_viewpoints = sorted(
+        {
+            tag
+            for result in results
+            for tag in result["viewpointTags"]
+            if tag != "unclassified"
+        }
+    )
+    observed_traditions = sorted(
+        {
+            tag
+            for result in results
+            for tag in result["traditionTags"]
+            if tag != "unclassified"
+        }
+    )
     return {
         "schemaVersion": QUERY_SCHEMA,
         "brainId": metadata["brainId"],
         "query": question,
         "gradeBand": grade_band,
+        "retrievalModeRequested": retrieval_mode,
+        "retrievalModeUsed": "hybrid-lexical-vector" if retrieval_mode == "hybrid" else "lexical-fts",
+        "vectorAlgorithm": VECTOR_ALGORITHM if retrieval_mode == "hybrid" else None,
+        "lexicalFallbackAvailable": True,
         "retrievalOnly": True,
         "generatedAnswer": None,
         "resultCount": len(results),
         "results": results,
+        "candidateCount": len(candidates),
+        "duplicateResolution": duplicate_resolution,
+        "coverage": {
+            "observedViewpointTags": observed_viewpoints,
+            "observedTraditionTags": observed_traditions,
+            "viewpointMetadataGap": not observed_viewpoints,
+            "traditionMetadataGap": not observed_traditions,
+            "diversificationApplied": True,
+            "coverageDoesNotImplyTruth": True,
+        },
+        "rankingPolicy": {
+            "lexicalAndVectorSignalsCombined": retrieval_mode == "hybrid",
+            "evidenceStrengthIncluded": True,
+            "topicMatchIncluded": True,
+            "preferredAndNewerEditionIncluded": True,
+            "exactDuplicatesSuppressed": True,
+            "supersededEditionsSuppressed": True,
+            "viewpointAndTraditionDiversityAppliedAfterRelevance": True,
+        },
         "teacherPolicy": {
             "useAsGroundedContextOnly": True,
             "citeEveryUsedResult": True,
@@ -950,8 +1447,16 @@ def main() -> int:
     query_parser.add_argument("--question", required=True)
     query_parser.add_argument("--limit", type=int, default=5)
     query_parser.add_argument("--grade-band", choices=("K-2", "3-5", "6-8", "9-12", "adult"))
+    query_parser.add_argument("--retrieval-mode", choices=("hybrid", "lexical"), default="hybrid")
+
+    plan_parser = subparsers.add_parser("plan-query")
+    plan_parser.add_argument("--registry", default="subject-brains.json")
+    plan_parser.add_argument("--question", required=True)
+    plan_parser.add_argument("--limit", type=int, default=3)
+    plan_parser.add_argument("--grade-band", choices=("K-2", "3-5", "6-8", "9-12", "adult"))
 
     subparsers.add_parser("locator-self-test")
+    subparsers.add_parser("retrieval-self-test")
 
     args = parser.parse_args()
     try:
@@ -989,10 +1494,19 @@ def main() -> int:
         if args.command == "query":
             if args.limit < 1 or args.limit > 20:
                 raise SubjectBrainError("--limit must be between 1 and 20")
-            print_result(query_index(Path(args.index), args.question, args.limit, args.grade_band))
+            print_result(query_index(Path(args.index), args.question, args.limit, args.grade_band, args.retrieval_mode))
+            return 0
+        if args.command == "plan-query":
+            if args.limit < 1 or args.limit > 5:
+                raise SubjectBrainError("--limit must be between 1 and 5 for cross-brain planning")
+            print_result(plan_query(Path(args.registry), args.question, args.grade_band, args.limit))
             return 0
         if args.command == "locator-self-test":
             result = locator_self_test()
+            print_result(result)
+            return 0 if result["passed"] else 1
+        if args.command == "retrieval-self-test":
+            result = retrieval_self_test()
             print_result(result)
             return 0 if result["passed"] else 1
     except (SubjectBrainError, OSError, sqlite3.Error, zipfile.BadZipFile, json.JSONDecodeError) as exc:

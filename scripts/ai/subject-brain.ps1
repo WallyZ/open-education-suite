@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)]
-    [ValidateSet('validate-registry', 'validate-brain', 'index', 'query', 'locator-self-test')]
+    [ValidateSet('validate-registry', 'validate-brain', 'index', 'query', 'plan-query', 'locator-self-test', 'retrieval-self-test')]
     [string]$Action,
     [string]$RegistryPath = '.\subject-brains.json',
     [string]$BrainRoot = '',
@@ -11,6 +11,8 @@ param(
     [string]$GradeBand = '',
     [ValidateRange(1, 20)]
     [int]$Limit = 5,
+    [ValidateSet('hybrid', 'lexical')]
+    [string]$RetrievalMode = 'hybrid',
     [switch]$Replace,
     [switch]$StrictFormats
 )
@@ -32,6 +34,8 @@ $arguments = @($prefix) + @($scriptPath, $Action)
 switch ($Action) {
     'locator-self-test' {
     }
+    'retrieval-self-test' {
+    }
     'validate-registry' {
         $arguments += @('--registry', $RegistryPath)
     }
@@ -51,7 +55,12 @@ switch ($Action) {
         if ([string]::IsNullOrWhiteSpace($IndexPath) -or [string]::IsNullOrWhiteSpace($Question)) {
             throw '-IndexPath and -Question are required.'
         }
-        $arguments += @('--index', $IndexPath, '--question', $Question, '--limit', [string]$Limit)
+        $arguments += @('--index', $IndexPath, '--question', $Question, '--limit', [string]$Limit, '--retrieval-mode', $RetrievalMode)
+        if (-not [string]::IsNullOrWhiteSpace($GradeBand)) { $arguments += @('--grade-band', $GradeBand) }
+    }
+    'plan-query' {
+        if ([string]::IsNullOrWhiteSpace($Question)) { throw '-Question is required.' }
+        $arguments += @('--registry', $RegistryPath, '--question', $Question, '--limit', [string]$Limit)
         if (-not [string]::IsNullOrWhiteSpace($GradeBand)) { $arguments += @('--grade-band', $GradeBand) }
     }
 }

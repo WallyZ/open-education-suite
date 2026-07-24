@@ -492,6 +492,35 @@ try {
         throw "Subject-brain locator self-test did not prove all required structured locator kinds: $($missingLocatorKinds -join ', ')."
     }
 
+    $retrievalSelfTestOutput = & .\scripts\ai\subject-brain.ps1 -Action retrieval-self-test 2>&1
+    $retrievalSelfTestOutput | Tee-Object -FilePath $logPath -Append
+    if ($LASTEXITCODE -ne 0) {
+        throw "Subject-brain hybrid retrieval self-test failed with exit code $LASTEXITCODE."
+    }
+    $retrievalSelfTest = ($retrievalSelfTestOutput | Out-String) | ConvertFrom-Json
+    $failedRetrievalChecks = @($retrievalSelfTest.checks.PSObject.Properties | Where-Object { $_.Value -ne $true })
+    if ($retrievalSelfTest.passed -ne $true -or $retrievalSelfTest.vectorAlgorithm -ne 'deterministic-hashed-concept-vector/v1' -or $retrievalSelfTest.vectorDimensions -ne 256 -or $failedRetrievalChecks.Count -ne 0) {
+        throw "Subject-brain hybrid retrieval self-test failed checks: $($failedRetrievalChecks.Name -join ', ')."
+    }
+
+    $brainPlanOutput = & .\scripts\ai\subject-brain.ps1 -Action plan-query -RegistryPath '.\subject-brains.json' -Question 'compare biblical teaching with psychological learning science and memory' -GradeBand '9-12' -Limit 3 2>&1
+    $brainPlanOutput | Tee-Object -FilePath $logPath -Append
+    if ($LASTEXITCODE -ne 0) {
+        throw "Cross-brain query planning failed with exit code $LASTEXITCODE."
+    }
+    $brainPlan = ($brainPlanOutput | Out-String) | ConvertFrom-Json
+    $plannedBrainIds = @($brainPlan.plans.brainId)
+    if (
+        $brainPlan.schemaVersion -ne 'open-education/subject-brain-query-plan/v1' -or
+        $brainPlan.plannedBrainCount -lt 2 -or
+        'biblical-theological-literacy' -notin $plannedBrainIds -or
+        'psychology-learning-science' -notin $plannedBrainIds -or
+        $brainPlan.routingPolicy.offlineLexicalFallbackAvailable -ne $true -or
+        $brainPlan.routingPolicy.durableLearnerStateMutationAllowed -ne $false
+    ) {
+        throw 'Cross-brain planner did not route the mixed-domain question to both required specialist brains.'
+    }
+
     $criticalBrainRoot = Resolve-Path -LiteralPath '..\critical-thinking-ai-tool'
     $criticalIndexPath = Join-Path $tmpRoot 'critical-thinking-subject-brain.sqlite'
     $criticalIndexOutput = & .\scripts\ai\subject-brain.ps1 -Action index -BrainRoot $criticalBrainRoot.Path -IndexPath $criticalIndexPath 2>&1
@@ -500,7 +529,17 @@ try {
         throw "Critical-thinking subject-brain indexing failed with exit code $LASTEXITCODE."
     }
     $criticalIndex = ($criticalIndexOutput | Out-String) | ConvertFrom-Json
-    if ($criticalIndex.brainId -ne 'critical-thinking' -or $criticalIndex.indexedSourceCount -lt 3 -or $criticalIndex.chunkCount -lt 100 -or $criticalIndex.locatorSchemaVersion -ne 'open-education/subject-brain-locator/v1' -or @($criticalIndex.locatorKindCounts.PSObject.Properties).Count -lt 1) {
+    if (
+        $criticalIndex.brainId -ne 'critical-thinking' -or
+        $criticalIndex.indexedSourceCount -lt 3 -or
+        $criticalIndex.chunkCount -lt 100 -or
+        $criticalIndex.locatorSchemaVersion -ne 'open-education/subject-brain-locator/v1' -or
+        @($criticalIndex.locatorKindCounts.PSObject.Properties).Count -lt 1 -or
+        $criticalIndex.retrievalMode -ne 'hybrid-lexical-vector' -or
+        $criticalIndex.vectorAlgorithm -ne 'deterministic-hashed-concept-vector/v1' -or
+        $criticalIndex.vectorDimensions -ne 256 -or
+        $criticalIndex.lexicalFallbackAvailable -ne $true
+    ) {
         throw 'Critical-thinking subject-brain index does not contain the checked Open Logic starter corpus.'
     }
 
@@ -511,12 +550,47 @@ try {
     }
     $brainQueryText = $brainQueryOutput | Out-String
     $brainQuery = $brainQueryText | ConvertFrom-Json
-    if ($brainQuery.retrievalOnly -ne $true -or $brainQuery.resultCount -lt 1 -or $null -ne $brainQuery.generatedAnswer) {
+    if (
+        $brainQuery.retrievalOnly -ne $true -or
+        $brainQuery.resultCount -lt 1 -or
+        $null -ne $brainQuery.generatedAnswer -or
+        $brainQuery.retrievalModeUsed -ne 'hybrid-lexical-vector' -or
+        $brainQuery.lexicalFallbackAvailable -ne $true -or
+        $brainQuery.rankingPolicy.lexicalAndVectorSignalsCombined -ne $true -or
+        $brainQuery.rankingPolicy.evidenceStrengthIncluded -ne $true -or
+        $brainQuery.rankingPolicy.exactDuplicatesSuppressed -ne $true -or
+        $brainQuery.coverage.diversificationApplied -ne $true
+    ) {
         throw 'Subject-brain query must return retrieval-only context without a generated answer.'
     }
     $openLogicResults = @($brainQuery.results | Where-Object { $_.sourceId -eq 'open-logic-complete-2026-07-12' })
     if ($openLogicResults.Count -lt 1 -or [string]::IsNullOrWhiteSpace([string]$openLogicResults[0].locator) -or [string]::IsNullOrWhiteSpace([string]$openLogicResults[0].locatorKind) -or $openLogicResults[0].locatorData.schemaVersion -ne 'open-education/subject-brain-locator/v1' -or $openLogicResults[0].locatorData.charStart -lt 1 -or $openLogicResults[0].locatorData.charEnd -lt $openLogicResults[0].locatorData.charStart) {
         throw 'Subject-brain query did not retain an exact structured Open Logic locator.'
+    }
+    $malformedHybridResults = @($brainQuery.results | Where-Object {
+        [double]$_.retrievalScore -le 0 -or
+        [string]::IsNullOrWhiteSpace([string]$_.evidenceTier) -or
+        $null -eq $_.scoreBreakdown -or
+        $null -eq $_.retrievalSignals
+    })
+    if ($malformedHybridResults.Count -ne 0 -or @($brainQuery.results | Where-Object { $_.retrievalSignals.vectorMatched -eq $true }).Count -lt 1) {
+        throw 'Hybrid subject-brain query did not retain vector, evidence-strength, and reranking signals.'
+    }
+
+    $lexicalFallbackOutput = & .\scripts\ai\subject-brain.ps1 -Action query -IndexPath $criticalIndexPath -Question 'valid deductive argument premises conclusion' -GradeBand '9-12' -Limit 3 -RetrievalMode lexical 2>&1
+    $lexicalFallbackOutput | Tee-Object -FilePath $logPath -Append
+    if ($LASTEXITCODE -ne 0) {
+        throw "Subject-brain lexical fallback query failed with exit code $LASTEXITCODE."
+    }
+    $lexicalFallback = ($lexicalFallbackOutput | Out-String) | ConvertFrom-Json
+    if (
+        $lexicalFallback.retrievalModeUsed -ne 'lexical-fts' -or
+        $lexicalFallback.lexicalFallbackAvailable -ne $true -or
+        $lexicalFallback.resultCount -lt 1 -or
+        $null -ne $lexicalFallback.vectorAlgorithm -or
+        @($lexicalFallback.results | Where-Object { $_.retrievalSignals.vectorMatched -ne $false }).Count -ne 0
+    ) {
+        throw 'Subject-brain lexical-only fallback contract is not operational.'
     }
 
     $brainQueryPath = Join-Path $tmpRoot 'critical-thinking-query.json'

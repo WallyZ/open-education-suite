@@ -3,21 +3,26 @@
   "$id": "https://open-education.local/schemas/subject-brain-query.schema.json",
   "title": "Open Education Subject Brain Query Exchange",
   "type": "object",
-  "required": ["schemaVersion", "brainId", "query", "retrievalOnly", "results"],
+  "required": ["schemaVersion", "brainId", "query", "retrievalModeUsed", "lexicalFallbackAvailable", "retrievalOnly", "results", "duplicateResolution", "coverage", "rankingPolicy"],
   "properties": {
     "schemaVersion": { "const": "open-education/subject-brain-query-result/v1" },
     "brainId": { "type": "string" },
     "query": { "type": "string" },
+    "retrievalModeRequested": { "enum": ["hybrid", "lexical"] },
+    "retrievalModeUsed": { "enum": ["hybrid-lexical-vector", "lexical-fts"] },
+    "vectorAlgorithm": { "type": ["string", "null"] },
+    "lexicalFallbackAvailable": { "const": true },
     "retrievalOnly": { "const": true },
     "results": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["sourceId", "sourceRepo", "sourcePath", "title", "locator", "locatorKind", "locatorData", "excerpt", "licenseId", "sha256", "citationRequired"],
+        "required": ["sourceId", "sourceRepo", "sourcePath", "sourceType", "title", "locator", "locatorKind", "locatorData", "excerpt", "licenseId", "sha256", "evidenceTier", "evidenceStrengthScore", "viewpointTags", "traditionTags", "workKey", "preferredEdition", "retrievalScore", "scoreBreakdown", "retrievalSignals", "citationRequired"],
         "properties": {
           "sourceId": { "type": "string" },
           "sourceRepo": { "type": "string" },
           "sourcePath": { "type": "string" },
+          "sourceType": { "type": "string" },
           "title": { "type": "string" },
           "locator": { "type": "string" },
           "locatorKind": { "enum": ["page", "chapter", "section", "verse", "equation", "table", "diagram", "code-symbol", "dataset", "image", "audiovisual-timestamp"] },
@@ -37,9 +42,40 @@
           "canonicalUrl": { "type": "string" },
           "licenseId": { "type": "string" },
           "sha256": { "type": "string" },
+          "evidenceTier": { "type": "string" },
+          "evidenceStrengthScore": { "type": "number", "minimum": 0, "maximum": 1 },
+          "viewpointTags": { "type": "array", "items": { "type": "string" } },
+          "traditionTags": { "type": "array", "items": { "type": "string" } },
+          "edition": { "type": ["string", "null"] },
+          "workKey": { "type": "string" },
+          "preferredEdition": { "type": "boolean" },
+          "publicationDate": { "type": ["string", "null"] },
+          "retrievalScore": { "type": "number", "minimum": 0, "maximum": 1 },
+          "scoreBreakdown": {
+            "type": "object",
+            "required": ["lexical", "vector", "evidenceStrength", "topicMatch", "editionPreference"],
+            "properties": {
+              "lexical": { "type": "number", "minimum": 0 },
+              "vector": { "type": "number", "minimum": 0 },
+              "evidenceStrength": { "type": "number", "minimum": 0 },
+              "topicMatch": { "type": "number", "minimum": 0 },
+              "editionPreference": { "type": "number", "minimum": 0 }
+            }
+          },
+          "retrievalSignals": {
+            "type": "object",
+            "required": ["lexicalMatched", "vectorMatched"],
+            "properties": {
+              "lexicalMatched": { "type": "boolean" },
+              "vectorMatched": { "type": "boolean" }
+            }
+          },
           "citationRequired": { "const": true }
         }
       }
-    }
+    },
+    "duplicateResolution": { "type": "object" },
+    "coverage": { "type": "object" },
+    "rankingPolicy": { "type": "object" }
   }
 }

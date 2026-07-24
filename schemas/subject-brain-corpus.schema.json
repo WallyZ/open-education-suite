@@ -24,6 +24,22 @@
           "sha256": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" },
           "gradeBands": { "type": "array", "minItems": 1, "items": { "type": "string" } },
           "topics": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "workKey": { "type": "string", "minLength": 1 },
+          "versionOf": { "type": "string", "minLength": 1 },
+          "edition": { "type": ["string", "null"] },
+          "isPreferredEdition": { "type": "boolean" },
+          "publicationDate": { "type": ["string", "null"] },
+          "reviewedAt": { "type": ["string", "null"], "format": "date" },
+          "viewpointTags": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "traditionTags": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
           "locatorPolicy": {
             "type": "object",
             "additionalProperties": false,
