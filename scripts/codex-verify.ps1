@@ -454,6 +454,8 @@ try {
     Assert-FileExists '.\scripts\ai\subject-brain.ps1'
     Assert-FileExists '.\scripts\ai\extract_subject_pdf.py'
     Assert-FileExists '.\scripts\ai\invoke-local-teacher.ps1'
+    Assert-FileExists '.\scripts\ai\build-content-ai-knowledge-federation.ps1'
+    Assert-FileExists '.\generated\ai-knowledge\content-knowledge-catalog.json'
     Assert-FileExists '.\scripts\setup\build-planned-subject-brains.ps1'
     Assert-FileExists '..\open-education-teacher\selection\teacher-knowledge-routing-policy.json'
     Assert-FileExists '.\scripts\testing\run-live-gdev-teacher-smoke.ps1'
@@ -555,6 +557,11 @@ try {
 
         Assert-DirectoryExists (Join-Path $sourceRoot.Path $manifest.paths.studyPlans)
         Assert-DirectoryExists (Join-Path $sourceRoot.Path $manifest.paths.resources)
+    }
+
+    & .\scripts\ai\build-content-ai-knowledge-federation.ps1 -Check 2>&1 | Tee-Object -FilePath $logPath -Append
+    if ($LASTEXITCODE -ne 0) {
+        throw "Content AI knowledge federation check failed with exit code $LASTEXITCODE."
     }
 
     $domainStudyPlans = Get-ChildItem -LiteralPath '.\study-plans' -Recurse -File |
