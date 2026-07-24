@@ -503,6 +503,59 @@ try {
         throw "Subject-brain hybrid retrieval self-test failed checks: $($failedRetrievalChecks.Name -join ', ')."
     }
 
+    $toolSelfTestOutput = & .\scripts\ai\subject-brain.ps1 -Action tool-self-test 2>&1
+    $toolSelfTestOutput | Tee-Object -FilePath $logPath -Append
+    if ($LASTEXITCODE -ne 0) {
+        throw "Subject-brain checked-tool self-test failed with exit code $LASTEXITCODE."
+    }
+    $toolSelfTest = ($toolSelfTestOutput | Out-String) | ConvertFrom-Json
+    $requiredCheckedTools = @('calculator', 'symbolic-math', 'code-execution', 'data-analysis', 'mapping-timeline', 'citation-verification', 'source-comparison')
+    $missingCheckedTools = @($requiredCheckedTools | Where-Object { $_ -notin @($toolSelfTest.capabilities) })
+    $failedToolChecks = @($toolSelfTest.checks.PSObject.Properties | Where-Object { $_.Value -ne $true })
+    if (
+        $toolSelfTest.schemaVersion -ne 'open-education/subject-brain-tool-self-test/v1' -or
+        $toolSelfTest.passed -ne $true -or
+        $toolSelfTest.capabilityCount -ne 7 -or
+        $missingCheckedTools.Count -ne 0 -or
+        $failedToolChecks.Count -ne 0 -or
+        $toolSelfTest.catalog.networkAccess -ne 'none' -or
+        $toolSelfTest.catalog.durableLearnerStateMutationAllowed -ne $false -or
+        $toolSelfTest.sampleResults.'code-execution'.result.arbitraryPythonAllowed -ne $false -or
+        $toolSelfTest.sampleResults.'citation-verification'.result.claimEntailment -ne 'verified-exact-text' -or
+        $toolSelfTest.sampleResults.'source-comparison'.result.truthAdjudicated -ne $false
+    ) {
+        throw "Subject-brain checked-tool self-test failed required capabilities or boundaries: missing=$($missingCheckedTools -join ', ') failed=$($failedToolChecks.Name -join ', ')."
+    }
+
+    $calculatorRequestPath = Join-Path $tmpRoot 'checked-calculator-request.json'
+    [System.IO.File]::WriteAllText(
+        $calculatorRequestPath,
+        (@{
+            schemaVersion = 'open-education/subject-brain-tool-request/v1'
+            tool = 'calculator'
+            expression = '250'
+            unitConversion = @{
+                from = 'cm'
+                to = 'm'
+            }
+        } | ConvertTo-Json -Depth 10),
+        [System.Text.UTF8Encoding]::new($false)
+    )
+    $calculatorOutput = & .\scripts\ai\subject-brain.ps1 -Action run-tool -RequestPath $calculatorRequestPath 2>&1
+    $calculatorOutput | Tee-Object -FilePath $logPath -Append
+    if ($LASTEXITCODE -ne 0) {
+        throw "Subject-brain checked calculator request failed with exit code $LASTEXITCODE."
+    }
+    $calculator = ($calculatorOutput | Out-String) | ConvertFrom-Json
+    if (
+        $calculator.schemaVersion -ne 'open-education/subject-brain-tool-result/v1' -or
+        $calculator.status -ne 'passed' -or
+        $calculator.result.unitConversion.exactValue -ne '5/2' -or
+        $calculator.safety.retrievedProseTreatedAsComputation -ne $false
+    ) {
+        throw 'Subject-brain checked calculator did not return the exact unit conversion and safety contract.'
+    }
+
     $brainPlanOutput = & .\scripts\ai\subject-brain.ps1 -Action plan-query -RegistryPath '.\subject-brains.json' -Question 'compare biblical teaching with psychological learning science and memory' -GradeBand '9-12' -Limit 3 2>&1
     $brainPlanOutput | Tee-Object -FilePath $logPath -Append
     if ($LASTEXITCODE -ne 0) {

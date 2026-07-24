@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)]
-    [ValidateSet('validate-registry', 'validate-brain', 'index', 'query', 'plan-query', 'locator-self-test', 'retrieval-self-test')]
+    [ValidateSet('validate-registry', 'validate-brain', 'index', 'query', 'plan-query', 'locator-self-test', 'retrieval-self-test', 'run-tool', 'tool-self-test')]
     [string]$Action,
     [string]$RegistryPath = '.\subject-brains.json',
     [string]$BrainRoot = '',
@@ -13,6 +13,7 @@ param(
     [int]$Limit = 5,
     [ValidateSet('hybrid', 'lexical')]
     [string]$RetrievalMode = 'hybrid',
+    [string]$RequestPath = '',
     [switch]$Replace,
     [switch]$StrictFormats
 )
@@ -35,6 +36,12 @@ switch ($Action) {
     'locator-self-test' {
     }
     'retrieval-self-test' {
+    }
+    'tool-self-test' {
+    }
+    'run-tool' {
+        if ([string]::IsNullOrWhiteSpace($RequestPath)) { throw '-RequestPath is required.' }
+        $arguments += @('--request', $RequestPath)
     }
     'validate-registry' {
         $arguments += @('--registry', $RegistryPath)

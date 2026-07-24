@@ -8,14 +8,18 @@ teacher model; it does not generate answers or mutate learner state.
 from __future__ import annotations
 
 import argparse
+import ast
 import csv
 import hashlib
 import json
 import math
+import os
 import re
 import sqlite3
 import sys
 import zipfile
+from datetime import date
+from fractions import Fraction
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any, Iterable
@@ -29,6 +33,11 @@ QUERY_SCHEMA = "open-education/subject-brain-query-result/v1"
 INDEX_SCHEMA = "open-education/subject-brain-index/v1"
 LOCATOR_SCHEMA = "open-education/subject-brain-locator/v1"
 QUERY_PLAN_SCHEMA = "open-education/subject-brain-query-plan/v1"
+TOOL_REQUEST_SCHEMA = "open-education/subject-brain-tool-request/v1"
+TOOL_RESULT_SCHEMA = "open-education/subject-brain-tool-result/v1"
+TOOL_SELF_TEST_SCHEMA = "open-education/subject-brain-tool-self-test/v1"
+MAX_TOOL_REQUEST_BYTES = 2_000_000
+MAX_CITATION_SOURCE_CHARS = 1_000_000
 VECTOR_ALGORITHM = "deterministic-hashed-concept-vector/v1"
 VECTOR_DIMENSIONS = 256
 READY_STATUSES = {"contract-ready", "starter-corpus-ready", "pilot-ready", "production-ready"}
@@ -152,7 +161,18 @@ def workspace_path(registry_dir: Path, raw_path: str, label: str) -> Path:
     """Resolve a registry path while allowing sibling repos under one workspace."""
     if not raw_path or Path(raw_path).is_absolute() or ":" in raw_path:
         raise SubjectBrainError(f"{label} must be a non-empty relative path")
-    workspace_root = registry_dir.resolve().parent
+    configured_workspace = os.environ.get("OPEN_EDUCATION_SHARED_WORKSPACE_ROOT", "")
+    workspace_root = (
+        Path(configured_workspace).resolve()
+        if configured_workspace
+        else registry_dir.resolve().parent
+    )
+    try:
+        registry_dir.resolve().relative_to(workspace_root)
+    except ValueError as exc:
+        raise SubjectBrainError(
+            f"{label} registry is outside the configured shared workspace"
+        ) from exc
     candidate = (registry_dir / raw_path).resolve()
     try:
         candidate.relative_to(workspace_root)
@@ -1422,6 +1442,724 @@ def query_index(index_path: Path, question: str, limit: int, grade_band: str | N
     }
 
 
+CHECKED_TOOL_IDS = (
+    "calculator",
+    "symbolic-math",
+    "code-execution",
+    "data-analysis",
+    "mapping-timeline",
+    "citation-verification",
+    "source-comparison",
+)
+
+UNIT_FACTORS = {
+    "mm": ("length", Fraction(1, 1000)),
+    "cm": ("length", Fraction(1, 100)),
+    "m": ("length", Fraction(1)),
+    "km": ("length", Fraction(1000)),
+    "g": ("mass", Fraction(1, 1000)),
+    "kg": ("mass", Fraction(1)),
+    "s": ("time", Fraction(1)),
+    "min": ("time", Fraction(60)),
+    "h": ("time", Fraction(3600)),
+}
+
+
+def require_tool(condition: bool, message: str) -> None:
+    if not condition:
+        raise SubjectBrainError(message)
+
+
+def fraction_text(value: Fraction) -> str:
+    return str(value.numerator) if value.denominator == 1 else f"{value.numerator}/{value.denominator}"
+
+
+def bounded_fraction(value: Fraction) -> Fraction:
+    require_tool(
+        len(str(abs(value.numerator))) <= 120 and len(str(abs(value.denominator))) <= 120,
+        "numeric result exceeds the 120-digit checked-tool limit",
+    )
+    return value
+
+
+def numeric_ast_value(node: ast.AST, variables: dict[str, Fraction], budget: list[int]) -> Fraction:
+    budget[0] -= 1
+    require_tool(budget[0] >= 0, "numeric expression exceeds the 200-node limit")
+    if isinstance(node, ast.Expression):
+        return numeric_ast_value(node.body, variables, budget)
+    if isinstance(node, ast.Constant) and not isinstance(node.value, bool):
+        if isinstance(node.value, int):
+            return Fraction(node.value)
+        if isinstance(node.value, float):
+            return Fraction(str(node.value))
+    if isinstance(node, ast.Name):
+        require_tool(node.id in variables, f"unknown numeric variable: {node.id}")
+        return variables[node.id]
+    if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.UAdd, ast.USub)):
+        value = numeric_ast_value(node.operand, variables, budget)
+        return value if isinstance(node.op, ast.UAdd) else -value
+    if isinstance(node, ast.BinOp):
+        left = numeric_ast_value(node.left, variables, budget)
+        right = numeric_ast_value(node.right, variables, budget)
+        if isinstance(node.op, ast.Add):
+            return bounded_fraction(left + right)
+        if isinstance(node.op, ast.Sub):
+            return bounded_fraction(left - right)
+        if isinstance(node.op, ast.Mult):
+            return bounded_fraction(left * right)
+        if isinstance(node.op, ast.Div):
+            require_tool(right != 0, "division by zero")
+            return bounded_fraction(left / right)
+        if isinstance(node.op, ast.Pow):
+            require_tool(right.denominator == 1, "exponent must be an integer")
+            exponent = right.numerator
+            require_tool(-12 <= exponent <= 12, "exponent must be between -12 and 12")
+            require_tool(left != 0 or exponent >= 0, "zero cannot have a negative exponent")
+            return bounded_fraction(left ** exponent)
+    raise SubjectBrainError(f"unsupported numeric expression element: {type(node).__name__}")
+
+
+def checked_numeric(expression: str, variables: dict[str, Fraction] | None = None) -> Fraction:
+    require_tool(isinstance(expression, str) and 0 < len(expression) <= 500, "expression must contain 1-500 characters")
+    try:
+        tree = ast.parse(expression, mode="eval")
+    except SyntaxError as exc:
+        raise SubjectBrainError(f"invalid numeric expression: {exc.msg}") from exc
+    return numeric_ast_value(tree, variables or {}, [200])
+
+
+def polynomial_add(
+    left: dict[tuple[int, ...], Fraction],
+    right: dict[tuple[int, ...], Fraction],
+    scale: Fraction = Fraction(1),
+) -> dict[tuple[int, ...], Fraction]:
+    result = dict(left)
+    for powers, coefficient in right.items():
+        result[powers] = result.get(powers, Fraction(0)) + scale * coefficient
+        if result[powers] == 0:
+            del result[powers]
+    return result
+
+
+def polynomial_multiply(
+    left: dict[tuple[int, ...], Fraction],
+    right: dict[tuple[int, ...], Fraction],
+) -> dict[tuple[int, ...], Fraction]:
+    result: dict[tuple[int, ...], Fraction] = {}
+    for left_powers, left_coefficient in left.items():
+        for right_powers, right_coefficient in right.items():
+            powers = tuple(a + b for a, b in zip(left_powers, right_powers))
+            coefficient = bounded_fraction(left_coefficient * right_coefficient)
+            result[powers] = bounded_fraction(result.get(powers, Fraction(0)) + coefficient)
+            if result[powers] == 0:
+                del result[powers]
+    require_tool(len(result) <= 500, "symbolic expansion exceeds 500 terms")
+    return result
+
+
+def polynomial_ast_value(
+    node: ast.AST,
+    variable_indexes: dict[str, int],
+    budget: list[int],
+) -> dict[tuple[int, ...], Fraction]:
+    budget[0] -= 1
+    require_tool(budget[0] >= 0, "symbolic expression exceeds the 300-node limit")
+    zero_powers = (0,) * len(variable_indexes)
+    if isinstance(node, ast.Expression):
+        return polynomial_ast_value(node.body, variable_indexes, budget)
+    if isinstance(node, ast.Constant) and not isinstance(node.value, bool) and isinstance(node.value, (int, float)):
+        value = Fraction(str(node.value))
+        return {} if value == 0 else {zero_powers: value}
+    if isinstance(node, ast.Name):
+        require_tool(node.id in variable_indexes, f"unknown symbolic variable: {node.id}")
+        powers = [0] * len(variable_indexes)
+        powers[variable_indexes[node.id]] = 1
+        return {tuple(powers): Fraction(1)}
+    if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.UAdd, ast.USub)):
+        value = polynomial_ast_value(node.operand, variable_indexes, budget)
+        return value if isinstance(node.op, ast.UAdd) else {powers: -coefficient for powers, coefficient in value.items()}
+    if isinstance(node, ast.BinOp):
+        left = polynomial_ast_value(node.left, variable_indexes, budget)
+        if isinstance(node.op, ast.Pow):
+            require_tool(
+                isinstance(node.right, ast.Constant) and isinstance(node.right.value, int),
+                "polynomial exponent must be an integer literal",
+            )
+            exponent = node.right.value
+            require_tool(0 <= exponent <= 8, "polynomial exponent must be between 0 and 8")
+            result = {zero_powers: Fraction(1)}
+            for _ in range(exponent):
+                result = polynomial_multiply(result, left)
+            return result
+        right = polynomial_ast_value(node.right, variable_indexes, budget)
+        if isinstance(node.op, ast.Add):
+            return polynomial_add(left, right)
+        if isinstance(node.op, ast.Sub):
+            return polynomial_add(left, right, Fraction(-1))
+        if isinstance(node.op, ast.Mult):
+            return polynomial_multiply(left, right)
+    raise SubjectBrainError(f"unsupported symbolic expression element: {type(node).__name__}")
+
+
+def checked_polynomial(expression: str, variables: list[str]) -> dict[tuple[int, ...], Fraction]:
+    require_tool(
+        isinstance(expression, str) and 0 < len(expression) <= 1000,
+        "symbolic expression must contain 1-1000 characters",
+    )
+    try:
+        tree = ast.parse(expression, mode="eval")
+    except SyntaxError as exc:
+        raise SubjectBrainError(f"invalid symbolic expression: {exc.msg}") from exc
+    return polynomial_ast_value(tree, {name: index for index, name in enumerate(variables)}, [300])
+
+
+def serialize_polynomial(polynomial: dict[tuple[int, ...], Fraction]) -> list[dict[str, Any]]:
+    return [
+        {"powers": list(powers), "coefficient": fraction_text(coefficient)}
+        for powers, coefficient in sorted(polynomial.items(), reverse=True)
+    ]
+
+
+def calculator_tool(request: dict[str, Any]) -> dict[str, Any]:
+    value = checked_numeric(request.get("expression", ""))
+    result: dict[str, Any] = {
+        "exactValue": fraction_text(value),
+        "decimalValue": float(value),
+        "exactArithmetic": True,
+    }
+    conversion = request.get("unitConversion")
+    if conversion is not None:
+        require_tool(isinstance(conversion, dict), "unitConversion must be an object")
+        from_unit = conversion.get("from")
+        to_unit = conversion.get("to")
+        require_tool(
+            isinstance(from_unit, str) and isinstance(to_unit, str),
+            "unitConversion from and to must be strings",
+        )
+        require_tool(from_unit in UNIT_FACTORS and to_unit in UNIT_FACTORS, "unsupported unit conversion")
+        from_dimension, from_factor = UNIT_FACTORS[from_unit]
+        to_dimension, to_factor = UNIT_FACTORS[to_unit]
+        require_tool(from_dimension == to_dimension, "unit conversion dimensions differ")
+        converted = bounded_fraction(value * from_factor / to_factor)
+        result["unitConversion"] = {
+            "from": from_unit,
+            "to": to_unit,
+            "exactValue": fraction_text(converted),
+            "decimalValue": float(converted),
+        }
+    return result
+
+
+def symbolic_math_tool(request: dict[str, Any]) -> dict[str, Any]:
+    variables = request.get("variables") or []
+    require_tool(
+        isinstance(variables, list)
+        and 1 <= len(variables) <= 8
+        and all(isinstance(name, str) and name.isidentifier() for name in variables)
+        and len(set(variables)) == len(variables),
+        "variables must contain 1-8 unique identifiers",
+    )
+    left = checked_polynomial(request.get("left", ""), variables)
+    right = checked_polynomial(request.get("right", ""), variables)
+    return {
+        "variables": variables,
+        "equivalent": left == right,
+        "leftCanonical": serialize_polynomial(left),
+        "rightCanonical": serialize_polynomial(right),
+        "method": "exact-rational-polynomial-normalization",
+        "scope": "polynomials with nonnegative integer powers through 8",
+    }
+
+
+def execute_program_block(
+    instructions: list[Any],
+    variables: dict[str, Fraction],
+    budget: list[int],
+    assertions: list[dict[str, Any]],
+) -> None:
+    require_tool(isinstance(instructions, list), "program block must be an array")
+    for instruction in instructions:
+        budget[0] -= 1
+        require_tool(budget[0] >= 0, "program exceeds the 1000-step execution budget")
+        require_tool(isinstance(instruction, dict), "program instruction must be an object")
+        operation = instruction.get("op")
+        if operation == "assign":
+            name = instruction.get("name")
+            require_tool(isinstance(name, str) and name.isidentifier(), "assign requires an identifier name")
+            variables[name] = checked_numeric(instruction.get("expression", ""), variables)
+        elif operation == "for-range":
+            name = instruction.get("name")
+            require_tool(isinstance(name, str) and name.isidentifier(), "for-range requires an identifier name")
+            start = checked_numeric(str(instruction.get("start", 0)), variables)
+            stop = checked_numeric(str(instruction.get("stop", 0)), variables)
+            step = checked_numeric(str(instruction.get("step", 1)), variables)
+            require_tool(
+                all(value.denominator == 1 for value in (start, stop, step)),
+                "for-range bounds must be integers",
+            )
+            require_tool(step != 0, "for-range step cannot be zero")
+            values = list(range(start.numerator, stop.numerator, step.numerator))
+            require_tool(len(values) <= 100, "for-range cannot exceed 100 iterations")
+            for value in values:
+                variables[name] = Fraction(value)
+                execute_program_block(instruction.get("body") or [], variables, budget, assertions)
+        elif operation == "assert-equal":
+            left = checked_numeric(instruction.get("left", ""), variables)
+            right = checked_numeric(instruction.get("right", ""), variables)
+            require_tool(left == right, f"program assertion failed: {fraction_text(left)} != {fraction_text(right)}")
+            assertions.append({"left": fraction_text(left), "right": fraction_text(right), "passed": True})
+        else:
+            raise SubjectBrainError(f"unsupported program operation: {operation}")
+
+
+def code_execution_tool(request: dict[str, Any]) -> dict[str, Any]:
+    variables: dict[str, Fraction] = {}
+    initial = request.get("variables") or {}
+    require_tool(
+        isinstance(initial, dict) and len(initial) <= 25,
+        "variables must be an object with at most 25 entries",
+    )
+    for name, value in initial.items():
+        require_tool(isinstance(name, str) and name.isidentifier(), "variable names must be identifiers")
+        variables[name] = checked_numeric(str(value))
+    assertions: list[dict[str, Any]] = []
+    budget = [1000]
+    execute_program_block(request.get("program") or [], variables, budget, assertions)
+    return {
+        "variables": {name: fraction_text(value) for name, value in sorted(variables.items())},
+        "assertions": assertions,
+        "stepsUsed": 1000 - budget[0],
+        "executionModel": "bounded-educational-numeric-instruction-set",
+        "arbitraryPythonAllowed": False,
+        "importsFilesNetworkProcessesAllowed": False,
+    }
+
+
+def data_analysis_tool(request: dict[str, Any]) -> dict[str, Any]:
+    raw_values = request.get("values") or []
+    require_tool(
+        isinstance(raw_values, list) and 1 <= len(raw_values) <= 10000,
+        "values must contain 1-10000 numeric entries",
+    )
+    values = [checked_numeric(str(value)) for value in raw_values]
+    ordered = sorted(values)
+    count = len(values)
+    middle = count // 2
+    median = ordered[middle] if count % 2 else (ordered[middle - 1] + ordered[middle]) / 2
+    mean = sum(values, Fraction(0)) / count
+    frequencies: dict[str, int] = {}
+    for value in values:
+        key = fraction_text(value)
+        frequencies[key] = frequencies.get(key, 0) + 1
+    return {
+        "count": count,
+        "minimum": fraction_text(ordered[0]),
+        "maximum": fraction_text(ordered[-1]),
+        "mean": fraction_text(mean),
+        "median": fraction_text(median),
+        "frequencies": dict(sorted(frequencies.items())),
+        "missingValuePolicy": "reject-not-impute",
+    }
+
+
+def mapping_timeline_tool(request: dict[str, Any]) -> dict[str, Any]:
+    points = request.get("points") or []
+    require_tool(
+        isinstance(points, list) and 1 <= len(points) <= 1000,
+        "points must contain 1-1000 entries",
+    )
+    checked_points: list[dict[str, Any]] = []
+    for point in points:
+        require_tool(isinstance(point, dict), "each point must be an object")
+        latitude = float(checked_numeric(str(point.get("latitude"))))
+        longitude = float(checked_numeric(str(point.get("longitude"))))
+        require_tool(
+            -90 <= latitude <= 90 and -180 <= longitude <= 180,
+            "point coordinates are outside valid bounds",
+        )
+        checked_points.append(
+            {"id": str(point.get("id") or ""), "latitude": latitude, "longitude": longitude}
+        )
+    distance_km = 0.0
+    for left, right in zip(checked_points, checked_points[1:]):
+        left_latitude = math.radians(left["latitude"])
+        right_latitude = math.radians(right["latitude"])
+        latitude_delta = right_latitude - left_latitude
+        longitude_delta = math.radians(right["longitude"] - left["longitude"])
+        haversine = (
+            math.sin(latitude_delta / 2) ** 2
+            + math.cos(left_latitude)
+            * math.cos(right_latitude)
+            * math.sin(longitude_delta / 2) ** 2
+        )
+        distance_km += 6371.0088 * 2 * math.asin(min(1.0, math.sqrt(haversine)))
+    events = request.get("events") or []
+    require_tool(
+        isinstance(events, list) and len(events) <= 1000,
+        "events must be an array with at most 1000 entries",
+    )
+    checked_events: list[dict[str, Any]] = []
+    for event in events:
+        require_tool(isinstance(event, dict), "each event must be an object")
+        try:
+            start = date.fromisoformat(str(event.get("start")))
+            end = date.fromisoformat(str(event.get("end") or event.get("start")))
+        except ValueError as exc:
+            raise SubjectBrainError(f"invalid ISO event date: {exc}") from exc
+        require_tool(end >= start, "event end date precedes start date")
+        checked_events.append({"id": str(event.get("id") or ""), "start": start, "end": end})
+    checked_events.sort(key=lambda item: (item["start"], item["end"], item["id"]))
+    overlaps = [
+        [left["id"], right["id"]]
+        for index, left in enumerate(checked_events)
+        for right in checked_events[index + 1 :]
+        if right["start"] <= left["end"]
+    ]
+    return {
+        "pointCount": len(checked_points),
+        "pathDistanceKm": round(distance_km, 6),
+        "coordinateBoundsChecked": True,
+        "chronologicalEventIds": [event["id"] for event in checked_events],
+        "overlappingEventPairs": overlaps,
+        "mapProjectionClaim": None,
+    }
+
+
+def normalize_checked_text(value: str) -> str:
+    return " ".join(re.findall(r"[a-z0-9]+", value.lower()))
+
+
+def citation_verification_tool(request: dict[str, Any]) -> dict[str, Any]:
+    source_text = request.get("sourceText")
+    expected_sha256 = request.get("expectedSha256")
+    quote = request.get("quote")
+    claim = request.get("claim")
+    locator = request.get("locator") or {}
+    require_tool(
+        isinstance(source_text, str)
+        and 1 <= len(source_text) <= MAX_CITATION_SOURCE_CHARS,
+        f"sourceText must contain 1-{MAX_CITATION_SOURCE_CHARS} characters",
+    )
+    require_tool(
+        isinstance(expected_sha256, str)
+        and re.fullmatch(r"[0-9a-fA-F]{64}", expected_sha256) is not None,
+        "expectedSha256 must be 64 hexadecimal characters",
+    )
+    require_tool(isinstance(quote, str) and quote, "quote is required")
+    require_tool(isinstance(claim, str) and claim, "claim is required")
+    require_tool(isinstance(locator, dict), "locator must be an object")
+    start = locator.get("charStart")
+    end = locator.get("charEnd")
+    require_tool(
+        isinstance(start, int)
+        and not isinstance(start, bool)
+        and isinstance(end, int)
+        and not isinstance(end, bool)
+        and 1 <= start <= end <= len(source_text),
+        "locator must use valid 1-based inclusive character bounds",
+    )
+    actual_sha256 = hashlib.sha256(source_text.encode("utf-8")).hexdigest()
+    located_text = source_text[start - 1 : end]
+    hash_verified = actual_sha256.lower() == expected_sha256.lower()
+    locator_verified = located_text == quote
+    normalized_quote = normalize_checked_text(quote)
+    normalized_claim = normalize_checked_text(claim)
+    require_tool(
+        bool(normalized_quote) and bool(normalized_claim),
+        "quote and claim must contain normalized text",
+    )
+    exact_text_entailment = normalized_claim == normalized_quote or normalized_claim in normalized_quote
+    citation_verified = hash_verified and locator_verified and exact_text_entailment
+    return {
+        "citationVerified": citation_verified,
+        "hashVerified": hash_verified,
+        "locatorVerified": locator_verified,
+        "quotationVerified": quote in source_text,
+        "claimEntailment": (
+            "verified-exact-text"
+            if exact_text_entailment
+            else "not-deterministically-established"
+        ),
+        "actualSha256": actual_sha256,
+        "locatedText": located_text,
+        "semanticParaphraseEntailmentClaimed": False,
+    }
+
+
+def source_comparison_tool(request: dict[str, Any]) -> dict[str, Any]:
+    sources = request.get("sources") or []
+    require_tool(
+        isinstance(sources, list) and 2 <= len(sources) <= 20,
+        "sources must contain 2-20 entries",
+    )
+    normalized: list[dict[str, str]] = []
+    for source in sources:
+        require_tool(isinstance(source, dict), "each source comparison entry must be an object")
+        source_id = str(source.get("sourceId") or "")
+        claim = str(source.get("claim") or "")
+        stance = source.get("stance")
+        evidence_tier = str(source.get("evidenceTier") or "unclassified")
+        require_tool(source_id and claim, "sourceId and claim are required")
+        require_tool(
+            isinstance(stance, str)
+            and stance in {"supports", "opposes", "qualifies", "reports"},
+            "stance must be supports, opposes, qualifies, or reports",
+        )
+        normalized_claim = normalize_checked_text(claim)
+        require_tool(normalized_claim, "claim must contain normalized text")
+        normalized.append(
+            {
+                "sourceId": source_id,
+                "claim": claim,
+                "normalizedClaim": normalized_claim,
+                "stance": stance,
+                "evidenceTier": evidence_tier,
+            }
+        )
+    pairs: list[dict[str, Any]] = []
+    for index, left in enumerate(normalized):
+        for right in normalized[index + 1 :]:
+            same_claim = left["normalizedClaim"] == right["normalizedClaim"]
+            conflict = (
+                same_claim
+                and {left["stance"], right["stance"]} == {"supports", "opposes"}
+            )
+            agreement = same_claim and left["stance"] == right["stance"]
+            pairs.append(
+                {
+                    "leftSourceId": left["sourceId"],
+                    "rightSourceId": right["sourceId"],
+                    "exactNormalizedClaimMatch": same_claim,
+                    "explicitStanceAgreement": agreement,
+                    "explicitStanceConflict": conflict,
+                }
+            )
+    return {
+        "sources": normalized,
+        "pairs": pairs,
+        "conflictDetected": any(pair["explicitStanceConflict"] for pair in pairs),
+        "truthAdjudicated": False,
+        "comparisonPolicy": (
+            "compare attributed claim text, explicit stance, and evidence tier; "
+            "do not infer truth"
+        ),
+    }
+
+
+def checked_tool_catalog() -> dict[str, Any]:
+    return {
+        "capabilities": [
+            {
+                "tool": "calculator",
+                "checks": [
+                    "exact rational arithmetic",
+                    "bounded exponentiation",
+                    "same-dimension unit conversion",
+                ],
+            },
+            {
+                "tool": "symbolic-math",
+                "checks": ["exact polynomial normalization", "symbolic equivalence"],
+            },
+            {
+                "tool": "code-execution",
+                "checks": ["bounded numeric instruction set", "step budget", "assertions"],
+                "arbitraryCode": False,
+            },
+            {
+                "tool": "data-analysis",
+                "checks": ["count", "range", "exact mean", "median", "frequencies"],
+            },
+            {
+                "tool": "mapping-timeline",
+                "checks": [
+                    "coordinate bounds",
+                    "haversine path distance",
+                    "date order",
+                    "overlap",
+                ],
+            },
+            {
+                "tool": "citation-verification",
+                "checks": [
+                    "source hash",
+                    "exact locator",
+                    "quotation",
+                    "exact-text entailment",
+                ],
+            },
+            {
+                "tool": "source-comparison",
+                "checks": [
+                    "attribution",
+                    "exact normalized claim",
+                    "explicit stance conflict",
+                ],
+            },
+        ],
+        "networkAccess": "none",
+        "durableLearnerStateMutationAllowed": False,
+        "professionalJudgmentReplacementAllowed": False,
+    }
+
+
+def run_checked_tool(request: dict[str, Any]) -> dict[str, Any]:
+    require_tool(isinstance(request, dict), "tool request must be an object")
+    require_tool(
+        request.get("schemaVersion") == TOOL_REQUEST_SCHEMA,
+        f"schemaVersion must be {TOOL_REQUEST_SCHEMA}",
+    )
+    tool_id = request.get("tool")
+    handlers = {
+        "calculator": calculator_tool,
+        "symbolic-math": symbolic_math_tool,
+        "code-execution": code_execution_tool,
+        "data-analysis": data_analysis_tool,
+        "mapping-timeline": mapping_timeline_tool,
+        "citation-verification": citation_verification_tool,
+        "source-comparison": source_comparison_tool,
+    }
+    require_tool(
+        isinstance(tool_id, str) and tool_id in handlers,
+        f"tool must be one of: {', '.join(CHECKED_TOOL_IDS)}",
+    )
+    return {
+        "schemaVersion": TOOL_RESULT_SCHEMA,
+        "tool": tool_id,
+        "status": "passed",
+        "result": handlers[tool_id](request),
+        "safety": {
+            "networkAccess": "none",
+            "durableLearnerStateMutationAllowed": False,
+            "retrievedProseTreatedAsComputation": False,
+            "toolLimitsDisclosed": True,
+        },
+    }
+
+
+def tool_self_test() -> dict[str, Any]:
+    base = {"schemaVersion": TOOL_REQUEST_SCHEMA}
+    source_text = "The Constitution allocates enumerated powers to Congress."
+    results = {
+        "calculator": run_checked_tool(
+            {**base, "tool": "calculator", "expression": "2 + 3 * 4"}
+        ),
+        "symbolic-math": run_checked_tool(
+            {
+                **base,
+                "tool": "symbolic-math",
+                "variables": ["x"],
+                "left": "(x + 1) ** 2",
+                "right": "x ** 2 + 2 * x + 1",
+            }
+        ),
+        "code-execution": run_checked_tool(
+            {
+                **base,
+                "tool": "code-execution",
+                "program": [
+                    {"op": "assign", "name": "total", "expression": "0"},
+                    {
+                        "op": "for-range",
+                        "name": "i",
+                        "start": 1,
+                        "stop": 6,
+                        "body": [
+                            {
+                                "op": "assign",
+                                "name": "total",
+                                "expression": "total + i",
+                            }
+                        ],
+                    },
+                    {"op": "assert-equal", "left": "total", "right": "15"},
+                ],
+            }
+        ),
+        "data-analysis": run_checked_tool(
+            {**base, "tool": "data-analysis", "values": [2, 4, 6, 8]}
+        ),
+        "mapping-timeline": run_checked_tool(
+            {
+                **base,
+                "tool": "mapping-timeline",
+                "points": [
+                    {"id": "a", "latitude": 0, "longitude": 0},
+                    {"id": "b", "latitude": 0, "longitude": 1},
+                ],
+                "events": [
+                    {"id": "later", "start": "1789-03-04"},
+                    {"id": "earlier", "start": "1787-09-17"},
+                ],
+            }
+        ),
+        "citation-verification": run_checked_tool(
+            {
+                **base,
+                "tool": "citation-verification",
+                "sourceText": source_text,
+                "expectedSha256": hashlib.sha256(
+                    source_text.encode("utf-8")
+                ).hexdigest(),
+                "locator": {"charStart": 1, "charEnd": len(source_text)},
+                "quote": source_text,
+                "claim": source_text,
+            }
+        ),
+        "source-comparison": run_checked_tool(
+            {
+                **base,
+                "tool": "source-comparison",
+                "sources": [
+                    {
+                        "sourceId": "a",
+                        "claim": "The policy increased output.",
+                        "stance": "supports",
+                        "evidenceTier": "primary",
+                    },
+                    {
+                        "sourceId": "b",
+                        "claim": "The policy increased output.",
+                        "stance": "opposes",
+                        "evidenceTier": "secondary",
+                    },
+                ],
+            }
+        ),
+    }
+    checks = {
+        "calculator": results["calculator"]["result"]["exactValue"] == "14",
+        "symbolicMath": results["symbolic-math"]["result"]["equivalent"] is True,
+        "codeExecution": (
+            results["code-execution"]["result"]["variables"].get("total") == "15"
+        ),
+        "dataAnalysis": results["data-analysis"]["result"]["mean"] == "5",
+        "mappingTimeline": (
+            results["mapping-timeline"]["result"]["coordinateBoundsChecked"] is True
+            and results["mapping-timeline"]["result"]["chronologicalEventIds"]
+            == ["earlier", "later"]
+        ),
+        "citationVerification": (
+            results["citation-verification"]["result"]["citationVerified"] is True
+        ),
+        "sourceComparison": (
+            results["source-comparison"]["result"]["conflictDetected"] is True
+        ),
+        "noArbitraryCode": (
+            results["code-execution"]["result"]["arbitraryPythonAllowed"] is False
+        ),
+    }
+    return {
+        "schemaVersion": TOOL_SELF_TEST_SCHEMA,
+        "passed": all(checks.values()),
+        "capabilityCount": len(CHECKED_TOOL_IDS),
+        "capabilities": list(CHECKED_TOOL_IDS),
+        "checks": checks,
+        "catalog": checked_tool_catalog(),
+        "sampleResults": results,
+    }
+
+
 def print_result(value: dict[str, Any]) -> None:
     print(json.dumps(value, indent=2, sort_keys=True))
 
@@ -1457,6 +2195,9 @@ def main() -> int:
 
     subparsers.add_parser("locator-self-test")
     subparsers.add_parser("retrieval-self-test")
+    tool_parser = subparsers.add_parser("run-tool")
+    tool_parser.add_argument("--request", required=True)
+    subparsers.add_parser("tool-self-test")
 
     args = parser.parse_args()
     try:
@@ -1507,6 +2248,19 @@ def main() -> int:
             return 0 if result["passed"] else 1
         if args.command == "retrieval-self-test":
             result = retrieval_self_test()
+            print_result(result)
+            return 0 if result["passed"] else 1
+        if args.command == "run-tool":
+            request_path = Path(args.request)
+            require_tool(
+                request_path.stat().st_size <= MAX_TOOL_REQUEST_BYTES,
+                f"tool request must not exceed {MAX_TOOL_REQUEST_BYTES} bytes",
+            )
+            request = json.loads(request_path.read_text(encoding="utf-8"))
+            print_result(run_checked_tool(request))
+            return 0
+        if args.command == "tool-self-test":
+            result = tool_self_test()
             print_result(result)
             return 0 if result["passed"] else 1
     except (SubjectBrainError, OSError, sqlite3.Error, zipfile.BadZipFile, json.JSONDecodeError) as exc:
