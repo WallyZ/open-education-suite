@@ -20,9 +20,8 @@ assessment, source boundaries, or teacher-reviewed answer key.
 
 `subject-brains.json` is the suite-owned registry. Active entries resolve to a
 repo-owned `subject-brain.json`. All thirteen K-12 contracts now resolve
-locally: three have checked starter corpora and ten are contract-ready only.
-Contract-ready entries expose rights, evidence, and acquisition boundaries
-without pretending that a usable service or corpus already exists.
+locally and have at least one checked, rights-approved starter source that can
+be indexed and queried through the shared adapter.
 
 Every active brain provides:
 
@@ -49,6 +48,28 @@ those target directories do not already exist:
 ```
 
 The generator refuses to overwrite an existing directory.
+
+The Founder open-corpus tranche verifies 112 cache records, 105 unique cache
+IDs, and 814,233,297 bytes against item-level SHA-256 and byte-count records.
+It attaches one starter source to each of the ten newer brains:
+
+| Brain | Starter source | Promoted commit |
+| --- | --- | --- |
+| Language, literature, rhetoric | Project Gutenberg Aesop | `193f161` |
+| Mathematics | Project Gutenberg Byrne Euclid | `4591d49` |
+| Science and engineering | Project Gutenberg Faraday | `602dbba` |
+| History, civics, geography, law | Project Gutenberg Declaration of Independence | `ab29142` |
+| Economics, finance, business | BLS CPI-U public dataset | `b528486` |
+| Computing, data, cyber | MDN Web Security | `0f6be6d` |
+| Health, fitness, safety | Project Gutenberg Nightingale, historical-use boundary | `022856a` |
+| Arts, music, design, performance | Project Gutenberg Sophocles | `95329a7` |
+| Human relations and leadership | Project Gutenberg Cicero, *De Officiis* | `49d0c2e` |
+| Practical life, career, home | Project Gutenberg Adam Smith, work-and-trades scope | `bb5cea1` |
+
+The other 102 cache files remain metadata-mapped rather than silently indexed.
+PDF, image, score, and audio items await an available reviewed extractor or
+accessible derivative. No model-training permission is inferred from local
+retrieval approval.
 
 Build a local lexical index for one brain:
 
@@ -112,5 +133,6 @@ contract.
 - `pilot-ready`: grade-banded gold questions, citation checks, safety tests, and teacher transcript review pass.
 - `production-ready`: coverage, freshness, accessibility, conflict handling, and qualified external review are evidenced.
 
-Three initial brains are `starter-corpus-ready`; the remaining ten are
-`contract-ready`. No brain is claimed above starter-corpus readiness.
+All thirteen brains are `starter-corpus-ready`. This is a minimum retrieval
+baseline, not complete subject coverage: no brain is claimed pilot- or
+production-ready.

@@ -403,6 +403,7 @@ def build_index(brain_root: Path, output_path: Path, replace: bool, strict_forma
     indexed_sources: list[dict[str, Any]] = []
     skipped_sources: list[dict[str, str]] = []
     chunk_count = 0
+    connection: sqlite3.Connection | None = None
     try:
         connection = sqlite3.connect(output_path)
         connection.execute("PRAGMA journal_mode=DELETE")
@@ -483,11 +484,14 @@ def build_index(brain_root: Path, output_path: Path, replace: bool, strict_forma
         connection.execute("INSERT INTO metadata(key, value_json) VALUES (?, ?)", ("manifest", json.dumps(metadata, sort_keys=True)))
         connection.commit()
     except Exception:
+        if connection is not None:
+            connection.close()
+            connection = None
         if output_path.exists():
             output_path.unlink()
         raise
     finally:
-        if "connection" in locals():
+        if connection is not None:
             connection.close()
 
     return {

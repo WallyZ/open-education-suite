@@ -1,7 +1,7 @@
 {
   "schemaVersion": "open-education/subject-brain-registry/v1",
   "registryId": "open-education-subject-brains",
-  "updatedAt": "2026-07-20",
+  "updatedAt": "2026-07-23",
   "description": "Discovery registry for licensed, provenance-first specialist knowledge systems used by Open Education Suite.",
   "routingPolicy": {
     "lessonContentFirst": true,
@@ -46,7 +46,7 @@
     {
       "brainId": "language-literature-rhetoric",
       "title": "Language, Literature, Composition, Rhetoric, And Classics",
-      "status": "contract-ready",
+      "status": "starter-corpus-ready",
       "localPath": "../language-literature-rhetoric-ai-tool",
       "manifestPath": "subject-brain.json",
       "subjectTags": ["reading", "literature", "composition", "grammar", "rhetoric", "classics", "world-languages"],
@@ -56,7 +56,7 @@
     {
       "brainId": "mathematics",
       "title": "Mathematics, Statistics, And Quantitative Reasoning",
-      "status": "contract-ready",
+      "status": "starter-corpus-ready",
       "localPath": "../mathematics-ai-tool",
       "manifestPath": "subject-brain.json",
       "subjectTags": ["arithmetic", "algebra", "geometry", "trigonometry", "calculus", "statistics", "proof"],
@@ -66,7 +66,7 @@
     {
       "brainId": "science-engineering",
       "title": "Physical, Life, Earth, Space Science, And Engineering",
-      "status": "contract-ready",
+      "status": "starter-corpus-ready",
       "localPath": "../science-engineering-ai-tool",
       "manifestPath": "subject-brain.json",
       "subjectTags": ["physics", "chemistry", "biology", "earth-science", "astronomy", "engineering"],
@@ -76,7 +76,7 @@
     {
       "brainId": "history-civics-geography-law",
       "title": "History, Civics, Government, Geography, And Law",
-      "status": "contract-ready",
+      "status": "starter-corpus-ready",
       "localPath": "../history-civics-geography-law-ai-tool",
       "manifestPath": "subject-brain.json",
       "subjectTags": ["history", "civics", "government", "geography", "law", "primary-sources"],
@@ -86,7 +86,7 @@
     {
       "brainId": "economics-finance-business",
       "title": "Economics, Personal Finance, Investing, Accounting, Business, Sales, And Negotiation",
-      "status": "contract-ready",
+      "status": "starter-corpus-ready",
       "localPath": "../economics-finance-business-ai-tool",
       "manifestPath": "subject-brain.json",
       "subjectTags": ["economics", "personal-finance", "investing", "accounting", "business", "sales", "negotiation"],
@@ -96,7 +96,7 @@
     {
       "brainId": "computing-data-cyber",
       "title": "Computing, Software, Data Science, AI Literacy, And Cybersecurity",
-      "status": "contract-ready",
+      "status": "starter-corpus-ready",
       "localPath": "../computing-data-cyber-ai-tool",
       "manifestPath": "subject-brain.json",
       "subjectTags": ["computer-science", "software-development", "data-science", "ai-literacy", "cybersecurity", "digital-citizenship"],
@@ -106,7 +106,7 @@
     {
       "brainId": "health-fitness-safety",
       "title": "Health, Fitness, Nutrition, Safety, And First Aid",
-      "status": "contract-ready",
+      "status": "starter-corpus-ready",
       "localPath": "../health-fitness-safety-ai-tool",
       "manifestPath": "subject-brain.json",
       "subjectTags": ["health", "fitness", "nutrition", "sleep", "safety", "first-aid"],
@@ -116,7 +116,7 @@
     {
       "brainId": "arts-music-design-performance",
       "title": "Visual Arts, Music, Design, Theater, Dance, And Performance",
-      "status": "contract-ready",
+      "status": "starter-corpus-ready",
       "localPath": "../arts-music-design-performance-ai-tool",
       "manifestPath": "subject-brain.json",
       "subjectTags": ["visual-art", "music", "design", "theater", "dance", "performance"],
@@ -126,7 +126,7 @@
     {
       "brainId": "human-relations-leadership",
       "title": "Communication, Relationships, Leadership, Ethics, And Conflict Resolution",
-      "status": "contract-ready",
+      "status": "starter-corpus-ready",
       "localPath": "../human-relations-leadership-ai-tool",
       "manifestPath": "subject-brain.json",
       "subjectTags": ["communication", "relationships", "leadership", "ethics", "conflict-resolution", "social-confidence"],
@@ -136,7 +136,7 @@
     {
       "brainId": "practical-life-career-home",
       "title": "Practical Life, Career, Home, Consumer, And Emergency Readiness",
-      "status": "contract-ready",
+      "status": "starter-corpus-ready",
       "localPath": "../practical-life-career-home-ai-tool",
       "manifestPath": "subject-brain.json",
       "subjectTags": ["career", "home-economics", "consumer-skills", "maintenance", "emergency-readiness", "project-management"],
