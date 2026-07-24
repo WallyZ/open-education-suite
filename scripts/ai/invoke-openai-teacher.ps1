@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param(
     [string]$StatePath = '.\fixtures\learner-state.valid.json',
+    [string]$SubjectBrainResultsPath = '',
     [ValidateSet('socratic', 'direct', 'worked-example')]
     [string]$Mode = 'socratic',
     [string]$Model = '',
@@ -48,7 +49,7 @@ if (-not [string]::IsNullOrWhiteSpace($promptParent)) {
     [void](New-Item -ItemType Directory -Force -Path $promptParent)
 }
 
-$promptPayload = (& .\scripts\ai\build-teaching-prompt.ps1 -StatePath $StatePath -Mode $Mode -Now $Now | Out-String) | ConvertFrom-Json
+$promptPayload = (& .\scripts\ai\build-teaching-prompt.ps1 -StatePath $StatePath -SubjectBrainResultsPath $SubjectBrainResultsPath -Mode $Mode -Now $Now | Out-String) | ConvertFrom-Json
 $promptPayload | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $PromptPath
 $promptJson = $promptPayload | ConvertTo-Json -Depth 20 -Compress
 
@@ -78,8 +79,9 @@ The JSON object must use this shape:
   }
 }
 
-Use only sourceSnippets.excerpt for instructional content claims.
+Use only sourceSnippets.excerpt and subjectBrainContext.results.excerpt for instructional content claims.
 Include at least one citation using the exact sourceId, sourceRepo, and sourcePath from the source snippet you used.
+When subject-brain context is used, preserve its locator and disclose conflicting or insufficient evidence.
 Preserve the provided objectiveId and mode.
 Separate observed evidence from diagnosis.
 In Socratic mode, ask a calibrated question before revealing an answer.

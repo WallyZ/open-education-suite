@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param(
     [string]$StatePath = '.\fixtures\learner-state.valid.json',
+    [string]$SubjectBrainResultsPath = '',
     [ValidateSet('socratic', 'direct', 'worked-example')]
     [string]$Mode = 'socratic',
     [datetime]$Now = '2026-05-25T12:00:00Z'
@@ -83,6 +84,57 @@ function Get-SourceExcerpt {
     return $text.Substring(0, $MaxChars)
 }
 
+function Read-SubjectBrainContext {
+    param([string]$Path)
+
+    if ([string]::IsNullOrWhiteSpace($Path)) {
+        return $null
+    }
+    $resolved = Resolve-Path -LiteralPath $Path
+    $payload = Get-Content -LiteralPath $resolved.Path -Raw | ConvertFrom-Json
+    if ($payload.schemaVersion -ne 'open-education/subject-brain-query-result/v1') {
+        throw 'Subject-brain query result uses an unsupported schemaVersion.'
+    }
+    if ($payload.retrievalOnly -ne $true -or -not [string]::IsNullOrWhiteSpace([string]$payload.generatedAnswer)) {
+        throw 'Subject-brain context must be retrieval-only and must not contain a generated answer.'
+    }
+
+    $results = @($payload.results | Select-Object -First 8 | ForEach-Object {
+        foreach ($field in @('sourceId', 'sourceRepo', 'sourcePath', 'title', 'locator', 'excerpt', 'licenseId', 'sha256')) {
+            if ([string]::IsNullOrWhiteSpace([string]$_.$field)) {
+                throw "Subject-brain result is missing $field."
+            }
+        }
+        if ($_.citationRequired -ne $true) {
+            throw 'Subject-brain results must require citations.'
+        }
+        if ([System.IO.Path]::IsPathRooted([string]$_.sourcePath) -or [string]$_.sourcePath -match '^[A-Za-z]:') {
+            throw 'Subject-brain sourcePath must remain repo-relative.'
+        }
+        [ordered]@{
+            sourceId = $_.sourceId
+            sourceRepo = $_.sourceRepo
+            sourcePath = $_.sourcePath
+            title = $_.title
+            locator = $_.locator
+            excerpt = $_.excerpt
+            canonicalUrl = $_.canonicalUrl
+            licenseId = $_.licenseId
+            sha256 = $_.sha256
+            citationRequired = $true
+        }
+    })
+
+    return [ordered]@{
+        brainId = $payload.brainId
+        query = $payload.query
+        gradeBand = $payload.gradeBand
+        retrievalOnly = $true
+        results = $results
+        teacherPolicy = $payload.teacherPolicy
+    }
+}
+
 $temp = $null
 try {
     $state = (& .\scripts\state\read-learner-state.ps1 -Path $StatePath | Out-String) | ConvertFrom-Json
@@ -99,6 +151,7 @@ try {
         $candidateSourceObjects = @($sourceEntry[0].objects)
     }
     $sourceObjects = @(Select-SourceObjectsForObjective -SourceObjects $candidateSourceObjects -ObjectiveId $decision.objectiveId | Select-Object -First 3)
+    $subjectBrainContext = Read-SubjectBrainContext -Path $SubjectBrainResultsPath
 
     [ordered]@{
         schemaVersion = 1
@@ -132,8 +185,12 @@ try {
                 citationRequired = $true
             }
         })
+        subjectBrainContext = $subjectBrainContext
         constraints = @(
-            'Use only provided source snippets for content claims.',
+            'Use only provided source snippets and subject-brain excerpts for content claims.',
+            'Treat subject-brain evidence as supplemental to the scheduled objective and reviewed lesson content.',
+            'Cite the exact source repo, source path, and locator for each subject-brain excerpt used.',
+            'Disclose conflicting sources and state when the retrieved evidence is insufficient.',
             'Separate observed evidence from diagnosis.',
             'Ask a calibrated question before revealing the answer in Socratic mode.',
             'Do not directly mutate learner state.'
@@ -153,7 +210,7 @@ try {
             'No false praise.',
             'Maintain rigor while preserving learner agency.'
         )
-        tools = @('content.lookup', 'learner_state.read', 'next_action.read', 'assessment.read', 'state_update.propose')
+        tools = @('content.lookup', 'subject_brain.query', 'learner_state.read', 'next_action.read', 'assessment.read', 'state_update.propose')
     } | ConvertTo-Json -Depth 14
 }
 finally {

@@ -349,6 +349,7 @@ try {
     Assert-FileExists '.\package-lock.json'
     Assert-FileExists '.\playwright.config.js'
     Assert-FileExists '.\content-sources.json'
+    Assert-FileExists '.\subject-brains.json'
     Assert-FileExists '.\qa-live\workflow.learner_ui_live.json'
     Assert-FileExists '.\qa-live\feature_spec.learner_ui_lecture.json'
     Assert-FileExists '.\qa-live\capture.learner_ui_static.json'
@@ -373,16 +374,22 @@ try {
     Assert-FileExists '.\docs\interoperability-quality.md'
     Assert-FileExists '.\docs\learner-state-privacy.md'
     Assert-FileExists '.\docs\ai-teacher-integration.md'
+    Assert-FileExists '.\docs\subject-brain-federation.md'
     Assert-FileExists '.\docs\content-repo-readiness.md'
     Assert-FileExists '.\docs\teaching-quality-rubric.md'
     Assert-FileExists '.\docs\todo\TODO_12_generated_lecture_video.md'
     Assert-FileExists '.\docs\todo\TODO_21_generated_instructor_persona_contract.md'
+    Assert-FileExists '.\docs\todo\TODO_22_subject_brain_federation.md'
     Assert-FileExists '.\schemas\adaptive-teacher.schema.json'
     Assert-FileExists '.\schemas\assessment.schema.json'
     Assert-FileExists '.\schemas\learner-state.schema.json'
     Assert-FileExists '.\schemas\ai-teacher.schema.json'
     Assert-FileExists '.\schemas\lecture-video.schema.json'
     Assert-FileExists '.\schemas\generated-instructor-persona.schema.json'
+    Assert-FileExists '.\schemas\subject-brain.schema.json'
+    Assert-FileExists '.\schemas\subject-brain-corpus.schema.json'
+    Assert-FileExists '.\schemas\subject-brain-query.schema.json'
+    Assert-FileExists '.\schemas\subject-brain-registry.schema.json'
     Assert-FileExists '.\fixtures\learner-scenarios.json'
     Assert-FileExists '.\fixtures\assessment-items.json'
     Assert-FileExists '.\fixtures\golden-workflows.json'
@@ -443,6 +450,12 @@ try {
     Assert-FileExists '.\scripts\ai\build-teaching-prompt.ps1'
     Assert-FileExists '.\scripts\ai\invoke-openai-teacher.ps1'
     Assert-FileExists '.\scripts\ai\evaluate-model-output.ps1'
+    Assert-FileExists '.\scripts\ai\subject_brain.py'
+    Assert-FileExists '.\scripts\ai\subject-brain.ps1'
+    Assert-FileExists '.\scripts\ai\extract_subject_pdf.py'
+    Assert-FileExists '.\scripts\ai\invoke-local-teacher.ps1'
+    Assert-FileExists '.\scripts\setup\build-planned-subject-brains.ps1'
+    Assert-FileExists '..\open-education-teacher\selection\teacher-knowledge-routing-policy.json'
     Assert-FileExists '.\scripts\testing\run-live-gdev-teacher-smoke.ps1'
     Assert-FileExists '.\scripts\status\next-work.ps1'
     Assert-FileExists '.\ui\learner\index.html'
@@ -454,6 +467,58 @@ try {
     Test-LocalAppLauncherManifest
     Test-VoiceStudioSessionContract
     Test-AssessmentMasteryContract
+
+    $brainRegistryOutput = & .\scripts\ai\subject-brain.ps1 -Action validate-registry 2>&1
+    $brainRegistryOutput | Tee-Object -FilePath $logPath -Append
+    if ($LASTEXITCODE -ne 0) {
+        throw "Subject-brain registry validation failed with exit code $LASTEXITCODE."
+    }
+    $brainRegistry = ($brainRegistryOutput | Out-String) | ConvertFrom-Json
+    if ($brainRegistry.errorCount -ne 0 -or $brainRegistry.activeBrainCount -lt 13 -or $brainRegistry.brainCount -lt 13) {
+        throw 'Subject-brain registry must resolve all thirteen K-12 brain contracts.'
+    }
+
+    $criticalBrainRoot = Resolve-Path -LiteralPath '..\critical-thinking-ai-tool'
+    $criticalIndexPath = Join-Path $tmpRoot 'critical-thinking-subject-brain.sqlite'
+    $criticalIndexOutput = & .\scripts\ai\subject-brain.ps1 -Action index -BrainRoot $criticalBrainRoot.Path -IndexPath $criticalIndexPath 2>&1
+    $criticalIndexOutput | Tee-Object -FilePath $logPath -Append
+    if ($LASTEXITCODE -ne 0) {
+        throw "Critical-thinking subject-brain indexing failed with exit code $LASTEXITCODE."
+    }
+    $criticalIndex = ($criticalIndexOutput | Out-String) | ConvertFrom-Json
+    if ($criticalIndex.brainId -ne 'critical-thinking' -or $criticalIndex.indexedSourceCount -lt 3 -or $criticalIndex.chunkCount -lt 100) {
+        throw 'Critical-thinking subject-brain index does not contain the checked Open Logic starter corpus.'
+    }
+
+    $brainQueryOutput = & .\scripts\ai\subject-brain.ps1 -Action query -IndexPath $criticalIndexPath -Question 'valid deductive argument premises conclusion' -GradeBand '9-12' -Limit 5 2>&1
+    $brainQueryOutput | Tee-Object -FilePath $logPath -Append
+    if ($LASTEXITCODE -ne 0) {
+        throw "Subject-brain query failed with exit code $LASTEXITCODE."
+    }
+    $brainQueryText = $brainQueryOutput | Out-String
+    $brainQuery = $brainQueryText | ConvertFrom-Json
+    if ($brainQuery.retrievalOnly -ne $true -or $brainQuery.resultCount -lt 1 -or $null -ne $brainQuery.generatedAnswer) {
+        throw 'Subject-brain query must return retrieval-only context without a generated answer.'
+    }
+    $openLogicResults = @($brainQuery.results | Where-Object { $_.sourceId -eq 'open-logic-complete-2026-07-12' })
+    if ($openLogicResults.Count -lt 1 -or [string]::IsNullOrWhiteSpace([string]$openLogicResults[0].locator)) {
+        throw 'Subject-brain query did not retain an exact Open Logic locator.'
+    }
+
+    $brainQueryPath = Join-Path $tmpRoot 'critical-thinking-query.json'
+    Set-Content -LiteralPath $brainQueryPath -Value $brainQueryText
+    $groundedPromptOutput = & .\scripts\ai\build-teaching-prompt.ps1 -SubjectBrainResultsPath $brainQueryPath 2>&1
+    $groundedPromptOutput | Tee-Object -FilePath $logPath -Append
+    if ($LASTEXITCODE -ne 0) {
+        throw "Subject-brain teaching prompt build failed with exit code $LASTEXITCODE."
+    }
+    $groundedPrompt = ($groundedPromptOutput | Out-String) | ConvertFrom-Json
+    if ($groundedPrompt.subjectBrainContext.brainId -ne 'critical-thinking' -or @($groundedPrompt.subjectBrainContext.results).Count -lt 1) {
+        throw 'Teaching prompt did not retain specialist subject-brain context.'
+    }
+    if ('subject_brain.query' -notin @($groundedPrompt.tools)) {
+        throw 'Teaching prompt tool contract is missing subject_brain.query.'
+    }
 
     $registry = Get-Content -LiteralPath '.\content-sources.json' -Raw | ConvertFrom-Json
     if ($registry.schemaVersion -ne 1) {

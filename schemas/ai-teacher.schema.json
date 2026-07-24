@@ -33,6 +33,7 @@
     "assessment.read",
     "offline_knowledge.lookup",
     "offline_knowledge.write_note",
+    "subject_brain.query",
     "ai_runtime.select",
     "state_update.propose"
   ]

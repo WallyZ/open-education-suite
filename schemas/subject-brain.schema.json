@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-education.local/schemas/subject-brain.schema.json",
+  "title": "Open Education Subject Brain Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "brainId",
+    "title",
+    "role",
+    "status",
+    "description",
+    "subjectTags",
+    "gradeBands",
+    "capabilities",
+    "paths",
+    "rightsPolicy",
+    "queryPolicy",
+    "safetyPolicy"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "open-education/subject-brain/v1" },
+    "brainId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "title": { "type": "string", "minLength": 1 },
+    "role": { "const": "specialist-subject-brain" },
+    "status": { "enum": ["contract-ready", "starter-corpus-ready", "pilot-ready", "production-ready"] },
+    "description": { "type": "string", "minLength": 1 },
+    "subjectTags": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } },
+    "gradeBands": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "enum": ["K-2", "3-5", "6-8", "9-12", "adult"] }
+    },
+    "capabilities": {
+      "type": "object",
+      "required": ["ingestionFormats", "retrievalModes", "outputTypes"],
+      "properties": {
+        "ingestionFormats": { "type": "array", "minItems": 1, "items": { "enum": ["txt", "markdown", "html", "json", "csv", "pdf", "docx", "epub"] } },
+        "retrievalModes": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "outputTypes": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+      }
+    },
+    "paths": {
+      "type": "object",
+      "required": ["corpusManifest", "evidencePolicy", "corpusPlan"],
+      "properties": {
+        "corpusManifest": { "type": "string", "pattern": "^[^:]+$" },
+        "evidencePolicy": { "type": "string", "pattern": "^[^:]+$" },
+        "corpusPlan": { "type": "string", "pattern": "^[^:]+$" }
+      }
+    },
+    "rightsPolicy": {
+      "type": "object",
+      "required": ["requiredRightsStatus", "checksumRequired", "unknownRightsBehavior", "restrictedTextBehavior"],
+      "properties": {
+        "requiredRightsStatus": { "const": "approved-for-local-index" },
+        "checksumRequired": { "const": true },
+        "unknownRightsBehavior": { "const": "block-indexing" },
+        "restrictedTextBehavior": { "enum": ["metadata-only", "link-only"] }
+      }
+    },
+    "queryPolicy": {
+      "type": "object",
+      "required": ["citationRequired", "locatorRequired", "uncertaintyRequired", "conflictDisclosureRequired", "answerGenerationMode"],
+      "properties": {
+        "citationRequired": { "const": true },
+        "locatorRequired": { "const": true },
+        "uncertaintyRequired": { "const": true },
+        "conflictDisclosureRequired": { "const": true },
+        "answerGenerationMode": { "const": "retrieval-context-only" }
+      }
+    },
+    "safetyPolicy": {
+      "type": "object",
+      "required": ["learnerPrivateDataAllowed", "durableStateMutationAllowed", "ageBandRequired", "humanEscalationTopics"],
+      "properties": {
+        "learnerPrivateDataAllowed": { "const": false },
+        "durableStateMutationAllowed": { "const": false },
+        "ageBandRequired": { "const": true },
+        "humanEscalationTopics": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

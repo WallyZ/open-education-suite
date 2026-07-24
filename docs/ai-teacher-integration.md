@@ -12,6 +12,7 @@ The AI teacher may use these platform tools:
 - `assessment.read`: read assessment prompt, accepted answer metadata, hints, and feedback templates
 - `offline_knowledge.lookup`: read local course seed records and private overlays from the offline AI knowledge store
 - `offline_knowledge.write_note`: write local/private AI or learner notes without changing public course seed records
+- `subject_brain.query`: retrieve rights-approved specialist excerpts with exact source locators
 - `ai_runtime.select`: select Ollama or LM Studio local runtime profile
 - `state_update.propose`: propose a state update for checked code to validate and apply
 
@@ -24,6 +25,7 @@ The AI teacher may use these platform tools:
 - learner state summary
 - deterministic next action
 - source snippets and provenance
+- optional subject-brain retrieval results with source, locator, checksum, and license
 - learner constraints and preferences
 - desired output shape
 - guardrails
@@ -31,6 +33,9 @@ The AI teacher may use these platform tools:
 ## Guardrails
 
 - Cite source repo id and source path for content explanations.
+- Cite the exact subject-brain locator when specialist context is used.
+- Treat specialist retrieval as supplemental context; do not override the scheduled objective or reviewed lesson source silently.
+- Disclose material source disagreement and state when retrieved evidence is insufficient.
 - Separate observed evidence from diagnosis.
 - Ask calibrated questions before giving away answers in Socratic mode.
 - Refuse or ask for clarification when source content is missing.
@@ -76,3 +81,19 @@ The builder reads registered content repos from `content-sources.json`, finds ea
 - checks the model cites the GDEV-101 course file and preserves learner adaptation evidence
 
 The live smoke test is intentionally not part of `scripts/codex-verify.ps1`, because normal verification must remain deterministic and runnable without network access or API credentials.
+
+## Specialist Subject Brains
+
+`docs/subject-brain-federation.md` defines the discovery, corpus, rights, and
+query contracts. The local adapter validates `subject-brains.json`, builds a
+per-brain SQLite FTS index, and returns retrieval-only JSON. Save that JSON and
+pass it to:
+
+```powershell
+.\scripts\ai\build-teaching-prompt.ps1 -SubjectBrainResultsPath <query-result.json>
+```
+
+For an installed local model, use
+`scripts/ai/invoke-local-teacher.ps1 -Provider ollama|lm-studio`. It accepts the
+same subject-brain result and refuses non-localhost endpoints. Live local-model
+calls remain outside normal deterministic verification.

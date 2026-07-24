@@ -1,0 +1,147 @@
+{
+  "schemaVersion": "open-education/subject-brain-registry/v1",
+  "registryId": "open-education-subject-brains",
+  "updatedAt": "2026-07-20",
+  "description": "Discovery registry for licensed, provenance-first specialist knowledge systems used by Open Education Suite.",
+  "routingPolicy": {
+    "lessonContentFirst": true,
+    "specialistBrainSupplementsLessonContent": true,
+    "citationRequired": true,
+    "minimumStatusForLearnerUse": "starter-corpus-ready",
+    "conflictingSourcesMustBeDisclosed": true,
+    "missingEvidenceBehavior": "state the gap and route to reviewed deterministic content",
+    "durableLearnerStateMutationAllowed": false
+  },
+  "brains": [
+    {
+      "brainId": "critical-thinking",
+      "title": "Critical Thinking, Logic, And Argumentation",
+      "status": "starter-corpus-ready",
+      "localPath": "../critical-thinking-ai-tool",
+      "manifestPath": "subject-brain.json",
+      "subjectTags": ["critical-thinking", "logic", "argumentation", "rhetoric", "media-literacy"],
+      "gradeBands": ["3-5", "6-8", "9-12"],
+      "primaryConsumers": ["open-education-suite", "open-education-founder-level-civic-classical", "open-education-clear-reasoning", "youtube-automation", "news-intel-bot"]
+    },
+    {
+      "brainId": "psychology-learning-science",
+      "title": "Psychology, Learning Science, Memory, And Human Development",
+      "status": "starter-corpus-ready",
+      "localPath": "../psychology-ai-tool",
+      "manifestPath": "subject-brain.json",
+      "subjectTags": ["psychology", "learning-science", "memory", "human-development", "research-methods"],
+      "gradeBands": ["K-2", "3-5", "6-8", "9-12"],
+      "primaryConsumers": ["open-education-suite", "open-education-founder-level-civic-classical", "open-education-teacher", "life-ai"]
+    },
+    {
+      "brainId": "biblical-theological-literacy",
+      "title": "Biblical, Theological, And Ancient Near Eastern Literacy",
+      "status": "starter-corpus-ready",
+      "localPath": "../bible-ai-tool",
+      "manifestPath": "subject-brain.json",
+      "subjectTags": ["bible", "theology", "religious-literacy", "ancient-near-east", "textual-history"],
+      "gradeBands": ["K-2", "3-5", "6-8", "9-12"],
+      "primaryConsumers": ["open-education-suite", "open-education-founder-level-civic-classical", "youtube-automation", "news-intel-bot"]
+    },
+    {
+      "brainId": "language-literature-rhetoric",
+      "title": "Language, Literature, Composition, Rhetoric, And Classics",
+      "status": "contract-ready",
+      "localPath": "../language-literature-rhetoric-ai-tool",
+      "manifestPath": "subject-brain.json",
+      "subjectTags": ["reading", "literature", "composition", "grammar", "rhetoric", "classics", "world-languages"],
+      "gradeBands": ["K-2", "3-5", "6-8", "9-12"],
+      "primaryConsumers": ["open-education-suite", "open-education-founder-level-civic-classical", "youtube-automation", "novel_writing"]
+    },
+    {
+      "brainId": "mathematics",
+      "title": "Mathematics, Statistics, And Quantitative Reasoning",
+      "status": "contract-ready",
+      "localPath": "../mathematics-ai-tool",
+      "manifestPath": "subject-brain.json",
+      "subjectTags": ["arithmetic", "algebra", "geometry", "trigonometry", "calculus", "statistics", "proof"],
+      "gradeBands": ["K-2", "3-5", "6-8", "9-12"],
+      "primaryConsumers": ["open-education-suite", "open-education-founder-level-civic-classical", "assessment-mastery-engine"]
+    },
+    {
+      "brainId": "science-engineering",
+      "title": "Physical, Life, Earth, Space Science, And Engineering",
+      "status": "contract-ready",
+      "localPath": "../science-engineering-ai-tool",
+      "manifestPath": "subject-brain.json",
+      "subjectTags": ["physics", "chemistry", "biology", "earth-science", "astronomy", "engineering"],
+      "gradeBands": ["K-2", "3-5", "6-8", "9-12"],
+      "primaryConsumers": ["open-education-suite", "open-education-founder-level-civic-classical"]
+    },
+    {
+      "brainId": "history-civics-geography-law",
+      "title": "History, Civics, Government, Geography, And Law",
+      "status": "contract-ready",
+      "localPath": "../history-civics-geography-law-ai-tool",
+      "manifestPath": "subject-brain.json",
+      "subjectTags": ["history", "civics", "government", "geography", "law", "primary-sources"],
+      "gradeBands": ["K-2", "3-5", "6-8", "9-12"],
+      "primaryConsumers": ["open-education-suite", "open-education-founder-level-civic-classical", "open-education-american-history", "youtube-automation", "news-intel-bot"]
+    },
+    {
+      "brainId": "economics-finance-business",
+      "title": "Economics, Personal Finance, Investing, Accounting, Business, Sales, And Negotiation",
+      "status": "contract-ready",
+      "localPath": "../economics-finance-business-ai-tool",
+      "manifestPath": "subject-brain.json",
+      "subjectTags": ["economics", "personal-finance", "investing", "accounting", "business", "sales", "negotiation"],
+      "gradeBands": ["K-2", "3-5", "6-8", "9-12"],
+      "primaryConsumers": ["open-education-suite", "open-education-founder-level-civic-classical", "creator-monetization-ops", "youtube-automation"]
+    },
+    {
+      "brainId": "computing-data-cyber",
+      "title": "Computing, Software, Data Science, AI Literacy, And Cybersecurity",
+      "status": "contract-ready",
+      "localPath": "../computing-data-cyber-ai-tool",
+      "manifestPath": "subject-brain.json",
+      "subjectTags": ["computer-science", "software-development", "data-science", "ai-literacy", "cybersecurity", "digital-citizenship"],
+      "gradeBands": ["K-2", "3-5", "6-8", "9-12"],
+      "primaryConsumers": ["open-education-suite", "open-education-founder-level-civic-classical", "open-education-software-development", "open-education-data-science", "open-education-cybersecurity", "open-education-game-development"]
+    },
+    {
+      "brainId": "health-fitness-safety",
+      "title": "Health, Fitness, Nutrition, Safety, And First Aid",
+      "status": "contract-ready",
+      "localPath": "../health-fitness-safety-ai-tool",
+      "manifestPath": "subject-brain.json",
+      "subjectTags": ["health", "fitness", "nutrition", "sleep", "safety", "first-aid"],
+      "gradeBands": ["K-2", "3-5", "6-8", "9-12"],
+      "primaryConsumers": ["open-education-suite", "open-education-founder-level-civic-classical", "life-ai"]
+    },
+    {
+      "brainId": "arts-music-design-performance",
+      "title": "Visual Arts, Music, Design, Theater, Dance, And Performance",
+      "status": "contract-ready",
+      "localPath": "../arts-music-design-performance-ai-tool",
+      "manifestPath": "subject-brain.json",
+      "subjectTags": ["visual-art", "music", "design", "theater", "dance", "performance"],
+      "gradeBands": ["K-2", "3-5", "6-8", "9-12"],
+      "primaryConsumers": ["open-education-suite", "open-education-founder-level-civic-classical", "open-education-performing-arts", "open-education-comedy"]
+    },
+    {
+      "brainId": "human-relations-leadership",
+      "title": "Communication, Relationships, Leadership, Ethics, And Conflict Resolution",
+      "status": "contract-ready",
+      "localPath": "../human-relations-leadership-ai-tool",
+      "manifestPath": "subject-brain.json",
+      "subjectTags": ["communication", "relationships", "leadership", "ethics", "conflict-resolution", "social-confidence"],
+      "gradeBands": ["K-2", "3-5", "6-8", "9-12"],
+      "primaryConsumers": ["open-education-suite", "open-education-founder-level-civic-classical", "open-education-leadership", "open-education-mens-relationship-skills", "life-ai"]
+    },
+    {
+      "brainId": "practical-life-career-home",
+      "title": "Practical Life, Career, Home, Consumer, And Emergency Readiness",
+      "status": "contract-ready",
+      "localPath": "../practical-life-career-home-ai-tool",
+      "manifestPath": "subject-brain.json",
+      "subjectTags": ["career", "home-economics", "consumer-skills", "maintenance", "emergency-readiness", "project-management"],
+      "gradeBands": ["K-2", "3-5", "6-8", "9-12"],
+      "primaryConsumers": ["open-education-suite", "open-education-founder-level-civic-classical", "life-ai"]
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-education.local/schemas/subject-brain-registry.schema.json",
+  "title": "Open Education Subject Brain Registry",
+  "type": "object",
+  "required": ["schemaVersion", "registryId", "updatedAt", "routingPolicy", "brains"],
+  "properties": {
+    "schemaVersion": { "const": "open-education/subject-brain-registry/v1" },
+    "registryId": { "const": "open-education-subject-brains" },
+    "updatedAt": { "type": "string", "format": "date" },
+    "routingPolicy": { "type": "object" },
+    "brains": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["brainId", "title", "status", "localPath", "manifestPath", "subjectTags", "gradeBands", "primaryConsumers"],
+        "properties": {
+          "brainId": { "type": "string" },
+          "title": { "type": "string" },
+          "status": { "enum": ["planned", "contract-ready", "starter-corpus-ready", "pilot-ready", "production-ready"] },
+          "localPath": { "type": ["string", "null"] },
+          "manifestPath": { "type": ["string", "null"] },
+          "subjectTags": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "gradeBands": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "primaryConsumers": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

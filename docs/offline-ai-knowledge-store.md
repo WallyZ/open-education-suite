@@ -10,6 +10,13 @@ This keeps the three layers complementary:
 - Subject repos own course-specific AI knowledge seeds, provenance, allowed record types, and public/private boundaries.
 - Local AI runtimes such as Ollama and LM Studio consume the same store package through provider profiles.
 
+Specialist subject brains are a fourth, optional knowledge layer. Course seed
+records describe the scheduled curriculum and its approved source routes;
+subject brains retrieve deeper licensed texts and evidence. The suite combines
+both in a teaching prompt, but course objectives and checked learner state
+remain authoritative. See `docs/subject-brain-federation.md` and
+`subject-brains.json`.
+
 ## What Exists Now
 
 The suite already has AI teacher prompt and evaluation contracts, but it did not have an offline database template. This store fills that gap. It packages course-owned seed records into deterministic local artifacts:
@@ -75,9 +82,15 @@ Local AI calls should follow this order:
 2. Retrieve course seed records from the offline store.
 3. Read private overlays only from user-approved local storage.
 4. Build a grounded prompt with citations.
+   When a specialist brain is used, preserve its exact source ID, repo-relative
+   path, locator, checksum, license, and canonical URL.
 5. Invoke the selected runtime profile, usually Ollama first and LM Studio as fallback.
 6. Evaluate model output before proposing state changes.
 7. Write notes or proposed updates only to local overlays unless promotion is explicitly approved.
+
+Subject-brain retrieval results are ephemeral context and are not copied into
+the public course seed automatically. Promotion requires the same source,
+rights, review, and content-repo checks as any other curriculum change.
 
 ## Build Command
 

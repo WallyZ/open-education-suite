@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-education.local/schemas/subject-brain-query.schema.json",
+  "title": "Open Education Subject Brain Query Exchange",
+  "type": "object",
+  "required": ["schemaVersion", "brainId", "query", "retrievalOnly", "results"],
+  "properties": {
+    "schemaVersion": { "const": "open-education/subject-brain-query-result/v1" },
+    "brainId": { "type": "string" },
+    "query": { "type": "string" },
+    "retrievalOnly": { "const": true },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["sourceId", "sourceRepo", "sourcePath", "title", "locator", "excerpt", "licenseId", "sha256", "citationRequired"],
+        "properties": {
+          "sourceId": { "type": "string" },
+          "sourceRepo": { "type": "string" },
+          "sourcePath": { "type": "string" },
+          "title": { "type": "string" },
+          "locator": { "type": "string" },
+          "excerpt": { "type": "string" },
+          "canonicalUrl": { "type": "string" },
+          "licenseId": { "type": "string" },
+          "sha256": { "type": "string" },
+          "citationRequired": { "const": true }
+        }
+      }
+    }
+  }
+}

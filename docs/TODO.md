@@ -30,6 +30,7 @@ This is the index for platform backlog items. Each detailed backlog file lives u
 - [TODO_19_publish_grade_classroom_video_realism.md](todo/TODO_19_publish_grade_classroom_video_realism.md) - publish-grade instructor performance, gesture planning, classroom realism, chalk realism, visual QA, and shot direction
 - [TODO_20_information_presentation_strategy.md](todo/TODO_20_information_presentation_strategy.md) - information-type and subject-aware presentation patterns, modality selection, accessibility, and quality gates
 - [TODO_21_generated_instructor_persona_contract.md](todo/TODO_21_generated_instructor_persona_contract.md) - stable generated-instructor persona schema, approved and blocked fixtures, pilot references, and verifier gate
+- [TODO_22_subject_brain_federation.md](todo/TODO_22_subject_brain_federation.md) - rights-gated specialist knowledge systems, local retrieval, teacher grounding, and K-12 corpus coverage
 
 ## Projects Reviewed for Ideas
 
