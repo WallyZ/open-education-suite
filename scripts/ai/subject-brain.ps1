@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)]
-    [ValidateSet('validate-registry', 'validate-brain', 'index', 'query')]
+    [ValidateSet('validate-registry', 'validate-brain', 'index', 'query', 'locator-self-test')]
     [string]$Action,
     [string]$RegistryPath = '.\subject-brains.json',
     [string]$BrainRoot = '',
@@ -30,6 +30,8 @@ else {
 
 $arguments = @($prefix) + @($scriptPath, $Action)
 switch ($Action) {
+    'locator-self-test' {
+    }
     'validate-registry' {
         $arguments += @('--registry', $RegistryPath)
     }

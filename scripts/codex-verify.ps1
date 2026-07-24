@@ -480,6 +480,18 @@ try {
         throw 'Subject-brain registry must resolve all thirteen K-12 brain contracts.'
     }
 
+    $locatorSelfTestOutput = & .\scripts\ai\subject-brain.ps1 -Action locator-self-test 2>&1
+    $locatorSelfTestOutput | Tee-Object -FilePath $logPath -Append
+    if ($LASTEXITCODE -ne 0) {
+        throw "Subject-brain locator self-test failed with exit code $LASTEXITCODE."
+    }
+    $locatorSelfTest = ($locatorSelfTestOutput | Out-String) | ConvertFrom-Json
+    $requiredLocatorKinds = @('page', 'chapter', 'section', 'verse', 'equation', 'table', 'diagram', 'code-symbol', 'dataset', 'image', 'audiovisual-timestamp')
+    $missingLocatorKinds = @($requiredLocatorKinds | Where-Object { $_ -notin @($locatorSelfTest.observedLocatorKinds) })
+    if ($locatorSelfTest.passed -ne $true -or $locatorSelfTest.schemaVersion -ne 'open-education/subject-brain-locator/v1' -or $missingLocatorKinds.Count -ne 0 -or $locatorSelfTest.malformedChunkCount -ne 0) {
+        throw "Subject-brain locator self-test did not prove all required structured locator kinds: $($missingLocatorKinds -join ', ')."
+    }
+
     $criticalBrainRoot = Resolve-Path -LiteralPath '..\critical-thinking-ai-tool'
     $criticalIndexPath = Join-Path $tmpRoot 'critical-thinking-subject-brain.sqlite'
     $criticalIndexOutput = & .\scripts\ai\subject-brain.ps1 -Action index -BrainRoot $criticalBrainRoot.Path -IndexPath $criticalIndexPath 2>&1
@@ -488,7 +500,7 @@ try {
         throw "Critical-thinking subject-brain indexing failed with exit code $LASTEXITCODE."
     }
     $criticalIndex = ($criticalIndexOutput | Out-String) | ConvertFrom-Json
-    if ($criticalIndex.brainId -ne 'critical-thinking' -or $criticalIndex.indexedSourceCount -lt 3 -or $criticalIndex.chunkCount -lt 100) {
+    if ($criticalIndex.brainId -ne 'critical-thinking' -or $criticalIndex.indexedSourceCount -lt 3 -or $criticalIndex.chunkCount -lt 100 -or $criticalIndex.locatorSchemaVersion -ne 'open-education/subject-brain-locator/v1' -or @($criticalIndex.locatorKindCounts.PSObject.Properties).Count -lt 1) {
         throw 'Critical-thinking subject-brain index does not contain the checked Open Logic starter corpus.'
     }
 
@@ -503,8 +515,8 @@ try {
         throw 'Subject-brain query must return retrieval-only context without a generated answer.'
     }
     $openLogicResults = @($brainQuery.results | Where-Object { $_.sourceId -eq 'open-logic-complete-2026-07-12' })
-    if ($openLogicResults.Count -lt 1 -or [string]::IsNullOrWhiteSpace([string]$openLogicResults[0].locator)) {
-        throw 'Subject-brain query did not retain an exact Open Logic locator.'
+    if ($openLogicResults.Count -lt 1 -or [string]::IsNullOrWhiteSpace([string]$openLogicResults[0].locator) -or [string]::IsNullOrWhiteSpace([string]$openLogicResults[0].locatorKind) -or $openLogicResults[0].locatorData.schemaVersion -ne 'open-education/subject-brain-locator/v1' -or $openLogicResults[0].locatorData.charStart -lt 1 -or $openLogicResults[0].locatorData.charEnd -lt $openLogicResults[0].locatorData.charStart) {
+        throw 'Subject-brain query did not retain an exact structured Open Logic locator.'
     }
 
     $brainQueryPath = Join-Path $tmpRoot 'critical-thinking-query.json'

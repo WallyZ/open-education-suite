@@ -26,10 +26,20 @@ CORPUS_SCHEMA = "open-education/subject-brain-corpus/v1"
 REGISTRY_SCHEMA = "open-education/subject-brain-registry/v1"
 QUERY_SCHEMA = "open-education/subject-brain-query-result/v1"
 INDEX_SCHEMA = "open-education/subject-brain-index/v1"
+LOCATOR_SCHEMA = "open-education/subject-brain-locator/v1"
 READY_STATUSES = {"contract-ready", "starter-corpus-ready", "pilot-ready", "production-ready"}
 INDEX_RIGHTS_STATUS = "approved-for-local-index"
 LOCAL_ACQUISITION_STATUSES = {"local-ready", "local-pending-extraction"}
-SUPPORTED_SUFFIXES = {".txt", ".md", ".markdown", ".html", ".htm", ".json", ".csv", ".pdf", ".docx", ".epub"}
+SUPPORTED_SUFFIXES = {
+    ".txt", ".md", ".markdown", ".html", ".htm", ".json", ".jsonl", ".csv",
+    ".tsv", ".pdf", ".docx", ".epub", ".py", ".js", ".mjs", ".cjs", ".ts",
+    ".tsx", ".java", ".cs", ".c", ".h", ".cpp", ".hpp", ".rs", ".go", ".rb",
+    ".php", ".ps1", ".sh", ".sql",
+}
+REQUIRED_LOCATOR_KINDS = {
+    "page", "chapter", "section", "verse", "equation", "table", "diagram",
+    "code-symbol", "dataset", "image", "audiovisual-timestamp",
+}
 STOP_WORDS = {
     "a", "an", "and", "are", "as", "at", "be", "by", "for", "from", "how",
     "in", "is", "it", "of", "on", "or", "that", "the", "this", "to", "what",
@@ -292,24 +302,246 @@ def flatten_json(value: Any) -> Iterable[str]:
         yield str(value)
 
 
-def extract_pdf(path: Path) -> list[tuple[str, str]]:
+def make_locator(kind: str, label: str, **details: Any) -> dict[str, Any]:
+    value: dict[str, Any] = {
+        "schemaVersion": LOCATOR_SCHEMA,
+        "kind": kind,
+        "label": label,
+    }
+    value.update({key: item for key, item in details.items() if item is not None and item != ""})
+    return value
+
+
+def locator_label(locator: dict[str, Any]) -> str:
+    base = str(locator.get("label") or locator.get("kind") or "document")
+    qualifiers: list[str] = []
+    for key in ("page", "chapter", "section", "verse", "equation", "table", "diagram", "symbol", "dataset", "image", "timestamp", "spineItem", "jsonPath", "rowStart", "rowEnd", "lineStart", "lineEnd", "charStart", "charEnd"):
+        value = locator.get(key)
+        if value is not None and value != "" and str(value) not in base:
+            qualifiers.append(f"{key}={value}")
+    return f"{base}; " + "; ".join(qualifiers) if qualifiers else base
+
+
+def strip_markup(value: str) -> str:
+    return html_text(re.sub(r"<[^>]+>", " ", value))
+
+
+def heading_kind(title: str, level: int) -> str:
+    return "chapter" if level == 1 or re.match(r"(?i)^(chapter|book|part|act)\b", title.strip()) else "section"
+
+
+def extract_timestamp_seconds(value: str) -> float | None:
+    match = re.search(r"(?<!\d)(?:(\d{1,2}):)?(\d{1,2}):(\d{2})(?:[.,](\d{1,3}))?(?!\d)", value)
+    if not match:
+        return None
+    hours = int(match.group(1) or 0)
+    minutes = int(match.group(2))
+    seconds = int(match.group(3))
+    millis = int((match.group(4) or "0").ljust(3, "0")[:3])
+    return round(hours * 3600 + minutes * 60 + seconds + millis / 1000, 3)
+
+
+def code_symbol_name(line: str) -> tuple[str, str] | None:
+    patterns = (
+        ("class", r"^\s*(?:export\s+)?class\s+([A-Za-z_][A-Za-z0-9_]*)"),
+        ("function", r"^\s*(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_][A-Za-z0-9_]*)"),
+        ("function", r"^\s*(?:async\s+)?def\s+([A-Za-z_][A-Za-z0-9_]*)"),
+        ("function", r"^\s*function\s+([A-Za-z_][A-Za-z0-9_]*)"),
+        ("type", r"^\s*(?:export\s+)?(?:interface|type|enum|struct|trait)\s+([A-Za-z_][A-Za-z0-9_]*)"),
+        ("function", r"^\s*(?:public|private|protected|static|async|final|\s)+\s*[A-Za-z_][A-Za-z0-9_<>,\[\]? ]*\s+([A-Za-z_][A-Za-z0-9_]*)\s*\("),
+        ("function", r"^\s*(?:const|let|var)\s+([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(?:async\s*)?\("),
+        ("function", r"^\s*function\s+([A-Za-z_][A-Za-z0-9_]*)"),
+    )
+    for symbol_type, pattern in patterns:
+        match = re.search(pattern, line)
+        if match:
+            return symbol_type, match.group(1)
+    return None
+
+
+def extract_code_text(raw: str, source_label: str = "code") -> list[tuple[dict[str, Any], str]]:
+    lines = raw.splitlines()
+    starts: list[tuple[int, str, str]] = []
+    for index, line in enumerate(lines, start=1):
+        symbol = code_symbol_name(line)
+        if symbol:
+            starts.append((index, symbol[0], symbol[1]))
+    if not starts:
+        return [(make_locator("section", source_label, section=source_label, lineStart=1, lineEnd=max(len(lines), 1)), normalize_text(raw))]
+    sections: list[tuple[dict[str, Any], str]] = []
+    for position, (line_start, symbol_type, symbol_name) in enumerate(starts):
+        line_end = starts[position + 1][0] - 1 if position + 1 < len(starts) else len(lines)
+        text = normalize_text("\n".join(lines[line_start - 1:line_end]))
+        if text:
+            sections.append(
+                (
+                    make_locator(
+                        "code-symbol",
+                        f"{symbol_type} {symbol_name}",
+                        symbol=symbol_name,
+                        symbolType=symbol_type,
+                        lineStart=line_start,
+                        lineEnd=line_end,
+                    ),
+                    text,
+                )
+            )
+    return sections
+
+
+def extract_markdown_text(raw: str, source_type: str = "", topics: Iterable[str] = ()) -> list[tuple[dict[str, Any], str]]:
+    sections: list[tuple[dict[str, Any], str]] = []
+    lines = raw.splitlines()
+    topic_text = " ".join(topics).lower()
+
+    page_matches = list(re.finditer(r"(?m)^\[\[PAGE (\d+)\]\]\s*$", raw))
+    for index, match in enumerate(page_matches):
+        end = page_matches[index + 1].start() if index + 1 < len(page_matches) else len(raw)
+        text = normalize_text(raw[match.end():end])
+        if text:
+            page = int(match.group(1))
+            sections.append((make_locator("page", f"page {page}", page=page), text))
+
+    heading_rows: list[tuple[int, int, str]] = []
+    for index, line in enumerate(lines, start=1):
+        match = re.match(r"^\s{0,3}(#{1,6})\s+(.+?)\s*#*\s*$", line)
+        if match:
+            heading_rows.append((index, len(match.group(1)), match.group(2).strip()))
+    for position, (line_start, level, title) in enumerate(heading_rows):
+        line_end = heading_rows[position + 1][0] - 1 if position + 1 < len(heading_rows) else len(lines)
+        text = normalize_text("\n".join(lines[line_start - 1:line_end]))
+        if text:
+            kind = heading_kind(title, level)
+            detail_key = "chapter" if kind == "chapter" else "section"
+            sections.append((make_locator(kind, f"{detail_key} {title}", **{detail_key: title, "headingLevel": level, "lineStart": line_start, "lineEnd": line_end}), text))
+
+    verse_pattern = re.compile(r"^\s*(?:(?:[1-3]\s*)?[A-Za-z][A-Za-z ]+\s+)?(\d{1,3}):(\d{1,3})(?:[-–](\d{1,3}))?\s+(.+)$")
+    if source_type == "primary-source" or any(term in topic_text for term in ("bible", "scripture", "verse", "theology")):
+        for index, line in enumerate(lines, start=1):
+            match = verse_pattern.match(line)
+            if match:
+                verse = f"{match.group(1)}:{match.group(2)}" + (f"-{match.group(3)}" if match.group(3) else "")
+                sections.append((make_locator("verse", f"verse {verse}", verse=verse, lineStart=index, lineEnd=index), normalize_text(match.group(4))))
+
+    equation_rows: list[tuple[int, str]] = []
+    in_display_math = False
+    math_buffer: list[str] = []
+    math_start = 0
+    for index, line in enumerate(lines, start=1):
+        stripped = line.strip()
+        if stripped.startswith("$$") or stripped.startswith(r"\["):
+            if not in_display_math:
+                in_display_math = True
+                math_start = index
+                math_buffer = [stripped]
+                if stripped.endswith("$$") and len(stripped) > 4:
+                    equation_rows.append((index, stripped.strip("$")))
+                    in_display_math = False
+            else:
+                math_buffer.append(stripped)
+                equation_rows.append((math_start, " ".join(math_buffer).strip("$[] \\")))
+                in_display_math = False
+            continue
+        if in_display_math:
+            math_buffer.append(stripped)
+            if stripped.endswith("$$") or stripped.endswith(r"\]"):
+                equation_rows.append((math_start, " ".join(math_buffer).strip("$[] \\")))
+                in_display_math = False
+        elif re.match(r"^\s*(?:Equation\s+\d+\s*[:.]?\s*)?[A-Za-z0-9()[\]{}_^+\-*/. ]+\s*=\s*[^=].+$", line) and len(stripped) <= 300:
+            equation_rows.append((index, stripped))
+    for equation_index, (line_start, equation_text) in enumerate(equation_rows, start=1):
+        text = normalize_text(equation_text)
+        if text:
+            sections.append((make_locator("equation", f"equation {equation_index}", equation=equation_index, lineStart=line_start, lineEnd=line_start), text))
+
+    table_start: int | None = None
+    for index in range(len(lines) + 1):
+        is_table = index < len(lines) and lines[index].count("|") >= 2
+        if is_table and table_start is None:
+            table_start = index
+        if not is_table and table_start is not None:
+            table_lines = lines[table_start:index]
+            if len(table_lines) >= 2:
+                table_number = sum(1 for locator, _ in sections if locator["kind"] == "table") + 1
+                sections.append((make_locator("table", f"table {table_number}", table=table_number, rowStart=table_start + 1, rowEnd=index), normalize_text("\n".join(table_lines))))
+            table_start = None
+
+    fence_pattern = re.compile(r"(?ms)^```([A-Za-z0-9_-]*)\s*\n(.*?)^```\s*$")
+    for fence_index, match in enumerate(fence_pattern.finditer(raw), start=1):
+        language = match.group(1).lower()
+        content = match.group(2)
+        line_start = raw[:match.start()].count("\n") + 1
+        if language in {"mermaid", "graphviz", "dot", "plantuml"}:
+            sections.append((make_locator("diagram", f"diagram {fence_index}", diagram=fence_index, diagramType=language, lineStart=line_start), normalize_text(content)))
+        else:
+            for locator, text in extract_code_text(content, f"code block {fence_index}"):
+                locator["lineStart"] = int(locator.get("lineStart", 1)) + line_start
+                locator["lineEnd"] = int(locator.get("lineEnd", 1)) + line_start
+                sections.append((locator, text))
+
+    for image_index, match in enumerate(re.finditer(r"!\[([^\]]*)\]\(([^)\s]+)(?:\s+\"([^\"]*)\")?\)", raw), start=1):
+        alt, image_path, title = match.group(1), match.group(2), match.group(3)
+        line_start = raw[:match.start()].count("\n") + 1
+        sections.append((make_locator("image", f"image {image_index}: {alt or title or image_path}", image=image_index, imagePath=image_path, alt=alt, title=title, lineStart=line_start), normalize_text(" ".join(item for item in (alt, title, image_path) if item))))
+
+    for timestamp_index, line in enumerate(lines, start=1):
+        seconds = extract_timestamp_seconds(line)
+        if seconds is not None:
+            timestamp = re.search(r"(?:(?:\d{1,2}:)?\d{1,2}:\d{2}(?:[.,]\d{1,3})?)", line)
+            timestamp_text = timestamp.group(0) if timestamp else str(seconds)
+            sections.append((make_locator("audiovisual-timestamp", f"timestamp {timestamp_text}", timestamp=timestamp_text, seconds=seconds, lineStart=timestamp_index), normalize_text(line)))
+
+    if not sections:
+        sections.append((make_locator("section", "document", section="document", lineStart=1, lineEnd=max(len(lines), 1)), normalize_text(raw)))
+    return sections
+
+
+def extract_html_text(raw: str, spine_item: str | None = None) -> list[tuple[dict[str, Any], str]]:
+    sections: list[tuple[dict[str, Any], str]] = []
+    heading_matches = list(re.finditer(r"(?is)<h([1-6])\b[^>]*>(.*?)</h\1>", raw))
+    for index, match in enumerate(heading_matches):
+        end = heading_matches[index + 1].start() if index + 1 < len(heading_matches) else len(raw)
+        title = strip_markup(match.group(2))
+        text = html_text(raw[match.start():end])
+        if text:
+            level = int(match.group(1))
+            kind = heading_kind(title, level)
+            detail_key = "chapter" if kind == "chapter" else "section"
+            sections.append((make_locator(kind, f"{detail_key} {title}", **{detail_key: title, "headingLevel": level, "spineItem": spine_item}), text))
+    for image_index, match in enumerate(re.finditer(r"(?is)<img\b([^>]*)>", raw), start=1):
+        attrs = dict((key.lower(), value) for key, _, value in re.findall(r"([A-Za-z_:][-A-Za-z0-9_:.]*)\s*=\s*([\"'])(.*?)\2", match.group(1)))
+        alt = attrs.get("alt", "")
+        image_path = attrs.get("src", "")
+        sections.append((make_locator("image", f"image {image_index}: {alt or image_path}", image=image_index, imagePath=image_path, alt=alt, spineItem=spine_item), normalize_text(f"{alt} {image_path}")))
+    for table_index, match in enumerate(re.finditer(r"(?is)<table\b[^>]*>(.*?)</table>", raw), start=1):
+        text = html_text(match.group(1))
+        if text:
+            sections.append((make_locator("table", f"table {table_index}", table=table_index, spineItem=spine_item), text))
+    if not sections:
+        text = html_text(raw)
+        if text:
+            sections.append((make_locator("section", spine_item or "document", section=spine_item or "document", spineItem=spine_item), text))
+    return sections
+
+
+def extract_pdf(path: Path) -> list[tuple[dict[str, Any], str]]:
     try:
         from pypdf import PdfReader  # type: ignore
 
         reader = PdfReader(str(path))
-        return [(f"page {index}", normalize_text(page.extract_text() or "")) for index, page in enumerate(reader.pages, start=1)]
+        return [(make_locator("page", f"page {index}", page=index), normalize_text(page.extract_text() or "")) for index, page in enumerate(reader.pages, start=1)]
     except ImportError:
         pass
     try:
         import fitz  # type: ignore
 
         with fitz.open(path) as document:
-            return [(f"page {index}", normalize_text(page.get_text("text"))) for index, page in enumerate(document, start=1)]
+            return [(make_locator("page", f"page {index}", page=index), normalize_text(page.get_text("text"))) for index, page in enumerate(document, start=1)]
     except ImportError as exc:
         raise UnsupportedExtraction("PDF extraction requires pypdf or PyMuPDF; source was retained but not indexed") from exc
 
 
-def extract_docx(path: Path) -> list[tuple[str, str]]:
+def extract_docx(path: Path) -> list[tuple[dict[str, Any], str]]:
     with zipfile.ZipFile(path) as archive:
         raw = archive.read("word/document.xml")
     root = ElementTree.fromstring(raw)
@@ -319,74 +551,166 @@ def extract_docx(path: Path) -> list[tuple[str, str]]:
             text = "".join(node.text or "" for node in paragraph.iter() if node.tag.endswith("}t"))
             if text.strip():
                 paragraphs.append(text.strip())
-    return [("document", normalize_text("\n\n".join(paragraphs)))]
+    return [(make_locator("section", "document", section="document"), normalize_text("\n\n".join(paragraphs)))]
 
 
-def extract_epub(path: Path) -> list[tuple[str, str]]:
-    sections: list[tuple[str, str]] = []
+def extract_epub(path: Path) -> list[tuple[dict[str, Any], str]]:
+    sections: list[tuple[dict[str, Any], str]] = []
     with zipfile.ZipFile(path) as archive:
         names = sorted(name for name in archive.namelist() if Path(name).suffix.lower() in {".html", ".htm", ".xhtml"})
         for name in names:
             raw = archive.read(name).decode("utf-8", errors="replace")
-            text = html_text(raw)
-            if text:
-                sections.append((name, text))
+            sections.extend(extract_html_text(raw, name))
     return sections
 
 
-def extract_sections(path: Path) -> list[tuple[str, str]]:
+def extract_json_sections(value: Any, source_type: str) -> list[tuple[dict[str, Any], str]]:
+    sections: list[tuple[dict[str, Any], str]] = []
+
+    def visit(item: Any, json_path: str) -> None:
+        if isinstance(item, dict):
+            scalar_text = " ".join(f"{key}: {value}" for key, value in item.items() if not isinstance(value, (dict, list)) and value is not None)
+            if scalar_text:
+                kind = "dataset" if source_type == "dataset" else "section"
+                sections.append((make_locator(kind, f"{kind} {json_path}", **{kind: json_path, "jsonPath": json_path}), normalize_text(scalar_text)))
+            for key, value in item.items():
+                if isinstance(value, (dict, list)):
+                    visit(value, f"{json_path}.{key}")
+        elif isinstance(item, list):
+            for index, value in enumerate(item):
+                visit(value, f"{json_path}[{index}]")
+        elif item is not None:
+            kind = "dataset" if source_type == "dataset" else "section"
+            sections.append((make_locator(kind, f"{kind} {json_path}", **{kind: json_path, "jsonPath": json_path}), normalize_text(str(item))))
+
+    visit(value, "$")
+    return sections
+
+
+def extract_delimited(path: Path, delimiter: str, source_type: str) -> list[tuple[dict[str, Any], str]]:
+    with path.open("r", encoding="utf-8-sig", errors="replace", newline="") as handle:
+        rows = list(csv.reader(handle, delimiter=delimiter))
+    if not rows:
+        return []
+    kind = "dataset" if source_type == "dataset" else "table"
+    sections: list[tuple[dict[str, Any], str]] = []
+    header = rows[0]
+    page_size = 100
+    for start in range(1, len(rows), page_size):
+        end = min(start + page_size, len(rows))
+        selected = [header] + rows[start:end]
+        row_start = start + 1
+        row_end = end
+        sections.append((make_locator(kind, f"{kind} rows {row_start}-{row_end}", **{kind: f"rows {row_start}-{row_end}", "rowStart": row_start, "rowEnd": row_end}), normalize_text("\n".join(" | ".join(row) for row in selected))))
+    if len(rows) == 1:
+        sections.append((make_locator(kind, f"{kind} row 1", **{kind: "row 1", "rowStart": 1, "rowEnd": 1}), normalize_text(" | ".join(rows[0]))))
+    return sections
+
+
+def extract_sections(path: Path, source: dict[str, Any]) -> list[tuple[dict[str, Any], str]]:
     suffix = path.suffix.lower()
+    source_type = str(source.get("sourceType") or "")
+    topics = source.get("topics") or []
     if suffix in {".txt", ".md", ".markdown"}:
         raw = path.read_text(encoding="utf-8", errors="replace")
-        page_parts = re.split(r"(?m)^\[\[PAGE (\d+)\]\]\s*$", raw)
-        if len(page_parts) > 1:
-            sections: list[tuple[str, str]] = []
-            for index in range(1, len(page_parts), 2):
-                text = normalize_text(page_parts[index + 1])
-                if text:
-                    sections.append((f"page {page_parts[index]}", text))
-            return sections
-        return [("document", normalize_text(raw))]
+        return extract_markdown_text(raw, source_type, topics)
     if suffix in {".html", ".htm"}:
-        return [("document", html_text(path.read_text(encoding="utf-8", errors="replace")))]
-    if suffix == ".json":
+        return extract_html_text(path.read_text(encoding="utf-8", errors="replace"))
+    if suffix in {".json", ".jsonl"}:
+        if suffix == ".jsonl":
+            values = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+            return extract_json_sections(values, source_type)
         value = json.loads(path.read_text(encoding="utf-8"))
-        return [("document", normalize_text("\n".join(flatten_json(value))))]
-    if suffix == ".csv":
-        with path.open("r", encoding="utf-8-sig", errors="replace", newline="") as handle:
-            rows = [" | ".join(row) for row in csv.reader(handle)]
-        return [("rows", normalize_text("\n".join(rows)))]
+        return extract_json_sections(value, source_type)
+    if suffix in {".csv", ".tsv"}:
+        return extract_delimited(path, "," if suffix == ".csv" else "\t", source_type)
     if suffix == ".pdf":
         return extract_pdf(path)
     if suffix == ".docx":
         return extract_docx(path)
     if suffix == ".epub":
         return extract_epub(path)
+    if suffix in SUPPORTED_SUFFIXES:
+        return extract_code_text(path.read_text(encoding="utf-8", errors="replace"), path.name)
     raise UnsupportedExtraction(f"No extractor for {suffix}")
 
 
-def chunk_sections(sections: list[tuple[str, str]], max_chars: int = 1800, overlap_chars: int = 220) -> list[tuple[str, str]]:
-    chunks: list[tuple[str, str]] = []
+def chunk_sections(sections: list[tuple[dict[str, Any], str]], max_chars: int = 1800, overlap_chars: int = 220) -> list[tuple[dict[str, Any], str]]:
+    chunks: list[tuple[dict[str, Any], str]] = []
     for locator, section in sections:
         if not section:
             continue
-        paragraphs = [part.strip() for part in re.split(r"\n\s*\n|(?<=\.)\s+(?=[A-Z])", section) if part.strip()]
-        current = ""
-        for paragraph in paragraphs:
-            if len(paragraph) > max_chars:
-                slices = [paragraph[index:index + max_chars] for index in range(0, len(paragraph), max_chars - overlap_chars)]
-            else:
-                slices = [paragraph]
-            for piece in slices:
-                candidate = f"{current}\n\n{piece}".strip() if current else piece
-                if current and len(candidate) > max_chars:
-                    chunks.append((locator, current))
-                    current = f"{current[-overlap_chars:]} {piece}".strip()
-                else:
-                    current = candidate
-        if current:
-            chunks.append((locator, current))
+        section = normalize_text(section)
+        start = 0
+        chunk_index = 0
+        while start < len(section):
+            desired_end = min(start + max_chars, len(section))
+            end = desired_end
+            if desired_end < len(section):
+                candidates = (
+                    section.rfind("\n\n", start + max_chars // 2, desired_end),
+                    section.rfind(". ", start + max_chars // 2, desired_end),
+                    section.rfind(" ", start + max_chars // 2, desired_end),
+                )
+                end = max(candidates)
+                if end <= start:
+                    end = desired_end
+                elif section[end:end + 2] in {". ", "\n\n"}:
+                    end += 1
+            text = section[start:end].strip()
+            if text:
+                chunk_index += 1
+                chunk_locator = dict(locator)
+                chunk_locator.update({"chunkIndex": chunk_index, "charStart": start + 1, "charEnd": end})
+                chunks.append((chunk_locator, text))
+            if end >= len(section):
+                break
+            start = max(end - overlap_chars, start + 1)
     return chunks
+
+
+def locator_self_test() -> dict[str, Any]:
+    samples: list[tuple[dict[str, Any], str]] = []
+    samples.extend(extract_markdown_text("[[PAGE 12]]\nPinned page text."))
+    samples.extend(extract_markdown_text("# Chapter 3\nChapter text.\n\n## Evidence Section\nSection text."))
+    samples.extend(extract_markdown_text("John 3:16 For God so loved the world.", "primary-source", ["scripture"]))
+    samples.extend(extract_markdown_text("$$\nE = mc^2\n$$"))
+    samples.extend(extract_markdown_text("| Name | Value |\n| --- | --- |\n| alpha | 1 |"))
+    samples.extend(extract_markdown_text("```mermaid\ngraph TD\nA --> B\n```\n\n```python\ndef solve(value):\n    return value\n```"))
+    samples.extend(extract_markdown_text("![Map of the route](route-map.png \"Route map\")"))
+    samples.extend(extract_markdown_text("[00:01:23.500] The demonstration begins.", "media-transcript"))
+    samples.extend(extract_json_sections({"series": [{"year": 2025, "value": 4.2}]}, "dataset"))
+    chunks = chunk_sections(samples, max_chars=300, overlap_chars=30)
+    kinds = sorted({locator["kind"] for locator, _ in chunks})
+    missing = sorted(REQUIRED_LOCATOR_KINDS - set(kinds))
+    malformed = [
+        locator for locator, text in chunks
+        if locator.get("schemaVersion") != LOCATOR_SCHEMA
+        or not locator.get("label")
+        or not locator.get("kind")
+        or not locator.get("charStart")
+        or not locator.get("charEnd")
+        or not text
+    ]
+    return {
+        "schemaVersion": LOCATOR_SCHEMA,
+        "requiredLocatorKinds": sorted(REQUIRED_LOCATOR_KINDS),
+        "observedLocatorKinds": kinds,
+        "sectionCount": len(samples),
+        "chunkCount": len(chunks),
+        "missingLocatorKinds": missing,
+        "malformedChunkCount": len(malformed),
+        "passed": not missing and not malformed,
+        "examples": [
+            {
+                "kind": locator["kind"],
+                "locator": locator_label(locator),
+                "locatorData": locator,
+                "excerpt": text[:120],
+            }
+            for locator, text in chunks
+        ],
+    }
 
 
 def build_index(brain_root: Path, output_path: Path, replace: bool, strict_formats: bool) -> dict[str, Any]:
@@ -403,6 +727,7 @@ def build_index(brain_root: Path, output_path: Path, replace: bool, strict_forma
     indexed_sources: list[dict[str, Any]] = []
     skipped_sources: list[dict[str, str]] = []
     chunk_count = 0
+    locator_kind_counts: dict[str, int] = {}
     connection: sqlite3.Connection | None = None
     try:
         connection = sqlite3.connect(output_path)
@@ -417,9 +742,10 @@ def build_index(brain_root: Path, output_path: Path, replace: bool, strict_forma
         )
         connection.execute(
             """CREATE TABLE chunks (
-                chunk_id INTEGER PRIMARY KEY, source_id TEXT NOT NULL, locator TEXT NOT NULL,
-                chunk_text TEXT NOT NULL, FOREIGN KEY(source_id) REFERENCES sources(source_id)
-            )"""
+                 chunk_id INTEGER PRIMARY KEY, source_id TEXT NOT NULL, locator TEXT NOT NULL,
+                 locator_kind TEXT NOT NULL, locator_json TEXT NOT NULL, chunk_text TEXT NOT NULL,
+                 FOREIGN KEY(source_id) REFERENCES sources(source_id)
+             )"""
         )
         connection.execute("CREATE VIRTUAL TABLE chunk_fts USING fts5(chunk_text, source_id UNINDEXED, title, topics)")
 
@@ -430,7 +756,7 @@ def build_index(brain_root: Path, output_path: Path, replace: bool, strict_forma
                 continue
             local_path = relative_file(brain_root, str(source.get("localPath")), f"{source.get('sourceId')}.localPath")
             try:
-                sections = extract_sections(local_path)
+                sections = extract_sections(local_path, source)
             except UnsupportedExtraction as exc:
                 skipped_sources.append({"sourceId": str(source.get("sourceId")), "reason": str(exc)})
                 if strict_formats:
@@ -458,10 +784,13 @@ def build_index(brain_root: Path, output_path: Path, replace: bool, strict_forma
                 ),
             )
             topics = " ".join(source.get("topics") or [])
+            source_locator_counts: dict[str, int] = {}
             for locator, text in chunks:
+                locator_kind = str(locator["kind"])
+                locator_text = locator_label(locator)
                 cursor = connection.execute(
-                    "INSERT INTO chunks(source_id, locator, chunk_text) VALUES (?, ?, ?)",
-                    (source_id, locator, text),
+                    "INSERT INTO chunks(source_id, locator, locator_kind, locator_json, chunk_text) VALUES (?, ?, ?, ?, ?)",
+                    (source_id, locator_text, locator_kind, json.dumps(locator, sort_keys=True), text),
                 )
                 chunk_id = int(cursor.lastrowid)
                 connection.execute(
@@ -469,7 +798,15 @@ def build_index(brain_root: Path, output_path: Path, replace: bool, strict_forma
                     (chunk_id, text, source_id, source["title"], topics),
                 )
                 chunk_count += 1
-            indexed_sources.append({"sourceId": source_id, "chunkCount": len(chunks)})
+                locator_kind_counts[locator_kind] = locator_kind_counts.get(locator_kind, 0) + 1
+                source_locator_counts[locator_kind] = source_locator_counts.get(locator_kind, 0) + 1
+            indexed_sources.append(
+                {
+                    "sourceId": source_id,
+                    "chunkCount": len(chunks),
+                    "locatorKindCounts": dict(sorted(source_locator_counts.items())),
+                }
+            )
 
         if not indexed_sources:
             raise SubjectBrainError("No rights-approved local source could be indexed")
@@ -478,6 +815,8 @@ def build_index(brain_root: Path, output_path: Path, replace: bool, strict_forma
             "brainId": manifest["brainId"],
             "sourceCount": len(indexed_sources),
             "chunkCount": chunk_count,
+            "locatorSchemaVersion": LOCATOR_SCHEMA,
+            "locatorKindCounts": dict(sorted(locator_kind_counts.items())),
             "retrievalMode": "lexical-fts",
             "answerGenerationMode": "retrieval-context-only",
         }
@@ -500,6 +839,8 @@ def build_index(brain_root: Path, output_path: Path, replace: bool, strict_forma
         "indexPath": str(output_path),
         "indexedSourceCount": len(indexed_sources),
         "chunkCount": chunk_count,
+        "locatorSchemaVersion": LOCATOR_SCHEMA,
+        "locatorKindCounts": dict(sorted(locator_kind_counts.items())),
         "indexedSources": indexed_sources,
         "skippedSources": skipped_sources,
     }
@@ -529,7 +870,8 @@ def query_index(index_path: Path, question: str, limit: int, grade_band: str | N
             raise SubjectBrainError("Index is missing its manifest")
         metadata = json.loads(metadata_row["value_json"])
         rows = connection.execute(
-            """SELECT c.chunk_id, c.locator, c.chunk_text, s.source_id, s.title,
+            """SELECT c.chunk_id, c.locator, c.locator_kind, c.locator_json,
+                      c.chunk_text, s.source_id, s.title,
                       s.source_path, s.canonical_url, s.license_id, s.sha256,
                       s.grade_bands_json, bm25(chunk_fts) AS rank
                FROM chunk_fts
@@ -553,6 +895,8 @@ def query_index(index_path: Path, question: str, limit: int, grade_band: str | N
                 "sourcePath": row["source_path"],
                 "title": row["title"],
                 "locator": row["locator"],
+                "locatorKind": row["locator_kind"],
+                "locatorData": json.loads(row["locator_json"]),
                 "excerpt": row["chunk_text"][:1600],
                 "canonicalUrl": row["canonical_url"],
                 "licenseId": row["license_id"],
@@ -607,6 +951,8 @@ def main() -> int:
     query_parser.add_argument("--limit", type=int, default=5)
     query_parser.add_argument("--grade-band", choices=("K-2", "3-5", "6-8", "9-12", "adult"))
 
+    subparsers.add_parser("locator-self-test")
+
     args = parser.parse_args()
     try:
         if args.command == "validate-registry":
@@ -645,6 +991,10 @@ def main() -> int:
                 raise SubjectBrainError("--limit must be between 1 and 20")
             print_result(query_index(Path(args.index), args.question, args.limit, args.grade_band))
             return 0
+        if args.command == "locator-self-test":
+            result = locator_self_test()
+            print_result(result)
+            return 0 if result["passed"] else 1
     except (SubjectBrainError, OSError, sqlite3.Error, zipfile.BadZipFile, json.JSONDecodeError) as exc:
         print(json.dumps({"error": str(exc), "command": args.command}, indent=2), file=sys.stderr)
         return 1

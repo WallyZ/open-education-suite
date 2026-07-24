@@ -13,13 +13,26 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["sourceId", "sourceRepo", "sourcePath", "title", "locator", "excerpt", "licenseId", "sha256", "citationRequired"],
+        "required": ["sourceId", "sourceRepo", "sourcePath", "title", "locator", "locatorKind", "locatorData", "excerpt", "licenseId", "sha256", "citationRequired"],
         "properties": {
           "sourceId": { "type": "string" },
           "sourceRepo": { "type": "string" },
           "sourcePath": { "type": "string" },
           "title": { "type": "string" },
           "locator": { "type": "string" },
+          "locatorKind": { "enum": ["page", "chapter", "section", "verse", "equation", "table", "diagram", "code-symbol", "dataset", "image", "audiovisual-timestamp"] },
+          "locatorData": {
+            "type": "object",
+            "required": ["schemaVersion", "kind", "label", "chunkIndex", "charStart", "charEnd"],
+            "properties": {
+              "schemaVersion": { "const": "open-education/subject-brain-locator/v1" },
+              "kind": { "enum": ["page", "chapter", "section", "verse", "equation", "table", "diagram", "code-symbol", "dataset", "image", "audiovisual-timestamp"] },
+              "label": { "type": "string", "minLength": 1 },
+              "chunkIndex": { "type": "integer", "minimum": 1 },
+              "charStart": { "type": "integer", "minimum": 1 },
+              "charEnd": { "type": "integer", "minimum": 1 }
+            }
+          },
           "excerpt": { "type": "string" },
           "canonicalUrl": { "type": "string" },
           "licenseId": { "type": "string" },
