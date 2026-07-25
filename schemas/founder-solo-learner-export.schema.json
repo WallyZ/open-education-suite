@@ -27,10 +27,10 @@
       "const": 1
     },
     "exportVersion": {
-      "const": "2026-07-23-v1"
+      "const": "2026-07-24-v2"
     },
     "status": {
-      "const": "synthetic-solo-learner-ui-route-and-initial-state-export-passed"
+      "const": "synthetic-autonomous-solo-route-and-initial-state-export-passed"
     },
     "sourceId": {
       "const": "founder-level-civic-classical"
@@ -88,6 +88,12 @@
       "facilitatorRequired": 828,
       "facilitatorRecommended": 552,
       "facilitatorAvailableIfNeeded": 2208,
+      "originalActivityFacilitatorRequired": 828,
+      "autonomousSafeEquivalents": 3588,
+      "cannotCompleteWithoutFacilitator": 0,
+      "learnerSelfCheckRoutes": 3588,
+      "externalGraderRequiredForOrdinaryMastery": 0,
+      "unresolvedLearningRoutes": 3588,
       "conditionalEscalationFlags": 17940
     },
     "forbiddenLearnerKeys": [
@@ -100,7 +106,7 @@
       "calibration",
       "sampleResponse"
     ],
-    "requiredRestrictedVisibility": "restricted-facilitator-or-authorized-grader",
+    "requiredRestrictedVisibility": "learner-self-check-after-preserved-attempt-or-authorized-grader",
     "requiredInitialMasteryStatus": "unearned"
   },
   "additionalProperties": true

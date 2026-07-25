@@ -1,7 +1,7 @@
 # Solution Harvest
 
 ## Metadata
-- Last updated: 2026-06-21
+- Last updated: 2026-07-24
 - Repo: open-education-suite
 - Privacy default: internal
 
@@ -11,6 +11,11 @@
 - Local path: `content-sources.json`
 - Reuse value: read-only sibling repo ingestion with provenance and content repo boundaries.
 - Privacy: internal; strip private local paths before public examples.
+
+### Checkout-independent content HTTP routes
+- Local path: `scripts/teaching/export-learner-ui-session.ps1`
+- Reuse value: lets a content manifest declare a stable URL slug while retaining a folder-name fallback for existing repos.
+- Privacy: public-safe; the route contains a manifest slug, not a local filesystem path.
 
 ### Essay-first assessment policy
 - Local path: `docs/assessment-feedback.md`

@@ -83,7 +83,7 @@ window.openEducationSessionOutput =
     "license": "CC-BY-4.0 for repo-authored metadata; linked third-party resources retain original licenses",
     "attribution": "Open Education Game Development"
   },
-  "updatedStatePath": "F:\\dev\\open-education-suite\\.codex-cache\\tmp\\learner-state.last-session.json"
+  "updatedStatePath": "F:\\dev\\open-education-suite\\.codex-cache\\tmp\\site-neutral-content-root-20260724\\worktree\\.codex-cache\\tmp\\learner-state.last-session.json"
 }
 ;
 window.openEducationLecturePackage = 
@@ -657,8 +657,8 @@ window.openEducationLecturePackage =
       "prompt": "Revise one rule in a familiar game and explain what changed in the verb, goal, or feedback loop."
     }
   },
-  "contentRepoRoot": "F:\\dev\\open-education-game-development",
-  "contentRepoWebRoot": "file:///F:/dev/open-education-game-development/",
+  "contentRepoRoot": "F:\\dev\\open-education-suite\\.codex-cache\\tmp\\site-neutral-content-root-20260724\\open-education-game-development",
+  "contentRepoWebRoot": "file:///F:/dev/open-education-suite/.codex-cache/tmp/site-neutral-content-root-20260724/open-education-game-development/",
   "contentRepoHttpRoot": "/content-repos/open-education-game-development/",
   "sourcePackagePath": "generated-lectures\\gdev-101-design-vocabulary\\publish\\lecture-video.publish-ready.json"
 }
@@ -668,7 +668,7 @@ window.openEducationContentCatalog =
   "schemaVersion": 1,
   "generatedFrom": "scripts/teaching/content_catalog_adapter.py",
   "sourceCount": 10,
-  "courseCount": 30,
+  "courseCount": 31,
   "audienceEnforcement": "fail-closed-shared-policy",
   "audienceOperation": "export",
   "adultContentOptIn": false,
@@ -2735,8 +2735,125 @@ window.openEducationContentCatalog =
       "sourceId": "founder-level-civic-classical",
       "title": "Open Education Founder-Level Civic Classical",
       "sourceRepo": "open-education-founder-level-civic-classical",
-      "objectCount": 908,
+      "objectCount": 924,
       "courses": [
+        {
+          "id": "founder-level-civic-classical:study-plans/courses/FCC-CHAR-HONORABLE-ADULTHOOD-K12.md",
+          "title": "FCC-CHAR-HONORABLE-ADULTHOOD-K12 — Honorable Adulthood, Character, Family, And Digital Life K-12",
+          "sourceRepo": "open-education-founder-level-civic-classical",
+          "sourcePath": "study-plans/courses/FCC-CHAR-HONORABLE-ADULTHOOD-K12.md",
+          "objectives": [
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/",
+              "label": ""
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/gk-truth-care-habit",
+              "label": "Gk Truth Care Habit"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g1-responsibility-gratitude-play",
+              "label": "G1 Responsibility Gratitude Play"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g2-courage-friendship-device-help",
+              "label": "G2 Courage Friendship Device Help"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g3-work-hobby-reading-choice",
+              "label": "G3 Work Hobby Reading Choice"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g4-self-command-advertising-service",
+              "label": "G4 Self Command Advertising Service"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g5-digital-boundaries-story-consequence",
+              "label": "G5 Digital Boundaries Story Consequence"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g6-purpose-parasocial-friendship",
+              "label": "G6 Purpose Parasocial Friendship"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g7-puberty-integrity-media-defense",
+              "label": "G7 Puberty Integrity Media Defense"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g8-vocation-romance-crime-discernment",
+              "label": "G8 Vocation Romance Crime Discernment"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g9-honor-courtship-digital-economy",
+              "label": "G9 Honor Courtship Digital Economy"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g10-masculinity-femininity-family",
+              "label": "G10 Masculinity Femininity Family"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g11-marriage-work-country-community",
+              "label": "G11 Marriage Work Country Community"
+            },
+            {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g12-rule-of-life-capstone",
+              "label": "G12 Rule Of Life Capstone"
+            }
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:founder-level-civic-classical:study-plans/courses/FCC-CHAR-HONORABLE-ADULTHOOD-K12.md",
+            "contentKind": "course",
+            "contentId": "founder-level-civic-classical:study-plans/courses/FCC-CHAR-HONORABLE-ADULTHOOD-K12.md",
+            "sourcePath": "study-plans/courses/FCC-CHAR-HONORABLE-ADULTHOOD-K12.md",
+            "title": "FCC-CHAR-HONORABLE-ADULTHOOD-K12 — Honorable Adulthood, Character, Family, And Digital Life K-12",
+            "gradeBand": {
+              "label": "ages-3-5-companion-and-k-12",
+              "minGrade": "K",
+              "maxGrade": "12"
+            },
+            "ageBand": {
+              "label": "ages-3-18",
+              "minAge": 3,
+              "maxAge": 18
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "faith-and-worldview",
+              "health-and-human-development",
+              "relationships-and-sexuality",
+              "substance-use-and-addiction",
+              "violence-crime-and-war",
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict",
+              "digital-media-and-online-safety"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context",
+              "family-community-discussion"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#founder-level-civic-classical",
+            "status": "source-default-reviewed-object-registry-required"
+          }
+        },
         {
           "id": "founder-level-civic-classical:study-plans/courses/FCC-FUTURE-READY-SYSTEMS-INNOVATION-K12.md",
           "title": "FCC-FUTURE-READY-SYSTEMS-INNOVATION-K12 — Future-Ready Systems, Innovation, And Stewardship K-12",
@@ -2913,6 +3030,10 @@ window.openEducationContentCatalog =
               "label": "Face To Face Communication Social Confidence"
             },
             {
+              "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/honorable-adulthood-character-family-digital-life",
+              "label": "Honorable Adulthood Character Family Digital Life"
+            },
+            {
               "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/health-nutrition-substance-safety",
               "label": "Health Nutrition Substance Safety"
             }
@@ -3079,6 +3200,62 @@ window.openEducationContentCatalog =
           "label": "Values Institutional Stewardship"
         },
         {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/",
+          "label": ""
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g1-responsibility-gratitude-play",
+          "label": "G1 Responsibility Gratitude Play"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g10-masculinity-femininity-family",
+          "label": "G10 Masculinity Femininity Family"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g11-marriage-work-country-community",
+          "label": "G11 Marriage Work Country Community"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g12-rule-of-life-capstone",
+          "label": "G12 Rule Of Life Capstone"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g2-courage-friendship-device-help",
+          "label": "G2 Courage Friendship Device Help"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g3-work-hobby-reading-choice",
+          "label": "G3 Work Hobby Reading Choice"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g4-self-command-advertising-service",
+          "label": "G4 Self Command Advertising Service"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g5-digital-boundaries-story-consequence",
+          "label": "G5 Digital Boundaries Story Consequence"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g6-purpose-parasocial-friendship",
+          "label": "G6 Purpose Parasocial Friendship"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g7-puberty-integrity-media-defense",
+          "label": "G7 Puberty Integrity Media Defense"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g8-vocation-romance-crime-discernment",
+          "label": "G8 Vocation Romance Crime Discernment"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/g9-honor-courtship-digital-economy",
+          "label": "G9 Honor Courtship Digital Economy"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-honorable-adulthood-k12/gk-truth-care-habit",
+          "label": "Gk Truth Care Habit"
+        },
+        {
           "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/american-enterprise-political-economy",
           "label": "American Enterprise Political Economy"
         },
@@ -3141,6 +3318,10 @@ window.openEducationContentCatalog =
         {
           "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/health-nutrition-substance-safety",
           "label": "Health Nutrition Substance Safety"
+        },
+        {
+          "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/honorable-adulthood-character-family-digital-life",
+          "label": "Honorable Adulthood Character Family Digital Life"
         },
         {
           "objectiveId": "founder-level-civic-classical:objectives/course/fcc-k12/program-orientation",

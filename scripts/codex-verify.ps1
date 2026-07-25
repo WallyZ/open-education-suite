@@ -422,6 +422,19 @@ try {
     Assert-FileExists '.\scripts\teaching\select-next-action.ps1'
     Assert-FileExists '.\scripts\teaching\start-session.ps1'
     Assert-FileExists '.\scripts\teaching\export-learner-ui-session.ps1'
+    $learnerSessionExporterText = Get-Content -LiteralPath '.\scripts\teaching\export-learner-ui-session.ps1' -Raw
+    foreach ($learnerSessionExporterMarker in @(
+        'function Get-ContentRepoHttpSlug',
+        "Join-Path `$ContentRoot 'content-repo.json'",
+        '$manifest.PSObject.Properties[''httpSlug'']',
+        '$null -eq $httpSlugProperty',
+        "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?`$",
+        'Get-ContentRepoHttpSlug -ContentRoot $lectureContentRoot'
+    )) {
+        if (-not $learnerSessionExporterText.Contains($learnerSessionExporterMarker)) {
+            throw "Learner UI exporter is missing checkout-independent content route marker: $learnerSessionExporterMarker"
+        }
+    }
     Assert-FileExists '.\scripts\teaching\lecture-paths.ps1'
     Assert-FileExists '.\scripts\teaching\learner_ui_bridge_server.py'
     Assert-FileExists '.\scripts\teaching\export-voice-session-contract.ps1'
@@ -438,6 +451,16 @@ try {
     Assert-FileExists '.\scripts\testing\run-learner-ui-playwright.ps1'
     Assert-FileExists '.\scripts\testing\run-lecture-production-smoke.ps1'
     Assert-FileExists '.\scripts\quality\check-content-quality.ps1'
+    $contentQualityCheckerText = Get-Content -LiteralPath '.\scripts\quality\check-content-quality.ps1' -Raw
+    foreach ($contentQualityCheckerMarker in @(
+        '(?:<([^>]+)>|([^)]+))',
+        '$match.Groups[1].Success',
+        '$match.Groups[2].Value.Trim()'
+    )) {
+        if (-not $contentQualityCheckerText.Contains($contentQualityCheckerMarker)) {
+            throw "Content quality checker is missing angle-bracket Markdown destination support: $contentQualityCheckerMarker"
+        }
+    }
     Assert-FileExists '.\scripts\quality\check-course-source-links.ps1'
     Assert-FileExists '.\scripts\quality\check-course-design-quality.ps1'
     Assert-FileExists '.\scripts\quality\check-teaching-quality.ps1'
@@ -456,6 +479,18 @@ try {
     Assert-FileExists '.\scripts\ai\extract_subject_pdf.py'
     Assert-FileExists '.\scripts\ai\invoke-local-teacher.ps1'
     Assert-FileExists '.\scripts\ai\build-content-ai-knowledge-federation.ps1'
+    $aiKnowledgeFederationBuilderText = Get-Content -LiteralPath '.\scripts\ai\build-content-ai-knowledge-federation.ps1' -Raw
+    foreach ($aiKnowledgeFederationBuilderMarker in @(
+        'function Get-NormalizedTextFileSha256',
+        '$text -replace "`r`n", "`n"',
+        '[System.Text.UTF8Encoding]::new($false).GetBytes($normalizedText)',
+        'Get-NormalizedTextFileSha256 -Path $recordsPath',
+        '$actualHash -ne $expectedHash -and $normalizedHash -ne $expectedHash'
+    )) {
+        if (-not $aiKnowledgeFederationBuilderText.Contains($aiKnowledgeFederationBuilderMarker)) {
+            throw "AI knowledge federation builder is missing checkout-independent checksum marker: $aiKnowledgeFederationBuilderMarker"
+        }
+    }
     Assert-FileExists '.\generated\ai-knowledge\content-knowledge-catalog.json'
     Assert-FileExists '.\scripts\setup\build-planned-subject-brains.ps1'
     Assert-FileExists '..\open-education-teacher\selection\teacher-knowledge-routing-policy.json'

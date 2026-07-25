@@ -20,9 +20,11 @@ Build a read-only ingestion path that lets the suite teach from separate content
 - [x] Emit an ingestion report with imported files, skipped files, and validation errors. <!-- ms:id 158fd8ce8af0 -->
 - [x] Define a content package format for local/offline use without mutating source repos. <!-- ms:id 582960ca1832 -->
 - [x] Add checks that prevent domain content from being added back into the core repo. <!-- ms:id 48a6dd256296 -->
+- [x] Allow a content manifest to declare a stable, checkout-independent `httpSlug` for learner bridge URLs while preserving the repository-folder fallback for existing sources. <!-- ms:id 7d193e9882c8 -->
 
 ## Acceptance Notes
 
 - Ingestion must be read-only.
 - Missing content repos should produce actionable validation output.
 - Generated indexes and temporary artifacts must stay out of tracked domain content.
+- Renaming, junction-mounting, or isolating a content checkout must not change a manifest-declared learner URL root.

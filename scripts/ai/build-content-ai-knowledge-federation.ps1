@@ -52,6 +52,21 @@ function Get-RelativeSuitePath {
     return [System.Uri]::UnescapeDataString($suiteUri.MakeRelativeUri($pathUri).ToString())
 }
 
+function Get-NormalizedTextFileSha256 {
+    param([Parameter(Mandatory = $true)][string]$Path)
+
+    $text = [System.IO.File]::ReadAllText($Path)
+    $normalizedText = ($text -replace "`r`n", "`n").TrimEnd("`r", "`n") + "`n"
+    $bytes = [System.Text.UTF8Encoding]::new($false).GetBytes($normalizedText)
+    $sha = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        return ([BitConverter]::ToString($sha.ComputeHash($bytes))).Replace('-', '').ToLowerInvariant()
+    }
+    finally {
+        $sha.Dispose()
+    }
+}
+
 function Get-FileSha256 {
     param([Parameter(Mandatory = $true)][string]$Path)
     return (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -549,6 +564,7 @@ foreach ($source in @($registry.contentSources)) {
     }
 
     $manifestRecordCount = $null
+    $expectedHash = $null
     $generation = Get-PropertyValue -Object $manifest -Name 'generation'
     if ($null -ne $generation) {
         $manifestRecordCount = Get-PropertyValue -Object $generation -Name 'totalRecordCount'
@@ -561,8 +577,10 @@ foreach ($source in @($registry.contentSources)) {
 
         $expectedHash = Get-PropertyValue -Object $generation -Name 'recordsSha256'
         if (-not [string]::IsNullOrWhiteSpace([string]$expectedHash)) {
+            $expectedHash = ([string]$expectedHash).ToLowerInvariant()
             $actualHash = Get-FileSha256 -Path $recordsPath
-            if ($actualHash -ne ([string]$expectedHash).ToLowerInvariant()) {
+            $normalizedHash = Get-NormalizedTextFileSha256 -Path $recordsPath
+            if ($actualHash -ne $expectedHash -and $normalizedHash -ne $expectedHash) {
                 throw "AI knowledge records checksum mismatch for '$($source.id)'."
             }
         }
@@ -662,7 +680,7 @@ foreach ($source in @($registry.contentSources)) {
         recordsPath = $recordsGitPath
         recordCount = $recordCount
         recordTypes = @($recordKinds | Sort-Object)
-        recordsSha256 = Get-FileSha256 -Path $recordsPath
+        recordsSha256 = $(if (-not [string]::IsNullOrWhiteSpace([string]$expectedHash)) { $expectedHash } else { Get-FileSha256 -Path $recordsPath })
         missingSourcePathCount = $packageMissingPathCount
         duplicateScopedRecordIdCount = $packageDuplicateCount
         privacyPolicyViolationCount = $packagePrivacyViolationCount

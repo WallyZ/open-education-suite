@@ -2,13 +2,13 @@
 
 Use this compact context for a single focused wave.
 
-Generated: 2026-06-27
+Generated: 2026-07-24
 
 ## Context profile
-- Profile: 32k (requested: auto)
-- Profile note: Local AI 32k profile: extremely aggressive compression/cutting to stay within tight windows.
-- Line budgets: activeContext<=90, progress<=120, context-pack<=60
-- Text caps: max_items=3, max_line_length=120
+- Profile: cloud (requested: cloud)
+- Profile note: Cloud profile: keep richer context for speed/quality, but remain bounded to control token cost.
+- Line budgets: activeContext<=200, progress<=280, context-pack<=140
+- Text caps: max_items=8, max_line_length=200
 
 ## Objective
 - Review docs terminology lint for education-suite vocabulary [PH2]
@@ -33,5 +33,5 @@ Generated: 2026-06-27
 ## Verification commands
 - `git status --short`
 - `pwsh -File .\scripts\memory\refresh_memory_bank.ps1 -DryRun`
-- python scripts/lifecycle/check_memory_bank.py --repo-root . --profile 32k
+- python scripts/lifecycle/check_memory_bank.py --repo-root . --profile cloud
 

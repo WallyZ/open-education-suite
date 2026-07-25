@@ -41,6 +41,13 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def matches_text_sha256(path: Path, expected: str) -> bool:
+    if sha256_file(path) == expected:
+        return True
+    normalized = path.read_bytes().replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    return hashlib.sha256(normalized).hexdigest() == expected
+
+
 def stable_sha256(value: Any) -> str:
     payload = json.dumps(value, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
@@ -477,7 +484,7 @@ def main() -> int:
     for object_type, entry in public_entries.items():
         path = founder_root / entry["path"]
         public_paths[object_type] = path
-        if sha256_file(path) != entry["sha256"]:
+        if not matches_text_sha256(path, entry["sha256"]):
             raise ValueError(f"Public shard checksum mismatch: {entry['path']}")
         shard_count = 0
         for record in iter_jsonl(path):
@@ -494,7 +501,7 @@ def main() -> int:
 
     restricted_entry = restricted_entries[0]
     restricted_path = founder_root / restricted_entry["path"]
-    if sha256_file(restricted_path) != restricted_entry["sha256"]:
+    if not matches_text_sha256(restricted_path, restricted_entry["sha256"]):
         raise ValueError("Restricted shard checksum mismatch")
     for record in iter_jsonl(restricted_path):
         validate_restricted_record(record)

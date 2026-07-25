@@ -121,6 +121,25 @@ def main() -> int:
         "facilitatorAvailableIfNeededCount": expected_counts[
             "facilitatorAvailableIfNeeded"
         ],
+        "originalActivityFacilitatorRequiredCount": expected_counts[
+            "originalActivityFacilitatorRequired"
+        ],
+        "autonomousSafeEquivalentCount": expected_counts[
+            "autonomousSafeEquivalents"
+        ],
+        "cannotCompleteWithoutFacilitatorCount": expected_counts[
+            "cannotCompleteWithoutFacilitator"
+        ],
+        "learnerSelfCheckRouteCount": expected_counts["learnerSelfCheckRoutes"],
+        "externalGraderRequiredForOrdinaryMasteryCount": expected_counts[
+            "externalGraderRequiredForOrdinaryMastery"
+        ],
+        "unresolvedLearningCaptureCount": expected_counts[
+            "unresolvedLearningRoutes"
+        ],
+        "studyLeadRequiredForOrdinaryUse": False,
+        "authorizedResearchSiteRequiredForOrdinaryUse": False,
+        "particularExternalSiteRequired": False,
         "conditionalEscalationFlagCount": expected_counts[
             "conditionalEscalationFlags"
         ],
@@ -134,7 +153,7 @@ def main() -> int:
             raise ValueError(f"Solo learner summary mismatch for {key}")
     if (
         summary.get("status")
-        != "all-grade-all-lesson-solo-learner-ui-navigation-and-portable-state-export-passed"
+        != "all-grade-all-lesson-autonomous-solo-learning-and-portable-state-export-passed"
     ):
         raise ValueError("Solo learner summary status mismatch")
 
@@ -189,6 +208,11 @@ def main() -> int:
         "available-if-needed": 0,
     }
     conditional_escalation_flags = 0
+    autonomous_safe_equivalents = 0
+    cannot_complete_without_facilitator = 0
+    learner_self_check_routes = 0
+    external_grader_required = 0
+    unresolved_learning_routes = 0
     catalog_preview_used = 0
     proposal_only_used = 0
     real_learner_states = 0
@@ -200,10 +224,10 @@ def main() -> int:
             raise ValueError(f"Solo session misses fields {sorted(missing)}")
         if (
             record["schemaVersion"] != 1
-            or record["exportVersion"] != "2026-07-23-v1"
+            or record["exportVersion"] != "2026-07-24-v2"
             or record["sourceId"] != "founder-level-civic-classical"
             or record["status"]
-            != "synthetic-solo-learner-ui-route-and-initial-state-export-passed"
+            != "synthetic-autonomous-solo-route-and-initial-state-export-passed"
         ):
             raise ValueError(f"Solo session identity mismatch: {record['sessionId']}")
         session_id = str(record["sessionId"])
@@ -356,11 +380,24 @@ def main() -> int:
             != contract["requiredRestrictedVisibility"]
             or restricted_route["learnerPayloadIncluded"] is not False
             or restricted_route["authorizedRoutingAvailable"] is not True
+            or restricted_route["learnerMayRevealAfterAttempt"] is not True
+            or restricted_route["revealRequiresPreservedAttempt"] is not True
+            or restricted_route["localRestrictedSidecarRequired"] is not True
+            or restricted_route["externalGraderRequiredForOrdinaryMastery"]
+            is not False
+            or restricted_route[
+                "independentScorerRequiredForFormalStudyOrCredentialClaim"
+            ]
+            is not True
         ):
             raise ValueError(f"Solo restricted-answer route mismatch: {session_id}")
+        learner_self_check_routes += 1
+        if restricted_route["externalGraderRequiredForOrdinaryMastery"]:
+            external_grader_required += 1
         if (
             routing["rubric"]["learnerCriteriaVisible"] is not True
-            or routing["rubric"]["authorizedScoringStillRequired"] is not True
+            or routing["rubric"]["learnerSelfScoringAvailable"] is not True
+            or routing["rubric"]["authorizedScoringStillRequired"] is not False
             or routing["correctionLog"]["initialEntries"] != []
             or routing["correctionLog"]["firstAttemptMustBePreserved"] is not True
             or routing["portfolio"]["visibility"]
@@ -369,6 +406,19 @@ def main() -> int:
             is not True
         ):
             raise ValueError(f"Solo evidence/privacy route mismatch: {session_id}")
+        unresolved = routing["unresolvedLearning"]
+        if (
+            unresolved["schemaPath"]
+            != "resources/unresolved-learning-record.schema.json"
+            or unresolved["initialEntries"] != []
+            or unresolved["localOnlyByDefault"] is not True
+            or unresolved["learnerApprovedMinimizedAiReviewAvailable"] is not True
+            or unresolved["aiMayChangeMastery"] is not False
+            or unresolved["aiMayPublishPrivateWork"] is not False
+            or unresolved["aiProposalRequiresReview"] is not True
+        ):
+            raise ValueError(f"Solo unresolved-learning route mismatch: {session_id}")
+        unresolved_learning_routes += 1
         if (
             routing["progress"]["masteryEventIds"]
             != lesson_data["masteryEventIds"]
@@ -421,7 +471,7 @@ def main() -> int:
             real_learner_states += 1
 
         handoff = record["soloHandoff"]
-        facilitator_status = handoff["guardianOrFacilitator"]
+        facilitator_status = handoff["guardianOrFacilitatorForOriginalActivity"]
         if facilitator_status not in facilitator_counts:
             raise ValueError(f"Unknown solo facilitator status: {session_id}")
         facilitator_counts[facilitator_status] += 1
@@ -437,14 +487,27 @@ def main() -> int:
         expected_recommended = facilitator_status == "recommended"
         expected_available = facilitator_status == "available-if-needed"
         if (
-            handoff["canCompleteWithoutFacilitator"] is expected_required
-            or handoff["requiresFacilitatorBeforeStart"] is not expected_required
+            handoff["canCompleteWithoutFacilitator"] is not True
+            or handoff["requiresFacilitatorBeforeStart"] is not False
+            or handoff["requiresFacilitatorForOriginalActivity"] is not expected_required
             or handoff["facilitatorRecommended"] is not expected_recommended
             or handoff["facilitatorAvailableIfNeeded"] is not expected_available
-            or (expected_required and not handoff["cannotCompleteAloneReason"])
-            or (not expected_required and handoff["cannotCompleteAloneReason"] is not None)
+            or handoff["cannotCompleteAloneReason"] is not None
+            or (expected_required and not handoff["originalActivityGateReason"])
+            or (
+                not expected_required
+                and handoff["originalActivityGateReason"] is not None
+            )
+            or handoff["autonomousSafeEquivalentRequired"] is not True
+            or not handoff["safeEquivalentRoute"]
+            or handoff["studyLeadRequiredForOrdinaryUse"] is not False
+            or handoff["authorizedResearchSiteRequiredForOrdinaryUse"] is not False
+            or handoff["particularExternalSiteRequired"] is not False
         ):
             raise ValueError(f"Solo facilitator flag mismatch: {session_id}")
+        autonomous_safe_equivalents += 1
+        if not handoff["canCompleteWithoutFacilitator"]:
+            cannot_complete_without_facilitator += 1
 
         boundary = record["privacyAndFormationBoundary"]
         if (
@@ -502,6 +565,16 @@ def main() -> int:
         != expected_counts["facilitatorRecommended"]
         or facilitator_counts["available-if-needed"]
         != expected_counts["facilitatorAvailableIfNeeded"]
+        or facilitator_counts["required"]
+        != expected_counts["originalActivityFacilitatorRequired"]
+        or autonomous_safe_equivalents
+        != expected_counts["autonomousSafeEquivalents"]
+        or cannot_complete_without_facilitator
+        != expected_counts["cannotCompleteWithoutFacilitator"]
+        or learner_self_check_routes != expected_counts["learnerSelfCheckRoutes"]
+        or external_grader_required
+        != expected_counts["externalGraderRequiredForOrdinaryMastery"]
+        or unresolved_learning_routes != expected_counts["unresolvedLearningRoutes"]
         or conditional_escalation_flags
         != expected_counts["conditionalEscalationFlags"]
     ):
@@ -558,8 +631,11 @@ def main() -> int:
                     "gradeCode": grade_code,
                     "lessonId": record["lessonId"],
                     "positionInGrade": record["navigation"]["positionInGrade"],
-                    "guardianOrFacilitator": record["soloHandoff"][
-                        "guardianOrFacilitator"
+                    "guardianOrFacilitatorForOriginalActivity": record["soloHandoff"][
+                        "guardianOrFacilitatorForOriginalActivity"
+                    ],
+                    "canCompleteWithoutFacilitator": record["soloHandoff"][
+                        "canCompleteWithoutFacilitator"
                     ],
                 }
             )
@@ -568,7 +644,7 @@ def main() -> int:
         "schemaVersion": 1,
         "status": "passed",
         "sourceId": "founder-level-civic-classical",
-        "exportVersion": "2026-07-23-v1",
+        "exportVersion": "2026-07-24-v2",
         "counts": {
             "sessions": len(session_ids),
             "grades": len(records_by_grade),
@@ -592,6 +668,12 @@ def main() -> int:
             "facilitatorAvailableIfNeeded": facilitator_counts[
                 "available-if-needed"
             ],
+            "originalActivityFacilitatorRequired": facilitator_counts["required"],
+            "autonomousSafeEquivalents": autonomous_safe_equivalents,
+            "cannotCompleteWithoutFacilitator": cannot_complete_without_facilitator,
+            "learnerSelfCheckRoutes": learner_self_check_routes,
+            "externalGraderRequiredForOrdinaryMastery": external_grader_required,
+            "unresolvedLearningRoutes": unresolved_learning_routes,
             "conditionalEscalationFlags": conditional_escalation_flags,
         },
         "validation": {
@@ -606,6 +688,9 @@ def main() -> int:
             "catalogPreviewUsedCount": catalog_preview_used,
             "proposalOnlyUsedCount": proposal_only_used,
             "realLearnerStateCount": real_learner_states,
+            "ordinaryUseRequiresStudyLead": False,
+            "ordinaryUseRequiresAuthorizedResearchSite": False,
+            "particularExternalSiteRequired": False,
         },
         "gradeSamples": grade_samples,
     }

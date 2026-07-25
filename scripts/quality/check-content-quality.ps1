@@ -26,9 +26,14 @@ function Test-LocalMarkdownLinks {
             $lineNumber = 0
             foreach ($line in Get-Content -LiteralPath $file.FullName) {
                 $lineNumber++
-                $matches = [regex]::Matches($line, '\[[^\]]+\]\(([^)]+)\)')
+                $matches = [regex]::Matches($line, '\[[^\]]+\]\((?:<([^>]+)>|([^)]+))\)')
                 foreach ($match in $matches) {
-                    $target = $match.Groups[1].Value.Trim()
+                    $target = if ($match.Groups[1].Success) {
+                        $match.Groups[1].Value.Trim()
+                    }
+                    else {
+                        $match.Groups[2].Value.Trim()
+                    }
                     if ([string]::IsNullOrWhiteSpace($target)) {
                         continue
                     }

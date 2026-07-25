@@ -9,6 +9,10 @@
 
 Update `content-sources.json` when adding, renaming, or removing a content repo.
 
+Content repos may declare an optional, URL-safe `httpSlug` in `content-repo.json`. The learner bridge uses that value for `/content-repos/<slug>/...` URLs so a repo remains portable across renamed checkouts, junctions, and isolated worktrees. Existing repos without `httpSlug` continue to use the content repo folder name.
+
+AI knowledge record checksums accept the manifest-declared byte hash or the equivalent UTF-8 text hash after CRLF-to-LF normalization. This preserves content integrity without making a valid package depend on Git checkout line-ending settings.
+
 ## 3. Ingest Content
 
 The suite should read content repos through their manifests, normalize learning objects, and preserve source attribution. Ingestion should be read-only until a task explicitly requires authoring support.

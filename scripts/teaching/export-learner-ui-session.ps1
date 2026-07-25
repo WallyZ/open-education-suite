@@ -112,6 +112,27 @@ function Invoke-ContentCatalogAdapter {
     return ($catalogJson | ConvertFrom-Json)
 }
 
+function Get-ContentRepoHttpSlug {
+    param([string]$ContentRoot)
+
+    $fallbackSlug = Split-Path -Leaf ([System.IO.Path]::GetFullPath($ContentRoot).TrimEnd('\'))
+    $manifestPath = Join-Path $ContentRoot 'content-repo.json'
+    if (-not (Test-Path -LiteralPath $manifestPath -PathType Leaf)) {
+        return $fallbackSlug
+    }
+
+    $manifest = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
+    $httpSlugProperty = $manifest.PSObject.Properties['httpSlug']
+    $declaredSlug = if ($null -eq $httpSlugProperty) { '' } else { [string]$httpSlugProperty.Value }
+    if ([string]::IsNullOrWhiteSpace($declaredSlug)) {
+        return $fallbackSlug
+    }
+    if ($declaredSlug -notmatch '^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$') {
+        throw "Content repository httpSlug is invalid: $declaredSlug"
+    }
+    return $declaredSlug
+}
+
 $repo = (& git -C . rev-parse --show-toplevel).Trim()
 if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($repo)) {
     throw 'Unable to resolve repository root with git.'
@@ -167,7 +188,7 @@ try {
     $lecturePackage = Get-Content -LiteralPath $resolvedLecturePath -Raw | ConvertFrom-Json
     $lectureContentRoot = Get-LectureContentRoot -ManifestPath $resolvedLecturePath
     $lectureContentRootUri = [System.Uri](([System.IO.Path]::GetFullPath($lectureContentRoot)).TrimEnd('\') + '\')
-    $lectureContentRepoSlug = Split-Path -Leaf ([System.IO.Path]::GetFullPath($lectureContentRoot).TrimEnd('\'))
+    $lectureContentRepoSlug = Get-ContentRepoHttpSlug -ContentRoot $lectureContentRoot
     $lecturePackage | Add-Member -MemberType NoteProperty -Name contentRepoRoot -Value $lectureContentRoot -Force
     $lecturePackage | Add-Member -MemberType NoteProperty -Name contentRepoWebRoot -Value $lectureContentRootUri.AbsoluteUri -Force
     $lecturePackage | Add-Member -MemberType NoteProperty -Name contentRepoHttpRoot -Value "/content-repos/$lectureContentRepoSlug/" -Force
