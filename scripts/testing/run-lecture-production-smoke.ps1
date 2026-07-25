@@ -75,7 +75,7 @@ try {
     }
 
     $env:OES_LECTURE_SMOKE_UI = Join-Path $uiRoot 'index.html'
-    & .\node_modules\.bin\playwright.ps1 test --config .\playwright.config.js --grep 'selects a rendered lecture package' 2>&1 | Tee-Object -FilePath $logPath -Append
+    & .\node_modules\.bin\playwright.ps1 test --config .\playwright.config.js --grep '(lecture production smoke|early-play adult companion)' 2>&1 | Tee-Object -FilePath $logPath -Append
     $exitCode = $LASTEXITCODE
 
     if ($exitCode -eq 0) {

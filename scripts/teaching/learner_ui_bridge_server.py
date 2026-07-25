@@ -24,6 +24,9 @@ GAME_DEVELOPMENT_LECTURE_PATH = (
     "lecture-video.publish-ready.json",
 )
 GAME_DEVELOPMENT_CONTENT_ROUTE = "/content-repos/open-education-game-development/"
+FOUNDER_CIVIC_CLASSICAL_CONTENT_ROUTE = (
+    "/content-repos/open-education-founder-level-civic-classical/"
+)
 
 
 def new_run_root(repo_root: Path, prefix: str) -> Path:
@@ -201,6 +204,9 @@ class LearnerBridgeHandler(BaseHTTPRequestHandler):
         if parsed.path.startswith(GAME_DEVELOPMENT_CONTENT_ROUTE):
             self.serve_game_development_content(parsed.path)
             return
+        if parsed.path.startswith(FOUNDER_CIVIC_CLASSICAL_CONTENT_ROUTE):
+            self.serve_founder_civic_classical_content(parsed.path)
+            return
         self.serve_static(parsed.path)
 
     def do_POST(self) -> None:
@@ -268,6 +274,43 @@ class LearnerBridgeHandler(BaseHTTPRequestHandler):
         self.send_response(HTTPStatus.OK)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
+
+    def serve_founder_civic_classical_content(self, request_path: str) -> None:
+        relative = unquote(
+            request_path[len(FOUNDER_CIVIC_CLASSICAL_CONTENT_ROUTE):]
+        ).lstrip("/")
+        content_root = (
+            self.server.repo_root.parent
+            / "open-education-founder-level-civic-classical"
+        ).resolve()
+        target = (content_root / relative).resolve()
+        try:
+            target.relative_to(content_root)
+        except ValueError:
+            self.send_error(HTTPStatus.NOT_FOUND)
+            return
+        if not target.is_file():
+            self.send_error(HTTPStatus.NOT_FOUND)
+            return
+
+        content_type = (
+            mimetypes.guess_type(target.name)[0] or "application/octet-stream"
+        )
+        data = target.read_bytes()
+        self.send_response(HTTPStatus.OK)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(data)))
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("Referrer-Policy", "no-referrer")
+        self.send_header(
+            "Content-Security-Policy",
+            "default-src 'none'; style-src 'unsafe-inline'; "
+            "img-src 'self' data:; font-src 'self'; base-uri 'none'; "
+            "form-action 'none'; frame-ancestors 'self'",
+        )
         self.end_headers()
         self.wfile.write(data)
 

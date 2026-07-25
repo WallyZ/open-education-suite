@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-src 'self' blob:; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'"
+  >
+  <title>Early Play Adult Companion</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to adult companion controls</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <p class="eyebrow">Open Education Suite · responsible-adult route</p>
+      <h1>Early Play Adult Companion</h1>
+      <p class="lede">
+        A private, local-first doorway to printable play invitations for ages
+        three through five. Children do not use this screen.
+      </p>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="gate-card" aria-labelledby="gate-title">
+      <div>
+        <p class="step-label">Adult gate</p>
+        <h2 id="gate-title">Confirm the responsible-adult route</h2>
+        <p>
+          The companion is optional, ungraded, and adult-mediated. It creates
+          no child account, profile, chat, behavioral score, or cloud record.
+        </p>
+      </div>
+
+      <label class="adult-confirmation">
+        <input id="adultOptIn" type="checkbox">
+        <span>
+          I am a responsible adult choosing to open the companion pack. I will
+          keep child participation voluntary and follow local safety, privacy,
+          accessibility, and safeguarding requirements.
+        </span>
+      </label>
+
+      <div class="button-row">
+        <button id="openPack" class="primary-button" type="button" disabled>
+          Open companion pack
+        </button>
+        <button id="closePack" class="secondary-button" type="button" hidden>
+          Clear and close
+        </button>
+      </div>
+
+      <p id="status" class="status" role="status" aria-live="polite">
+        Waiting for responsible-adult opt-in. No companion content has loaded.
+      </p>
+    </section>
+
+    <section class="safeguards" aria-labelledby="safeguards-title">
+      <div class="section-heading">
+        <p class="step-label">Non-negotiable safeguards</p>
+        <h2 id="safeguards-title">What this screen will not do</h2>
+      </div>
+      <ul class="safeguard-grid">
+        <li>
+          <strong>No child accounts or chat</strong>
+          <span>Children never sign in, type to a tutor, or use an unsupervised AI surface.</span>
+        </li>
+        <li>
+          <strong>No profiling or persuasion</strong>
+          <span>No clickstream, developmental ranking, targeted prompt, compliance score, or attention tracking.</span>
+        </li>
+        <li>
+          <strong>No identifiable uploads</strong>
+          <span>No names, photos, recordings, student work, family history, or private notes are accepted.</span>
+        </li>
+        <li>
+          <strong>No compelled participation</strong>
+          <span>A child may watch, change, decline, pause, or stop without penalty or loss of dignity.</span>
+        </li>
+      </ul>
+    </section>
+
+    <section id="packRegion" class="pack-region" aria-labelledby="pack-title" hidden>
+      <div class="pack-toolbar">
+        <div>
+          <p class="step-label">Loaded locally</p>
+          <h2 id="pack-title">Printable invitation cards and blank forms</h2>
+        </div>
+        <div class="button-row">
+          <button id="printPack" class="secondary-button" type="button">
+            Print pack
+          </button>
+          <a id="downloadPack" class="secondary-link" download="early-play-adult-offline-pack.html">
+            Save offline copy
+          </a>
+        </div>
+      </div>
+
+      <div class="privacy-note">
+        <strong>Private by design.</strong>
+        The pack stays in this browser tab unless the adult explicitly prints
+        or saves it. The Suite does not store the opt-in or observation notes.
+      </div>
+
+      <iframe
+        id="packFrame"
+        title="Early Play Adult Offline Pack"
+        sandbox="allow-same-origin allow-modals"
+      ></iframe>
+    </section>
+
+    <section id="failurePanel" class="failure-panel" aria-labelledby="failure-title" tabindex="-1" hidden>
+      <p class="step-label">Fail closed</p>
+      <h2 id="failure-title">The companion pack could not be opened</h2>
+      <p id="failureMessage">
+        No child-facing fallback, chat, upload, or alternate network route was opened.
+      </p>
+      <p>
+        A responsible adult can use a previously saved paper or offline copy,
+        or ask the local operator to restore the approved content repository.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      Optional Christian formation may be encouraged by the family without
+      compelled profession. The equivalent nondevotional route preserves the
+      same safety, dignity, service, stewardship, patience, and repair goals.
+    </p>
+  </footer>
+</body>
+</html>

@@ -402,14 +402,20 @@ def scan_content_sources(repo_root: Path) -> dict[str, Any]:
     powershell = shutil.which("powershell") or shutil.which("pwsh")
     if not powershell:
         raise RuntimeError("PowerShell is required to scan content sources.")
+    scan_script = repo_root / "scripts" / "ingestion" / "scan-content-sources.ps1"
+    quoted_scan_script = str(scan_script).replace("'", "''")
+    scan_command = (
+        "[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false); "
+        f"& '{quoted_scan_script}'"
+    )
     completed = subprocess.run(
         [
             powershell,
             "-NoProfile",
             "-ExecutionPolicy",
             "Bypass",
-            "-File",
-            str(repo_root / "scripts" / "ingestion" / "scan-content-sources.ps1"),
+            "-Command",
+            scan_command,
         ],
         cwd=repo_root,
         check=True,
