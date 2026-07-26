@@ -83,7 +83,7 @@ window.openEducationSessionOutput =
     "license": "CC-BY-4.0 for repo-authored metadata; linked third-party resources retain original licenses",
     "attribution": "Open Education Game Development"
   },
-  "updatedStatePath": "F:\\dev\\open-education-suite\\.codex-cache\\tmp\\site-neutral-content-root-20260724\\worktree\\.codex-cache\\tmp\\learner-state.last-session.json"
+  "updatedStatePath": "F:\\dev\\open-education-suite\\.codex-cache\\tmp\\learner-state.last-session.json"
 }
 ;
 window.openEducationLecturePackage = 
@@ -657,8 +657,8 @@ window.openEducationLecturePackage =
       "prompt": "Revise one rule in a familiar game and explain what changed in the verb, goal, or feedback loop."
     }
   },
-  "contentRepoRoot": "F:\\dev\\open-education-suite\\.codex-cache\\tmp\\site-neutral-content-root-20260724\\open-education-game-development",
-  "contentRepoWebRoot": "file:///F:/dev/open-education-suite/.codex-cache/tmp/site-neutral-content-root-20260724/open-education-game-development/",
+  "contentRepoRoot": "F:\\dev\\open-education-game-development",
+  "contentRepoWebRoot": "file:///F:/dev/open-education-game-development/",
   "contentRepoHttpRoot": "/content-repos/open-education-game-development/",
   "sourcePackagePath": "generated-lectures\\gdev-101-design-vocabulary\\publish\\lecture-video.publish-ready.json"
 }
@@ -2735,7 +2735,7 @@ window.openEducationContentCatalog =
       "sourceId": "founder-level-civic-classical",
       "title": "Open Education Founder-Level Civic Classical",
       "sourceRepo": "open-education-founder-level-civic-classical",
-      "objectCount": 924,
+      "objectCount": 918,
       "courses": [
         {
           "id": "founder-level-civic-classical:study-plans/courses/FCC-CHAR-HONORABLE-ADULTHOOD-K12.md",
