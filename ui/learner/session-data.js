@@ -667,8 +667,8 @@ window.openEducationContentCatalog =
 {
   "schemaVersion": 1,
   "generatedFrom": "scripts/teaching/content_catalog_adapter.py",
-  "sourceCount": 10,
-  "courseCount": 31,
+  "sourceCount": 11,
+  "courseCount": 32,
   "audienceEnforcement": "fail-closed-shared-policy",
   "audienceOperation": "export",
   "adultContentOptIn": false,
@@ -2135,6 +2135,152 @@ window.openEducationContentCatalog =
         {
           "objectiveId": "game-development:objectives/course/gdev-499/portfolio-case-study",
           "label": "Portfolio Case Study"
+        }
+      ],
+      "structuredPreviewCount": 0,
+      "audienceDefaultStatus": "source-default-reviewed"
+    },
+    {
+      "sourceId": "economics",
+      "title": "Open Education Economics",
+      "sourceRepo": "open-education-economics",
+      "objectCount": 6,
+      "courses": [
+        {
+          "id": "economics:study-plans/courses/ECON-REFERENCE-PROGRAM.md",
+          "title": "ECON-REFERENCE-PROGRAM - Economics World Systems Reference Program",
+          "sourceRepo": "open-education-economics",
+          "sourcePath": "study-plans/courses/ECON-REFERENCE-PROGRAM.md",
+          "objectives": [
+            {
+              "objectiveId": "economics:objectives/course/econ-reference/economic-reasoning",
+              "label": "Economic Reasoning"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-reference/micro-macro-core",
+              "label": "Micro Macro Core"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-reference/econometrics-and-data",
+              "label": "Econometrics And Data"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-reference/money-creation-and-banking",
+              "label": "Money Creation And Banking"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-reference/financial-systems-comparison",
+              "label": "Financial Systems Comparison"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-reference/debt-power-and-coercion",
+              "label": "Debt Power And Coercion"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-reference/financial-concentration-and-monopoly",
+              "label": "Financial Concentration And Monopoly"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-reference/monetary-reform-design",
+              "label": "Monetary Reform Design"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-reference/research-and-defense",
+              "label": "Research And Defense"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-reference/public-economic-education",
+              "label": "Public Economic Education"
+            }
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:economics:study-plans/courses/ECON-REFERENCE-PROGRAM.md",
+            "contentKind": "course",
+            "contentId": "economics:study-plans/courses/ECON-REFERENCE-PROGRAM.md",
+            "sourcePath": "study-plans/courses/ECON-REFERENCE-PROGRAM.md",
+            "title": "ECON-REFERENCE-PROGRAM - Economics World Systems Reference Program",
+            "gradeBand": {
+              "label": "grades-9-adult",
+              "minGrade": "9",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-14-adult",
+              "minAge": 14,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#economics",
+            "status": "source-default-reviewed"
+          }
+        }
+      ],
+      "objectives": [
+        {
+          "objectiveId": "economics:objectives/course/econ-reference/debt-power-and-coercion",
+          "label": "Debt Power And Coercion"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-reference/econometrics-and-data",
+          "label": "Econometrics And Data"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-reference/economic-reasoning",
+          "label": "Economic Reasoning"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-reference/financial-concentration-and-monopoly",
+          "label": "Financial Concentration And Monopoly"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-reference/financial-systems-comparison",
+          "label": "Financial Systems Comparison"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-reference/micro-macro-core",
+          "label": "Micro Macro Core"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-reference/monetary-reform-design",
+          "label": "Monetary Reform Design"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-reference/money-creation-and-banking",
+          "label": "Money Creation And Banking"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-reference/public-economic-education",
+          "label": "Public Economic Education"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-reference/research-and-defense",
+          "label": "Research And Defense"
         }
       ],
       "structuredPreviewCount": 0,

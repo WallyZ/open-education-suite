@@ -9,11 +9,11 @@
     "privateLearnerOverlaysFederated": false
   },
   "totals": {
-    "registeredContentRepoCount": 11,
-    "discoveredKnowledgePackageCount": 11,
+    "registeredContentRepoCount": 12,
+    "discoveredKnowledgePackageCount": 12,
     "standardGeneratedPackageCount": 9,
-    "existingRichPackageCount": 2,
-    "recordCount": 57510,
+    "existingRichPackageCount": 3,
+    "recordCount": 57518,
     "missingSourcePathCount": 0,
     "duplicateScopedRecordIdCount": 0,
     "privacyPolicyViolationCount": 0,
@@ -121,6 +121,29 @@
         "workflow"
       ],
       "recordsSha256": "df52f65d1c7ae1dfa48b5f8e237eb252d3c2161366709ea3d8e5fef8f2934c30",
+      "missingSourcePathCount": 0,
+      "duplicateScopedRecordIdCount": 0,
+      "privacyPolicyViolationCount": 0,
+      "citationPolicyViolationCount": 0
+    },
+    {
+      "id": "economics",
+      "title": "Open Education Economics",
+      "packageMode": "repository-owned-rich",
+      "manifestPath": "../open-education-economics/ai-knowledge/manifest.json",
+      "recordsPath": "../open-education-economics/ai-knowledge/records.jsonl",
+      "recordCount": 8,
+      "recordTypes": [
+        "assessment",
+        "course",
+        "misconception",
+        "objective",
+        "program",
+        "source_boundary",
+        "source_index",
+        "workflow"
+      ],
+      "recordsSha256": "4e9b82fafdcd8c29a08e3472eec39cf9919a1e035dca371204dc9d5db93ea5b0",
       "missingSourcePathCount": 0,
       "duplicateScopedRecordIdCount": 0,
       "privacyPolicyViolationCount": 0,

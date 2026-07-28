@@ -65,6 +65,21 @@
       "status": "source-default-reviewed"
     },
     {
+      "sourceId": "economics",
+      "gradeBand": {"label": "grades-9-adult", "minGrade": "9", "maxGrade": null},
+      "ageBand": {"label": "ages-14-adult", "minAge": 14, "maxAge": null},
+      "audienceClassification": "minor-safe",
+      "minorSafe": true,
+      "adultOnly": false,
+      "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+      "sensitiveTopicCategories": ["money-commerce-and-financial-risk", "civic-political-and-ideological-conflict"],
+      "prerequisiteIds": [],
+      "permittedTutorContexts": ["orientation", "retrieval-grounded-explanation", "guided-practice", "post-attempt-feedback", "source-context"],
+      "allowedOperations": ["catalog", "search", "recommendation", "export", "import", "tutor-context"],
+      "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+      "status": "source-default-reviewed"
+    },
+    {
       "sourceId": "mens-relationship-skills",
       "gradeBand": {"label": "adult-only", "minGrade": "adult", "maxGrade": null},
       "ageBand": {"label": "ages-18-adult", "minAge": 18, "maxAge": null},

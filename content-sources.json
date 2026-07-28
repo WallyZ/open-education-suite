@@ -30,6 +30,13 @@
       "status": "complete-delivery-ready"
     },
     {
+      "id": "economics",
+      "title": "Open Education Economics",
+      "localPath": "../open-education-economics",
+      "contentManifest": "content-repo.json",
+      "status": "draft-foundation-ready"
+    },
+    {
       "id": "mens-relationship-skills",
       "title": "Open Education Men's Relationship Skills",
       "localPath": "../open-education-mens-relationship-skills",
