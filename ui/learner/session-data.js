@@ -2881,7 +2881,7 @@ window.openEducationContentCatalog =
       "sourceId": "founder-level-civic-classical",
       "title": "Open Education Founder-Level Civic Classical",
       "sourceRepo": "open-education-founder-level-civic-classical",
-      "objectCount": 921,
+      "objectCount": 926,
       "courses": [
         {
           "id": "founder-level-civic-classical:study-plans/courses/FCC-CHAR-HONORABLE-ADULTHOOD-K12.md",
@@ -3526,6 +3526,18 @@ window.openEducationContentCatalog =
               "label": "Ethical Pressure"
             },
             {
+              "objectiveId": "leadership:objectives/course/lead-101/exemplar-context",
+              "label": "Exemplar Context"
+            },
+            {
+              "objectiveId": "leadership:objectives/course/lead-101/biography-transfer",
+              "label": "Biography Transfer"
+            },
+            {
+              "objectiveId": "leadership:objectives/course/lead-101/completion-succession",
+              "label": "Completion Succession"
+            },
+            {
               "objectiveId": "leadership:objectives/course/lead-101/capstone-defense",
               "label": "Capstone Defense"
             }
@@ -3578,6 +3590,10 @@ window.openEducationContentCatalog =
       ],
       "objectives": [
         {
+          "objectiveId": "leadership:objectives/course/lead-101/biography-transfer",
+          "label": "Biography Transfer"
+        },
+        {
           "objectiveId": "leadership:objectives/course/lead-101/capstone-defense",
           "label": "Capstone Defense"
         },
@@ -3590,6 +3606,10 @@ window.openEducationContentCatalog =
           "label": "Communication Intent"
         },
         {
+          "objectiveId": "leadership:objectives/course/lead-101/completion-succession",
+          "label": "Completion Succession"
+        },
+        {
           "objectiveId": "leadership:objectives/course/lead-101/conflict-repair",
           "label": "Conflict Repair"
         },
@@ -3600,6 +3620,10 @@ window.openEducationContentCatalog =
         {
           "objectiveId": "leadership:objectives/course/lead-101/ethical-pressure",
           "label": "Ethical Pressure"
+        },
+        {
+          "objectiveId": "leadership:objectives/course/lead-101/exemplar-context",
+          "label": "Exemplar Context"
         },
         {
           "objectiveId": "leadership:objectives/course/lead-101/leadership-as-responsibility",

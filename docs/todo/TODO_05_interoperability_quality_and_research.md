@@ -36,6 +36,24 @@ Keep the suite compatible with education ecosystems while building repeatable qu
     - Open Education Suite can ingest sanitized practice progress without private media.
     - YouTube Automation can keep production-specific behavior while sharing only reusable studio contracts.
 
+- [ ] Define and verify the Community Commons immersive-learning adapter for the adult bicycle flat-repair proof. [PH3] <!-- ms:id OES_COMMUNITY_COMMONS_LEARNING_001 --> <!-- ms:meta priority=p0 owner=@owner blocked-by=community-commons-repo,two-ended-contracts,bicycle-source-and-rubric-review stale-days=14 automation-level=assisted human-checkpoint=review rollout-scope=multi-repo validation-profile=cloud safe-autofix=review updated=2026-08-07 -->
+  - Deliverables: versioned minimal learning-event schema, valid/invalid fixtures, idempotent importer, consent/revocation/deletion behavior, mastery and transfer rubric, teach-back handling, degraded-mode queue, and QA Live feature specs.
+  - Files: `docs/community-commons-learning-integration.md`, `docs/todo/TODO_05_interoperability_quality_and_research.md`, future adapter/schema/fixture files selected during implementation.
+  - Verification: `.\scripts\codex-verify.ps1 -Mode changed`.
+  - QA Live automation: Exercise demonstration, guided, independent, diagnosis, teach-back, real-world-checkoff handoff, service outage, retry, reconnect, replay, correction, and deletion.
+  - Drift guard: Reject raw voice, video, transcripts, pose, gaze, biometric, private-message, room-movement, full-session-log, machine-path, and unrelated-participant fields. Simulation completion must not become a professional qualification or real-world mastery claim.
+  - Downstream rollout: The planned `community-commons` product owns the producer and immersive activity; `community-core` may receive only learner-approved coarse claims; `infinite-worlds` remains game-state authority; consult `open-education-teacher` for reusable pedagogy without moving learner state there.
+  - Dependencies:
+    - creation of the separate private `community-commons` repo
+    - two-ended identity, event, consent, learning, deletion, and incident contracts
+    - reviewed bicycle-repair activity source and transfer rubric
+  - Acceptance:
+    - the Suite remains content-agnostic and owns only learning records and decisions
+    - valid, invalid, expired, duplicated, forged, replayed, revoked, corrected, deleted, out-of-order, and service-outage cases are deterministic
+    - detailed attempts never enter Community Core or Infinite Worlds
+    - every decision records exact activity, rubric, event, adapter, and Suite revisions
+    - a fresh independent critic and owner approve the exact closed adult-pilot candidate
+
 ## Acceptance Notes
 
 - Quality checks should be runnable through `.\scripts\codex-verify.ps1`.
