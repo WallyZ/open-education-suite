@@ -1,5 +1,5 @@
 {
-  "updated_on": "2026-07-24",
+  "updated_on": "2026-08-08",
   "checked": 8,
   "unchecked": 3,
   "todo_file": "docs/TODO.md",
@@ -14,5 +14,5 @@
   "max_active_context_lines": 200,
   "max_progress_lines": 280,
   "max_context_pack_lines": 140,
-  "repo_root": "F:/dev/open-education-suite/.codex-cache/tmp/site-neutral-content-root-20260724/worktree"
+  "repo_root": "F:/dev/open-education-suite"
 }

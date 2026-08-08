@@ -1,7 +1,7 @@
 # Solution Harvest
 
 ## Metadata
-- Last updated: 2026-07-24
+- Last updated: 2026-08-08
 - Repo: open-education-suite
 - Privacy default: internal
 
@@ -38,6 +38,13 @@
 - Local path: `docs/program-pack-template.md`
 - Reuse value: reusable world-class subject pack standard with benchmark, competency, assessment, rubric, provenance, and maintenance requirements.
 - Privacy: public-safe after replacing local paths with repo-relative examples.
+
+### Subject-owned advanced-evaluation and credential boundary
+- Local path: sibling subject-pack `program.yaml` and release contracts; American History version 1.1.0 is the current reference.
+- Reuse value: keeps named benchmarks, source checks, learner artifacts, independent evaluation passes, defense, revision, retention, transfer, and reproducibility in the subject repo while the Suite remains content-agnostic.
+- Claim boundary: a subject repo or Suite may report demonstrated performance but may not award or guarantee a degree or certification; only an authorized third-party provider's award record supports the exact credential claim.
+- Human boundary: qualified experts are optional for the default noncredentialing path and provider-required only on a learner's opt-in credential pathway.
+- Privacy: reviewer identities, qualification evidence, attestations, learner records, and provider award records remain private-local unless specifically consented and redacted.
 
 ## Promoted to Repo-Kit
 - None yet. Review candidates through `.repo-kit/exchange.json` before upstreaming.
