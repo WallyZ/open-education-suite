@@ -183,6 +183,21 @@
       "allowedOperations": ["catalog", "search", "recommendation", "export", "import", "tutor-context"],
       "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
       "status": "source-default-reviewed"
+    },
+    {
+      "sourceId": "artificial-intelligence",
+      "gradeBand": {"label": "grades-k-adult", "minGrade": "K", "maxGrade": null},
+      "ageBand": {"label": "ages-5-adult", "minAge": 5, "maxAge": null},
+      "audienceClassification": "minor-safe",
+      "minorSafe": true,
+      "adultOnly": false,
+      "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+      "sensitiveTopicCategories": ["digital-media-and-online-safety", "cybersecurity-and-dual-use"],
+      "prerequisiteIds": [],
+      "permittedTutorContexts": ["orientation", "retrieval-grounded-explanation", "guided-practice", "post-attempt-feedback", "source-context"],
+      "allowedOperations": ["catalog", "search", "recommendation", "export", "import", "tutor-context"],
+      "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+      "status": "source-default-reviewed-pathway-review-and-pilot-open"
     }
   ]
 }
