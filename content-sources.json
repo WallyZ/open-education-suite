@@ -84,6 +84,13 @@
       "localPath": "../open-education-comedy",
       "contentManifest": "content-repo.json",
       "status": "complete-delivery-ready"
+    },
+    {
+      "id": "artificial-intelligence",
+      "title": "Open Education Artificial Intelligence",
+      "localPath": "../open-education-artificial-intelligence",
+      "contentManifest": "content-repo.json",
+      "status": "advanced-pathway-materialized-broader-pack-open"
     }
   ]
 }

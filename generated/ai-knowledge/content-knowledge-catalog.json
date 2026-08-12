@@ -9,11 +9,11 @@
     "privateLearnerOverlaysFederated": false
   },
   "totals": {
-    "registeredContentRepoCount": 12,
-    "discoveredKnowledgePackageCount": 12,
+    "registeredContentRepoCount": 13,
+    "discoveredKnowledgePackageCount": 13,
     "standardGeneratedPackageCount": 9,
-    "existingRichPackageCount": 3,
-    "recordCount": 57518,
+    "existingRichPackageCount": 4,
+    "recordCount": 57526,
     "missingSourcePathCount": 0,
     "duplicateScopedRecordIdCount": 0,
     "privacyPolicyViolationCount": 0,
@@ -316,6 +316,29 @@
         "workflow"
       ],
       "recordsSha256": "2b67b9634a54b4cfb8e036e589b1cb1a60254013961e7ba66ab27944a78ac1a8",
+      "missingSourcePathCount": 0,
+      "duplicateScopedRecordIdCount": 0,
+      "privacyPolicyViolationCount": 0,
+      "citationPolicyViolationCount": 0
+    },
+    {
+      "id": "artificial-intelligence",
+      "title": "Open Education Artificial Intelligence",
+      "packageMode": "repository-owned-rich",
+      "manifestPath": "../open-education-artificial-intelligence/ai-knowledge/manifest.json",
+      "recordsPath": "../open-education-artificial-intelligence/ai-knowledge/records.jsonl",
+      "recordCount": 8,
+      "recordTypes": [
+        "assessment",
+        "course",
+        "misconception",
+        "objective",
+        "practice_lab",
+        "program",
+        "source_boundary",
+        "workflow"
+      ],
+      "recordsSha256": "8378472820348bde7411b258c5a19c533209cb6f032ea52efdf691f6f4641d15",
       "missingSourcePathCount": 0,
       "duplicateScopedRecordIdCount": 0,
       "privacyPolicyViolationCount": 0,
