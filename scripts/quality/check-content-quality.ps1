@@ -15,54 +15,44 @@ function Add-Error {
 function Test-LocalMarkdownLinks {
     param(
         [System.Collections.Generic.List[string]]$Errors,
-        [string[]]$Roots
+        [string[]]$Files
     )
 
-    foreach ($root in $Roots) {
-        if (-not (Test-Path -LiteralPath $root -PathType Container)) {
+    foreach ($filePath in $Files) {
+        if (-not (Test-Path -LiteralPath $filePath -PathType Leaf)) {
             continue
         }
-        foreach ($file in Get-ChildItem -LiteralPath $root -Recurse -File -Filter '*.md') {
-            $lineNumber = 0
-            foreach ($line in Get-Content -LiteralPath $file.FullName) {
-                $lineNumber++
-                $matches = [regex]::Matches($line, '\[[^\]]+\]\((?:<([^>]+)>|([^)]+))\)')
-                foreach ($match in $matches) {
-                    $target = if ($match.Groups[1].Success) {
-                        $match.Groups[1].Value.Trim()
-                    }
-                    else {
-                        $match.Groups[2].Value.Trim()
-                    }
-                    if ([string]::IsNullOrWhiteSpace($target)) {
-                        continue
-                    }
-                    if ($target -match '^(https?|guide|content|mailto):') {
-                        continue
-                    }
-                    if ($target.StartsWith('#')) {
-                        continue
-                    }
+        $file = Get-Item -LiteralPath $filePath
+        $lineNumber = 0
+        foreach ($line in Get-Content -LiteralPath $file.FullName) {
+            $lineNumber++
+            $matches = [regex]::Matches($line, '\[[^\]]+\]\((?:<([^>]+)>|([^)]+))\)')
+            foreach ($match in $matches) {
+                $target = if ($match.Groups[1].Success) {
+                    $match.Groups[1].Value.Trim()
+                }
+                else {
+                    $match.Groups[2].Value.Trim()
+                }
+                if ([string]::IsNullOrWhiteSpace($target) -or $target -match '^(https?|guide|content|mailto):' -or $target.StartsWith('#')) {
+                    continue
+                }
 
-                    $withoutAnchor = ($target -split '#')[0]
-                    if ([string]::IsNullOrWhiteSpace($withoutAnchor)) {
-                        continue
-                    }
-                    if ($withoutAnchor.StartsWith('/')) {
-                        continue
-                    }
-                    $withoutAnchor = $withoutAnchor.Replace('/', '\')
+                $withoutAnchor = ($target -split '#')[0]
+                if ([string]::IsNullOrWhiteSpace($withoutAnchor) -or $withoutAnchor.StartsWith('/')) {
+                    continue
+                }
+                $withoutAnchor = $withoutAnchor.Replace('/', '\')
 
-                    if ([System.IO.Path]::IsPathRooted($withoutAnchor)) {
-                        $candidate = $withoutAnchor
-                    }
-                    else {
-                        $candidate = Join-Path $file.DirectoryName $withoutAnchor
-                    }
+                $candidate = if ([System.IO.Path]::IsPathRooted($withoutAnchor)) {
+                    $withoutAnchor
+                }
+                else {
+                    Join-Path $file.DirectoryName $withoutAnchor
+                }
 
-                    if (-not (Test-Path -LiteralPath $candidate)) {
-                        Add-Error $Errors "Broken local Markdown link in $($file.FullName):$lineNumber -> $target"
-                    }
+                if (-not (Test-Path -LiteralPath $candidate)) {
+                    Add-Error $Errors "Broken local Markdown link in $($file.FullName):$lineNumber -> $target"
                 }
             }
         }
@@ -136,19 +126,30 @@ foreach ($learner in @($learners.learners)) {
     }
 }
 
-$contentRoots = @('.\docs', '.\study-plans', '.\resources')
-foreach ($source in @($scanReport.sources)) {
-    if ($source.resolvedPath) {
-        $contentRoots += $source.resolvedPath
+$contentFiles = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+foreach ($trackedPath in @(& git ls-files -- 'docs/*.md' 'docs/**/*.md' 'study-plans/*.md' 'study-plans/**/*.md' 'resources/*.md' 'resources/**/*.md')) {
+    if (-not [string]::IsNullOrWhiteSpace($trackedPath)) {
+        $null = $contentFiles.Add((Join-Path (Get-Location).Path $trackedPath))
     }
 }
-Test-LocalMarkdownLinks -Errors $errors -Roots $contentRoots
+foreach ($source in @($scanReport.sources)) {
+    if (-not $source.resolvedPath) {
+        continue
+    }
+    foreach ($object in @($source.objects)) {
+        if ([string]$object.sourcePath -match '(?i)\.md$') {
+            $null = $contentFiles.Add((Join-Path $source.resolvedPath $object.sourcePath))
+        }
+    }
+}
+Test-LocalMarkdownLinks -Errors $errors -Files @($contentFiles)
 
 [ordered]@{
     schemaVersion = 1
     checkedAt = (Get-Date).ToString('o')
     errorCount = $errors.Count
     warningCount = $warnings.Count
+    markdownFileCount = $contentFiles.Count
     errors = @($errors)
     warnings = @($warnings)
 } | ConvertTo-Json -Depth 8

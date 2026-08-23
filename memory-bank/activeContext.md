@@ -1,22 +1,26 @@
 # Active Context
 
-Last updated: 2026-08-08
+Last updated: 2026-08-23
 
 ## Current objective
-- Review docs terminology lint for education-suite vocabulary [PH2]
+
+- Complete root-owned Markdown lint fleet Wave 47 while preserving the Suite's content-agnostic and local-first learner boundaries.
 
 ## Active wave/task
-- Primary TODO target: Review docs terminology lint for education-suite vocabulary [PH2]
+
+- Root item `RK_MARKDOWN_LINT_FLEET_ROLLOUT_001`; Suite-owned feature and owner-review TODOs remain separate.
 
 ## Allowed scope
-- Files directly related to the active wave and required verification updates.
-- `memory-bank/activeContext.md` and `memory-bank/progress.md` maintenance.
+
+- Shared lint assets, conservative Markdown repair, verifier composition, and current memory.
+- Do not copy subject content or expose learner, media, model, credential, or private local state.
 
 ## Risks/blockers
-- No major blockers captured during refresh.
+
+- No implementation blocker remains; promotion still requires an independent critic verdict and a stable exact candidate.
 
 ## Next 3 actions
-- Review docs terminology lint for education-suite vocabulary [PH2]
-- Review security and supply-chain scanner profiles for local education data boundaries [PH2]
-- Add hosted workflow callers only if this repo needs GitHub CI enforcement [PH2]
 
+- Obtain independent critic approval for the exact changed/full-verified candidate.
+- Commit and push the approved candidate to `main`.
+- Return to root fleet tracking and the next ranked repository.

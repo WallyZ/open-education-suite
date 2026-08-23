@@ -4,6 +4,7 @@ param(
     [switch]$RequireExternalTools,
     [switch]$EnforceDocsTerminology,
     [string]$MatrixPath = '',
+    [string[]]$ChangedFiles = @(),
     [string]$OutputJson = '',
     [string]$OutputMarkdown = ''
 )
@@ -43,15 +44,29 @@ function Test-SkippedPath {
     $skipPrefixes = @(
         '.git/',
         '.codex-cache/',
+        '.mypy_cache/',
+        '.pytest_cache/',
+        '.ruff_cache/',
         '.venv/',
+        'build/',
+        'data/',
+        'dist/',
+        'logs/',
+        'node_modules/',
+        'reports/',
         'venv/',
+        'youtube_automation.egg-info/',
         'archive/',
         'data/dev/_golden_repo_check_tmp/',
         'data/dev/_sync_contract_check_tmp/'
     )
 
     foreach ($prefix in $skipPrefixes) {
-        if ($normalized.StartsWith($prefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+        $directoryName = $prefix.TrimEnd('/')
+        if (
+            $normalized.Equals($directoryName, [System.StringComparison]::OrdinalIgnoreCase) -or
+            $normalized.StartsWith($prefix, [System.StringComparison]::OrdinalIgnoreCase)
+        ) {
             return $true
         }
     }
@@ -70,13 +85,29 @@ function Get-LanguageFiles {
     )
 
     $items = New-Object System.Collections.Generic.List[object]
-    foreach ($file in (Get-ChildItem -LiteralPath $Repo -Recurse -File -ErrorAction SilentlyContinue)) {
-        $rel = Get-RelativePath -Base $Repo -PathValue $file.FullName
-        if (Test-SkippedPath -RelativePath $rel) {
-            continue
-        }
-        if ($Extensions -contains $file.Extension.ToLowerInvariant()) {
-            $items.Add($file) | Out-Null
+    $pending = New-Object System.Collections.Generic.Queue[object]
+    $pending.Enqueue((Get-Item -LiteralPath $Repo)) | Out-Null
+
+    while ($pending.Count -gt 0) {
+        $directory = $pending.Dequeue()
+        foreach ($item in (Get-ChildItem -LiteralPath $directory.FullName -Force -ErrorAction SilentlyContinue)) {
+            $rel = Get-RelativePath -Base $Repo -PathValue $item.FullName
+            if ($item.PSIsContainer) {
+                if (Test-SkippedPath -RelativePath $rel) {
+                    continue
+                }
+                if (($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) -ne 0) {
+                    continue
+                }
+                $pending.Enqueue($item) | Out-Null
+                continue
+            }
+            if (Test-SkippedPath -RelativePath $rel) {
+                continue
+            }
+            if ($Extensions -contains $item.Extension.ToLowerInvariant()) {
+                $items.Add($item) | Out-Null
+            }
         }
     }
 
@@ -102,6 +133,36 @@ function Test-CommandExists {
     param([string]$Name)
 
     return $null -ne (Get-Command $Name -ErrorAction SilentlyContinue)
+}
+
+function Resolve-LintToolCommand {
+    param(
+        [string]$Repo,
+        [string]$Name
+    )
+
+    $executableNames = if ($IsWindows) { @("$Name.cmd", "$Name.exe", $Name) } else { @($Name) }
+    $candidateRoots = @(
+        (Join-Path $Repo 'repo-standards\lint\node_modules\.bin'),
+        (Join-Path $Repo 'node_modules\.bin')
+    )
+    foreach ($candidateRoot in $candidateRoots) {
+        foreach ($executableName in $executableNames) {
+            $candidate = Join-Path $candidateRoot $executableName
+            if (Test-Path -LiteralPath $candidate -PathType Leaf) {
+                return (Resolve-Path -LiteralPath $candidate).Path
+            }
+        }
+    }
+
+    $command = Get-Command $Name -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($null -eq $command) {
+        return ''
+    }
+    if (-not [string]::IsNullOrWhiteSpace([string]$command.Source)) {
+        return [string]$command.Source
+    }
+    return [string]$command.Name
 }
 
 function Get-JsonProperty {
@@ -156,6 +217,36 @@ function Resolve-CspellConfigPath {
     }
 
     return ''
+}
+
+function Resolve-MarkdownlintConfigPath {
+    param([string]$Repo)
+
+    $candidates = @(
+        '.markdownlint-cli2.jsonc',
+        '.markdownlint-cli2.json',
+        'markdownlint-cli2.jsonc',
+        'repo-standards\lint\markdownlint-cli2.jsonc'
+    )
+    foreach ($candidate in $candidates) {
+        $path = Join-Path $Repo $candidate
+        if (Test-Path -LiteralPath $path -PathType Leaf) {
+            return $path
+        }
+    }
+
+    return ''
+}
+
+function Resolve-PythonCommand {
+    param([string]$Repo)
+
+    $venvPython = Join-Path $Repo '.venv\Scripts\python.exe'
+    if (Test-Path -LiteralPath $venvPython -PathType Leaf) {
+        return $venvPython
+    }
+
+    return 'python'
 }
 
 function Get-ApplicableMatrixProfiles {
@@ -238,6 +329,7 @@ $repo = Get-RepoRootPath -Start $RepoRoot
 $results = New-Object System.Collections.Generic.List[object]
 $failures = New-Object System.Collections.Generic.List[string]
 $resolvedMatrixPath = Resolve-MatrixPath -Repo $repo -RequestedPath $MatrixPath
+$pythonCmd = Resolve-PythonCommand -Repo $repo
 $matrix = $null
 if (-not [string]::IsNullOrWhiteSpace($resolvedMatrixPath)) {
     $matrix = Get-Content -LiteralPath $resolvedMatrixPath -Raw | ConvertFrom-Json
@@ -247,7 +339,7 @@ Push-Location $repo
 try {
     $markdownDocFiles = @(Get-LanguageFiles -Repo $repo -Extensions @('.md'))
     if (Test-Path -LiteralPath 'scripts/lifecycle/check_markdown_paths.py') {
-        $output = python scripts/lifecycle/check_markdown_paths.py --repo-root . 2>&1
+        $output = & $pythonCmd scripts/lifecycle/check_markdown_paths.py --repo-root . 2>&1
         if ($LASTEXITCODE -eq 0) {
             Add-CheckResult -Results $results -Name 'Markdown' -Status 'pass' -Detail 'check_markdown_paths.py passed'
         }
@@ -258,6 +350,95 @@ try {
     }
     else {
         Add-CheckResult -Results $results -Name 'Markdown' -Status 'skip' -Detail 'no markdown checker found'
+    }
+
+    $markdownFormatGuard = 'scripts/markdown_format_guard.py'
+    if (Test-Path -LiteralPath $markdownFormatGuard -PathType Leaf) {
+        $selfTestOutput = & $pythonCmd $markdownFormatGuard --self-test 2>&1
+        if ($LASTEXITCODE -eq 0) {
+            Add-CheckResult -Results $results -Name 'Markdown guard self-test' -Status 'pass' -Detail 'dependency-free regression cases passed'
+        }
+        else {
+            $failures.Add("Markdown guard self-test failed: $($selfTestOutput -join ' ')") | Out-Null
+            Add-CheckResult -Results $results -Name 'Markdown guard self-test' -Status 'fail' -Detail 'markdown_format_guard.py self-test failed'
+        }
+
+        if ($ChangedFiles.Count -gt 0) {
+            $changedMarkdownFiles = @(
+                $ChangedFiles |
+                    Where-Object {
+                        $_ -imatch '\.md$' -and
+                        -not (Test-SkippedPath -RelativePath $_) -and
+                        (Test-Path -LiteralPath $_ -PathType Leaf)
+                    } |
+                    Sort-Object -Unique
+            )
+            if ($changedMarkdownFiles.Count -eq 0) {
+                Add-CheckResult -Results $results -Name 'Markdown format' -Status 'skip' -Detail 'no existing changed Markdown files'
+            }
+            else {
+                $formatOutput = & $pythonCmd $markdownFormatGuard --check @changedMarkdownFiles 2>&1
+                if ($LASTEXITCODE -eq 0) {
+                    Add-CheckResult -Results $results -Name 'Markdown format' -Status 'pass' -Detail ("markdown_format_guard.py verified {0} changed file(s)" -f $changedMarkdownFiles.Count)
+                }
+                else {
+                    $failures.Add("Markdown format check failed: $($formatOutput -join ' ')") | Out-Null
+                    Add-CheckResult -Results $results -Name 'Markdown format' -Status 'fail' -Detail 'markdown_format_guard.py found changed-file issues'
+                }
+            }
+        }
+        else {
+            Add-CheckResult -Results $results -Name 'Markdown format' -Status 'skip' -Detail 'changed-file rollout requires -ChangedFiles'
+        }
+    }
+    else {
+        Add-CheckResult -Results $results -Name 'Markdown format' -Status 'skip' -Detail 'no Markdown format guard found'
+    }
+
+    if ($markdownDocFiles.Count -gt 0) {
+        $markdownlintConfig = Resolve-MarkdownlintConfigPath -Repo $repo
+        $markdownlintCommand = Resolve-LintToolCommand -Repo $repo -Name 'markdownlint-cli2'
+        $markdownlintTargets = @(
+            $ChangedFiles |
+                Where-Object {
+                    $_ -imatch '\.md$' -and
+                    -not (Test-SkippedPath -RelativePath $_) -and
+                    (Test-Path -LiteralPath $_ -PathType Leaf)
+                } |
+                ForEach-Object { ([string]$_).Replace('\', '/') } |
+                Sort-Object -Unique
+        )
+
+        if ($ChangedFiles.Count -eq 0) {
+            Add-CheckResult -Results $results -Name 'Markdownlint-cli2' -Status 'skip' -Detail 'changed-file rollout requires -ChangedFiles'
+        }
+        elseif ($markdownlintTargets.Count -eq 0) {
+            Add-CheckResult -Results $results -Name 'Markdownlint-cli2' -Status 'skip' -Detail 'no existing changed Markdown files'
+        }
+        elseif ([string]::IsNullOrWhiteSpace($markdownlintCommand)) {
+            if ($RequireExternalTools) {
+                $failures.Add('Markdownlint-cli2 is required but not available.') | Out-Null
+                Add-CheckResult -Results $results -Name 'Markdownlint-cli2' -Status 'fail' -Detail 'required tool missing'
+            }
+            else {
+                Add-CheckResult -Results $results -Name 'Markdownlint-cli2' -Status 'skip' -Detail 'optional tool not installed'
+            }
+        }
+        elseif ([string]::IsNullOrWhiteSpace($markdownlintConfig)) {
+            $failures.Add('Markdownlint-cli2 is available but no reviewed config was found.') | Out-Null
+            Add-CheckResult -Results $results -Name 'Markdownlint-cli2' -Status 'fail' -Detail 'reviewed config missing'
+        }
+        else {
+            $markdownlintConfigRel = Get-RelativePath -Base $repo -PathValue $markdownlintConfig
+            $markdownlintOutput = & $markdownlintCommand --config $markdownlintConfigRel @markdownlintTargets 2>&1
+            if ($LASTEXITCODE -eq 0) {
+                Add-CheckResult -Results $results -Name 'Markdownlint-cli2' -Status 'pass' -Detail ("passed for {0} target(s) with {1}" -f $markdownlintTargets.Count, $markdownlintConfigRel)
+            }
+            else {
+                $failures.Add("Markdownlint-cli2 failed: $($markdownlintOutput -join ' ')") | Out-Null
+                Add-CheckResult -Results $results -Name 'Markdownlint-cli2' -Status 'fail' -Detail ("findings reported with {0}" -f $markdownlintConfigRel)
+            }
+        }
     }
 
     if ($markdownDocFiles.Count -gt 0) {
@@ -298,28 +479,29 @@ try {
 
     $pyFiles = @(Get-LanguageFiles -Repo $repo -Extensions @('.py'))
     if ($pyFiles.Count -gt 0) {
-        $previousPrefix = $env:PYTHONPYCACHEPREFIX
-        $cacheRoot = Join-Path $env:TEMP 'repo_kit_pycache'
-        $env:PYTHONPYCACHEPREFIX = $cacheRoot
-        try {
-            foreach ($file in $pyFiles) {
-                $output = python -m py_compile $file.FullName 2>&1
-                if ($LASTEXITCODE -ne 0) {
-                    $rel = Get-RelativePath -Base $repo -PathValue $file.FullName
-                    $failures.Add("Python compile failed: $rel :: $($output -join ' ')") | Out-Null
-                }
+        $syntaxCheck = @'
+import sys
+import tokenize
+
+path = sys.argv[1]
+with tokenize.open(path) as handle:
+    source = handle.read()
+compile(source, path, "exec")
+'@
+
+        foreach ($file in $pyFiles) {
+            $output = & $pythonCmd -B -c $syntaxCheck $file.FullName 2>&1
+            if ($LASTEXITCODE -ne 0) {
+                $rel = Get-RelativePath -Base $repo -PathValue $file.FullName
+                $failures.Add("Python compile failed: $rel :: $($output -join ' ')") | Out-Null
             }
-        }
-        finally {
-            $env:PYTHONPYCACHEPREFIX = $previousPrefix
-            Remove-Item -LiteralPath $cacheRoot -Recurse -Force -ErrorAction SilentlyContinue
         }
 
         if (@($failures | Where-Object { $_ -like 'Python compile failed:*' }).Count -eq 0) {
-            Add-CheckResult -Results $results -Name 'Python' -Status 'pass' -Detail ("py_compile passed for {0} files" -f $pyFiles.Count)
+            Add-CheckResult -Results $results -Name 'Python' -Status 'pass' -Detail ("in-memory compile passed for {0} files" -f $pyFiles.Count)
         }
         else {
-            Add-CheckResult -Results $results -Name 'Python' -Status 'fail' -Detail 'one or more files failed py_compile'
+            Add-CheckResult -Results $results -Name 'Python' -Status 'fail' -Detail 'one or more files failed in-memory compile'
         }
     }
     else {
@@ -347,14 +529,50 @@ try {
             Add-CheckResult -Results $results -Name 'PowerShell' -Status 'fail' -Detail 'one or more scripts failed parser checks'
         }
 
-        if (Test-CommandExists -Name 'Invoke-ScriptAnalyzer') {
+        $psAnalyzerFiles = $psFiles
+        if ($ChangedFiles.Count -gt 0) {
+            $changedPowerShellPaths = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+            foreach ($changedFile in $ChangedFiles) {
+                $changedPath = [string]$changedFile
+                if ([string]::IsNullOrWhiteSpace($changedPath)) {
+                    continue
+                }
+
+                $extension = [System.IO.Path]::GetExtension($changedPath).ToLowerInvariant()
+                if ($extension -notin @('.ps1', '.psm1', '.psd1')) {
+                    continue
+                }
+
+                $fullPath = if ([System.IO.Path]::IsPathRooted($changedPath)) {
+                    [System.IO.Path]::GetFullPath($changedPath)
+                }
+                else {
+                    [System.IO.Path]::GetFullPath((Join-Path $repo $changedPath))
+                }
+                if (Test-Path -LiteralPath $fullPath -PathType Leaf) {
+                    $null = $changedPowerShellPaths.Add((Get-RelativePath -Base $repo -PathValue $fullPath))
+                }
+            }
+
+            $psAnalyzerFiles = @(
+                $psFiles |
+                    Where-Object {
+                        $changedPowerShellPaths.Contains((Get-RelativePath -Base $repo -PathValue $_.FullName))
+                    }
+            )
+        }
+
+        if ($psAnalyzerFiles.Count -eq 0) {
+            Add-CheckResult -Results $results -Name 'PSScriptAnalyzer' -Status 'skip' -Detail 'no existing changed PowerShell files'
+        }
+        elseif (Test-CommandExists -Name 'Invoke-ScriptAnalyzer') {
             $analyzerFindings = @()
-            foreach ($file in $psFiles) {
+            foreach ($file in $psAnalyzerFiles) {
                 $analyzerFindings += @(Invoke-ScriptAnalyzer -Path $file.FullName 2>&1)
             }
             $blockingFindings = @($analyzerFindings | Where-Object { $null -ne $_.Severity -and [string]$_.Severity -eq 'Error' })
             if ($blockingFindings.Count -eq 0) {
-                Add-CheckResult -Results $results -Name 'PSScriptAnalyzer' -Status 'pass' -Detail 'Invoke-ScriptAnalyzer reported no error findings'
+                Add-CheckResult -Results $results -Name 'PSScriptAnalyzer' -Status 'pass' -Detail ("Invoke-ScriptAnalyzer reported no error findings for {0} selected file(s)" -f $psAnalyzerFiles.Count)
             }
             else {
                 $failures.Add("PSScriptAnalyzer error findings: $($blockingFindings -join ' ')") | Out-Null

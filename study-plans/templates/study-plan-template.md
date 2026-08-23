@@ -15,11 +15,13 @@ A reusable template for building structured, goal-driven study plans.
 ## 2. Resources
 
 ### Primary Resources
+
 - Textbook(s)
 - Course(s)
 - Video series
 
 ### Supplemental Resources
+
 - Articles
 - Practice platforms
 - Community spaces

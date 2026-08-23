@@ -342,6 +342,21 @@ try {
 
     Write-VerifyLog "codex-verify start mode=$Mode repo=$repo"
 
+    $languageLintRunner = Join-Path $repo 'scripts\lint\run_language_lint.ps1'
+    $changedScopeRunner = Join-Path $repo 'scripts\lint\run_changed_scope.ps1'
+    if ($Mode -eq 'full') {
+        $trackedMarkdown = @(& git -C $repo ls-files -- '*.md')
+        & $languageLintRunner -RepoRoot $repo -ChangedFiles $trackedMarkdown 2>&1 |
+            Tee-Object -FilePath $logPath -Append
+    }
+    else {
+        & $changedScopeRunner -RepoRoot $repo -ContextProfile cloud -IncludeUntracked 2>&1 |
+            Tee-Object -FilePath $logPath -Append
+    }
+    if ($LASTEXITCODE -ne 0) {
+        throw "Language lint failed with exit code $LASTEXITCODE."
+    }
+
     Assert-FileExists '.\README.md'
     Assert-FileExists '.\AGENTS.md'
     Assert-FileExists '.\.codex-cache\task-pack.md'

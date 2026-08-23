@@ -35,6 +35,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\memory\sync_repo_kit_cat
 - `cloud`: richer but bounded profile for hosted/cloud runtimes.
 
 Resolution order for `auto`:
+
 1. `-ContextProfile 32k|64k|cloud` parameter override.
 2. `CLINE_CONTEXT_PROFILE=32k|64k|cloud`.
 3. `CLINE_MODEL_RUNTIME=local|ondevice|on-device` -> `32k`.
@@ -47,6 +48,7 @@ Resolution order for `auto`:
 Pre-tool guard script to block context anti-patterns before heavy tool use.
 
 Checks include:
+
 - pointer-file size/line budgets
 - pointer-only behavior guard (`docs/CLINE_TASK_CURRENT.md`)
 - memory-bank line budgets by resolved profile (`auto|32k|64k|cloud`)
@@ -93,6 +95,7 @@ python .\scripts\lifecycle\check_memory_bank.py --repo-root . --profile 32k --re
 ```
 
 Required memory files now include:
+
 - `memory-bank/repoKitCatalog.md`
 - `memory-bank/solutionHarvest.md`
 

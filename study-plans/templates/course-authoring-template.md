@@ -35,11 +35,11 @@ Required:
 
 Required prior knowledge:
 
-- 
+-
 
 Required tools or accounts:
 
-- 
+-
 
 Diagnostic entry checks:
 

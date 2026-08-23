@@ -1,0 +1,65 @@
+{
+  "config": {
+    "default": true,
+    "MD013": false,
+    "MD009": {
+      "br_spaces": 2,
+      "list_item_empty_lines": false,
+      "strict": false
+    },
+    "MD010": {
+      "code_blocks": false,
+      "ignore_code_languages": []
+    },
+    "MD012": {
+      "maximum": 1
+    },
+    "MD022": {
+      "lines_above": 1,
+      "lines_below": 1
+    },
+    "MD024": {
+      "siblings_only": true
+    },
+    "MD026": {
+      "punctuation": ".,;:!?。，；：！？"
+    },
+    "MD033": {
+      "allowed_elements": [
+        "br",
+        "details",
+        "kbd",
+        "sub",
+        "summary",
+        "sup"
+      ]
+    },
+    "MD031": {
+      "list_items": true
+    },
+    "MD032": true,
+    "MD041": false,
+    "MD046": {
+      "style": "fenced"
+    },
+    "MD048": {
+      "style": "backtick"
+    },
+    "MD049": {
+      "style": "underscore"
+    },
+    "MD050": {
+      "style": "asterisk"
+    },
+    "MD047": true
+  },
+  "ignores": [
+    "**/.codex-cache/**",
+    "**/.git/**",
+    "**/.venv/**",
+    "**/archive/**",
+    "**/docs/wavekit/_archive/**",
+    "**/node_modules/**",
+    "**/vendor/**"
+  ]
+}
