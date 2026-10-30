@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('changed', 'full')]
+    [ValidateSet('changed', 'full', 'founder-loop')]
     [string]$Mode = 'changed',
     [switch]$KeepArtifacts
 )
@@ -341,6 +341,20 @@ try {
     $pushed = $true
 
     Write-VerifyLog "codex-verify start mode=$Mode repo=$repo"
+
+    if ($Mode -eq 'founder-loop') {
+        & .\scripts\lint\run_changed_scope.ps1 -RepoRoot $repo -ContextProfile cloud -IncludeUntracked 2>&1 |
+            Tee-Object -FilePath $logPath -Append
+        if ($LASTEXITCODE -ne 0) { throw "Changed-scope checks failed with exit code $LASTEXITCODE." }
+        $founderRoot = (Resolve-Path -LiteralPath (Join-Path $repo '..\open-education-founder-level-civic-classical')).Path
+        Invoke-PythonCheck -Label 'Founder synthetic learning loop' -Arguments @(
+            '.\scripts\export\check_founder_course_export.py', '--suite-root', $repo,
+            '--founder-root', $founderRoot, '--temp-root', $tmpRoot,
+            '--expected-path', (Join-Path $founderRoot 'fixtures\founder-course-end-to-end.current.expected.json')
+        )
+        Write-VerifyLog "codex-verify passed mode=$Mode evidence=synthetic-export-consumer-only log=$logPath"
+        exit 0
+    }
 
     $languageLintRunner = Join-Path $repo 'scripts\lint\run_language_lint.ps1'
     $changedScopeRunner = Join-Path $repo 'scripts\lint\run_changed_scope.ps1'

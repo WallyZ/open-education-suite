@@ -34,6 +34,16 @@ The teacher should behave like a top human tutor:
 
 ## Acceptance Notes
 
+- [x] Verify the existing Founder sequence through delayed evidence and export recovery. [PH2] <!-- ms:id OES_FOUNDER_LOOP_001 --> <!-- ms:meta priority=p1 owner=@suite stale-days=30 automation-level=auto human-checkpoint=none rollout-scope=repo validation-profile=cloud safe-autofix=review updated=2026-10-29 -->
+  - Deliverables: extend the existing export consumer and expose one narrow canonical verifier mode; no new lesson runtime.
+  - Files: `scripts/export/check_founder_course_export.py`, `scripts/codex-verify.ps1`, `docs/assessment-feedback.md`, this TODO, and the task pack.
+  - Verification: `pwsh -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\scripts\codex-verify.ps1 -Mode founder-loop`.
+  - QA Live automation: not required for this export-consumer rehearsal; it does not exercise or certify UI behavior.
+  - Drift guard: pin the Suite schema's existing lesson and the current Founder fixture; validate source checksums, references, negative boundaries, and recovered state.
+  - Downstream rollout: read Founder exports without modifying its working tree; retain TODO18 and formal-study gates.
+  - Acceptance: execute the synthetic delayed assessment, preserve earlier attempts, reject unsupported scoring and damaged/mismatched restores, and recover the completed temporary state.
+  - Evidence (2026-10-29): canonical `founder-loop` passed, including 114,799 exported records, the selected planning handoff, initial level 2, changed retry level 4, delayed level 4, preserved first attempt, completed-state recovery, and ten rejected negative cases. Log: `.codex-cache/logs/codex-verify_20261029_211910_afcac3b5.log`. All 54 pre-existing Founder changes remained byte-for-byte unchanged. No real learner, elapsed-retention, configured-model, UI, or formal-pilot claim.
+
 - "World class" must be measured through behavior and outcomes, not branding.
 - The system should optimize for durable learning, not just pleasant answers.
 - The best version should make the learner more capable, independent, and honest about mastery.

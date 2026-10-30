@@ -70,6 +70,52 @@ write the metadata file:
 .\scripts\assessment\export-assessment-mastery-contract.ps1 -ItemId gdev-synthesis-essay-001 -OutputPath .\.codex-cache\tmp\assessment-mastery-contract.json
 ```
 
+## Founder Learning-Loop Integration Slice
+
+The canonical narrow command is:
+
+```powershell
+pwsh -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\scripts\codex-verify.ps1 -Mode founder-loop
+```
+
+This reuses `scripts/export/check_founder_course_export.py` and the existing
+Founder-selected Grade 1 Calendar Week 10 Day 1 sequence,
+`lesson:lesson-g1-cw10-d01`, with initial/retry/delayed forms
+`assess-g1-t1-src-i1`, `assess-g1-t1-src-x1`, and `assess-g1-t1-src-d1`.
+The Suite schema pins that choice and the Founder-owned
+`fixtures/founder-course-end-to-end.current.expected.json` supplies current
+export counts. Source content remains in Founder. Its export README explicitly
+selects this sequence for deterministic integration; that is the approval
+basis for a synthetic software rehearsal, not qualified approval for a child
+or formal program pilot. The Grade 9 rhetoric pilot is an authored alternative
+but is not the current executable export-consumer contract.
+
+The slice validates source checksums and references, reads the actual lesson,
+source-rights, the checksum-bound solo parent/student planning handoff and its
+text safe-equivalent route, materials/access routes, public assessments, grader-only keys,
+rubrics and correction route, then exercises initial evidence, feedback,
+changed retry, delayed review at a simulated due date, persistence, export and
+recovery after loss of the active temporary state. The first attempt is
+retained. It rejects early/wrong/repeated delayed forms, an empty scoring key,
+withdrawn participation, unsupported fluent text, a restricted field in public/tutor data, corrupted
+exports, and cross-source/cross-lesson restoration.
+
+Task reconciliation: Founder TODO04 integration and TODO05 pilot authoring
+are already complete; TODO18 remains the program-closeout owner. Suite TODO06
+owns the existing teaching turn, TODO07 persistence/privacy, and TODO10 the
+practice/transfer primitives. `OES_FOUNDER_LOOP_001` under existing TODO10 owns
+only the missing delayed/recovery integration evidence; it does not reopen
+completed primitives or create another curriculum, runtime, or backlog.
+
+All answers and dates are synthetic. Rubric-key matching here tests contract
+plumbing, not an essay grader, actual unassisted learner performance, the live
+UI, a configured tutor model, real elapsed retention, or educational efficacy.
+The text/access routes are checked as exported contracts; this does not certify
+the full parent/student UI. Ordinary autonomous study and formal-study approval
+remain distinct. No real learner data, restricted answers, or state files are
+emitted into the tracked source corpus; temporary state is removed on exit.
+Founder is read-only, including its unrelated uncommitted work.
+
 ## Reusable Interactive Exercises
 
 Content repos may contribute interactive exercises by declaring:

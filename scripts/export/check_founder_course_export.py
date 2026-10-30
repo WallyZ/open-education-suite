@@ -8,6 +8,7 @@ import hashlib
 import json
 import re
 import tempfile
+from datetime import date
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -165,6 +166,8 @@ def validate_restricted_record(record: dict[str, Any]) -> None:
 
 
 def score_evidence(submitted: list[str], expected: list[str]) -> dict[str, Any]:
+    if not expected or any(not isinstance(item, str) or not item.strip() for item in expected):
+        raise ValueError("Scoring requires nonempty expected evidence")
     expected_normalized = {item.strip().casefold() for item in expected}
     submitted_normalized = {item.strip().casefold() for item in submitted}
     matched = len(expected_normalized.intersection(submitted_normalized))
@@ -180,6 +183,49 @@ def score_evidence(submitted: list[str], expected: list[str]) -> dict[str, Any]:
     return {"level": level, "matched": matched, "total": total}
 
 
+def read_progress_export(path: Path, source_id: str, lesson_id: str) -> dict[str, Any]:
+    snapshot = load_json(path)
+    if (
+        snapshot.get("schemaVersion") != 1
+        or snapshot.get("sourceId") != source_id
+        or snapshot.get("lessonId") != lesson_id
+        or not isinstance(snapshot.get("state"), dict)
+        or snapshot.get("stateSha256") != stable_sha256(snapshot["state"])
+    ):
+        raise ValueError("Progress export binding or integrity mismatch")
+    return snapshot["state"]
+
+
+def record_delayed_attempt(
+    state: dict[str, Any], assessment_id: str, submitted: list[str],
+    expected: list[str], reviewed_on: str,
+) -> dict[str, Any]:
+    """Exercise the exported delayed-review contract using synthetic evidence only."""
+    review = state["delayedReview"]
+    earlier_ids = {event.get("assessmentId") for event in state["attemptEvents"]
+                   if event.get("eventContractId", "").endswith(("attempt-recorded", "retest-scored"))}
+    if (
+        state.get("status") == "withdrawn"
+        or review["status"] != "scheduled"
+        or assessment_id != review["assessmentId"]
+        or assessment_id in earlier_ids
+        or date.fromisoformat(reviewed_on) < date.fromisoformat(review["dueDate"])
+    ):
+        raise ValueError("Delayed attempt is early, repeated, or bound to the wrong form")
+    result = copy.deepcopy(state)
+    score = score_evidence(submitted, expected)
+    result["attemptCount"] += 1
+    result["version"] += 1
+    result["delayedReview"].update({
+        "status": "passed" if score["level"] >= 3 else "needs-remediation",
+        "reviewedOn": reviewed_on,
+        "scoreLevel": score["level"],
+        "submittedEvidence": list(submitted),
+        "supportLevel": "independent-synthetic",
+    })
+    return result
+
+
 def run_end_to_end(
     founder_root: Path,
     manifest: dict[str, Any],
@@ -193,6 +239,26 @@ def run_end_to_end(
     lesson_data = lesson["data"]
     if lesson_data["gradeCode"] != "g1" or lesson_data["calendarWeek"] != 10 or lesson_data["day"] != 1:
         raise ValueError("Selected founder lesson schedule mismatch")
+
+    solo_path = founder_root / "exports" / "solo-learner-v1" / "solo-learner-sessions.jsonl"
+    solo = next((record for record in iter_jsonl(solo_path)
+                 if record.get("sessionId") == "solo-session:lesson-g1-cw10-d01"), None)
+    if solo is None:
+        raise ValueError("Selected lesson has no parent/student planning handoff")
+    unhashed_solo = {key: value for key, value in solo.items() if key != "sessionSha256"}
+    solo_digest = hashlib.sha256(json.dumps(
+        unhashed_solo, ensure_ascii=False, separators=(",", ":")
+    ).encode("utf-8")).hexdigest()
+    if (solo_digest != solo.get("sessionSha256")
+            or solo.get("sourceId") != manifest["sourceId"]
+            or solo.get("lessonId") != lesson["id"].removeprefix("lesson:")
+            or solo["learnerView"]["learnerObjective"] != lesson_data["objective"]
+            or not solo["learnerView"]["orderedSoloSteps"]
+            or not solo["learnerView"]["accessRoutes"]["writingSupport"]
+            or solo["soloHandoff"]["canCompleteWithoutFacilitator"] is not True
+            or not solo["soloHandoff"]["safeEquivalentRoute"]
+            or solo["routing"]["restrictedAnswerRoute"]["learnerPayloadIncluded"] is not False):
+        raise ValueError("Parent/student handoff checksum, route, or privacy mismatch")
 
     reading_id = lesson_data["readingId"]
     if not reading_id:
@@ -263,11 +329,17 @@ def run_end_to_end(
     restricted_retest = find_record(
         restricted_path, retest_assessment["data"]["restrictedAnswerKeyId"]
     )
+    restricted_delayed = find_record(
+        restricted_path, delayed_assessment["data"]["restrictedAnswerKeyId"]
+    )
     if (
         restricted_initial["targetId"] != initial_assessment["id"]
         or restricted_retest["targetId"] != retest_assessment["id"]
+        or restricted_delayed["targetId"] != delayed_assessment["id"]
     ):
         raise ValueError("Restricted assessment key target mismatch")
+    if len({item["id"] for item in (initial_assessment, retest_assessment, delayed_assessment)}) != 3:
+        raise ValueError("Initial, changed retry, and delayed forms must be distinct")
 
     initial_expected = list(restricted_initial["data"]["expectedEvidence"])
     retest_expected = list(restricted_retest["data"]["expectedEvidence"])
@@ -323,6 +395,7 @@ def run_end_to_end(
                     "eventContractId": event_ids["attempt-recorded"],
                     "assessmentId": initial_assessment["id"],
                     "submittedEvidenceCount": len(initial_attempt),
+                    "submittedEvidence": list(initial_attempt),
                 },
                 {
                     "eventContractId": event_ids["rubric-scored"],
@@ -388,10 +461,93 @@ def run_end_to_end(
         ):
             raise ValueError("Persisted learner state failed export/import integrity")
 
+        restored = read_progress_export(export_path, manifest["sourceId"], lesson["id"])
+        delayed_expected = list(restricted_delayed["data"]["expectedEvidence"])
+        first_attempt = copy.deepcopy(restored["attemptEvents"][0])
+        completed = record_delayed_attempt(
+            restored, delayed_assessment["id"], delayed_expected, delayed_expected, "2026-08-06"
+        )
+        if (completed["delayedReview"]["status"] != "passed"
+                or completed["attemptEvents"][0] != first_attempt
+                or restored != state):
+            raise ValueError("Delayed review changed prior evidence or failed its rubric")
+
+        # Negative cases use ordinary exported data boundaries, never live learner data.
+        negatives: list[str] = []
+        for name, operation in (
+            ("early-delayed-attempt", lambda: record_delayed_attempt(
+                restored, delayed_assessment["id"], delayed_expected, delayed_expected, "2026-08-05")),
+            ("wrong-delayed-form", lambda: record_delayed_attempt(
+                restored, retest_assessment["id"], delayed_expected, delayed_expected, "2026-08-06")),
+            ("duplicate-delayed-attempt", lambda: record_delayed_attempt(
+                completed, delayed_assessment["id"], delayed_expected, delayed_expected, "2026-08-07")),
+            ("empty-scoring-key", lambda: score_evidence([], [])),
+            ("withdrawn-participation", lambda: record_delayed_attempt(
+                {**restored, "status": "withdrawn"}, delayed_assessment["id"],
+                delayed_expected, delayed_expected, "2026-08-06")),
+        ):
+            try:
+                operation()
+            except ValueError:
+                negatives.append(name)
+            else:
+                raise ValueError(f"Negative case was accepted: {name}")
+        unsupported = record_delayed_attempt(
+            restored, delayed_assessment["id"], ["I understand everything fluently."],
+            delayed_expected, "2026-08-06",
+        )
+        if unsupported["delayedReview"]["status"] != "needs-remediation":
+            raise ValueError("Fluent unsupported text promoted delayed mastery")
+        negatives.append("unsupported-fluent-answer")
+        leaked = copy.deepcopy(lesson)
+        leaked["data"]["expectedEvidence"] = ["synthetic protected payload"]
+        try:
+            validate_public_record(leaked, "lesson", forbidden_render_keys,
+                                   set(contract["requiredAudienceOperations"]))
+        except ValueError:
+            negatives.append("restricted-public-payload")
+        else:
+            raise ValueError("Public/tutor boundary accepted restricted payload")
+
+        completed_snapshot = {**export_snapshot, "state": completed,
+                              "stateSha256": stable_sha256(completed)}
+        export_path.write_text(json.dumps(completed_snapshot), encoding="utf-8")
+        for name, damaged in (
+            ("corrupted-export", {**completed_snapshot, "stateSha256": "invalid"}),
+            ("cross-lesson-export", {**completed_snapshot, "lessonId": "lesson:other"}),
+            ("cross-source-export", {**completed_snapshot, "sourceId": "other"}),
+        ):
+            damaged_path = temp_path / f"{name}.json"
+            damaged_path.write_text(json.dumps(damaged), encoding="utf-8")
+            try:
+                read_progress_export(damaged_path, manifest["sourceId"], lesson["id"])
+            except ValueError:
+                negatives.append(name)
+            else:
+                raise ValueError(f"Damaged export was accepted: {name}")
+        # Simulate loss of the active file and recover from the independent export.
+        persisted_path.unlink()
+        recovered = read_progress_export(export_path, manifest["sourceId"], lesson["id"])
+        persisted_path.write_text(json.dumps(recovered), encoding="utf-8")
+        if load_json(persisted_path) != completed:
+            raise ValueError("Recovery lost completed delayed evidence")
+
     return {
         "schemaVersion": 1,
         "status": "passed",
         "sourceId": manifest["sourceId"],
+        "continuation": {
+            "evidenceKind": "synthetic-export-consumer-rehearsal",
+            "planningSessionId": solo["sessionId"],
+            "textSafeEquivalentAvailable": True,
+            "delayedAssessmentExecuted": delayed_assessment["id"],
+            "reviewedOn": completed["delayedReview"]["reviewedOn"],
+            "delayedScoreLevel": completed["delayedReview"]["scoreLevel"],
+            "firstAttemptPreserved": completed["attemptEvents"][0] == first_attempt,
+            "completedStateRecovered": recovered == completed,
+            "negativeCasesRejected": negatives,
+            "containsRealLearnerData": False,
+        },
         "exportVersion": manifest["exportVersion"],
         "recordCounts": {
             "public": manifest["publicRecordCount"],
@@ -444,6 +600,7 @@ def main() -> int:
     parser.add_argument("--founder-root", required=True)
     parser.add_argument("--temp-root", default="")
     parser.add_argument("--evidence-output", default="")
+    parser.add_argument("--expected-path", default="")
     args = parser.parse_args()
 
     suite_root = Path(args.suite_root).resolve()
@@ -559,10 +716,15 @@ def main() -> int:
         restricted_path,
         temp_root,
     )
-    expected_evidence = load_json(
-        suite_root / "fixtures" / "founder-course-end-to-end.expected.json"
-    )
+    expected_path = (Path(args.expected_path) if args.expected_path else
+                     suite_root / "fixtures" / "founder-course-end-to-end.expected.json")
+    expected_evidence = load_json(expected_path)
     assert_subset(evidence, expected_evidence)
+    evidence["verificationBinding"] = {
+        "consumerSha256": sha256_file(Path(__file__)),
+        "founderManifestSha256": sha256_file(export_root / "suite-export-manifest.json"),
+        "expectedFixtureSha256": sha256_file(expected_path),
+    }
     evidence_text = json.dumps(evidence, indent=2, ensure_ascii=False) + "\n"
     if args.evidence_output:
         output_path = Path(args.evidence_output).resolve()

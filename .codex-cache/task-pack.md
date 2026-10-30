@@ -1,28 +1,25 @@
-# Codex Task Pack
+# Founder Learning-Loop Integration
 
-## Objective
+Objective: reconcile Founder TODO04/05 (complete) and TODO18 (controlling)
+with Suite TODO06/07/10 (existing primitives), then verify the missing
+delayed/recovery continuation under OES_FOUNDER_LOOP_001.
 
-Add the smallest usable local-first learner profile system so multiple students can use Open Education Suite on the same computer with separate preferences, learning style, accessibility needs, goals, progress, assessment history, and recommendation context.
+Smallest file set:
 
-## Smallest Relevant File Set
-
-- ui/learner/*
-- scripts/*
-- tests/*
-- docs/TODO.md
-- docs/WORKFLOW.md
+- scripts/export/check_founder_course_export.py
 - scripts/codex-verify.ps1
+- docs/assessment-feedback.md
+- docs/todo/TODO_10_world_class_teaching_quality.md
+- this task pack
 
-## Intended Verification Command
+Verification:
 
 ```powershell
-pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\codex-verify.ps1
+pwsh -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\scripts\codex-verify.ps1 -Mode founder-loop
 ```
 
-## Scope Guardrails
-
-- Keep the suite content-agnostic; do not copy course content into the suite.
-- Keep learner data local-first and avoid authentication, cloud sync, or external identity providers.
-- Support multiple learners on one computer through explicit local learner selection and isolated profile/progress records.
-- Do not add learner PII beyond user-entered display name/preferences.
-- Add concrete TODOs only for discovered gaps that remain after the usable slice is implemented.
+Reuse the schema-selected Grade 1 Calendar Week 10 Day 1 sequence and
+Founder-owned current expectations. Keep Founder read-only and preserve its
+uncommitted files. No new curriculum, runtime, participant enrollment, model
+service, publication, or claim of learner outcomes. Synthetic state is temporary;
+only curated methods and aggregate software results may be tracked.
