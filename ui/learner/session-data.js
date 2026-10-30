@@ -4819,7 +4819,7 @@ window.openEducationContentCatalog =
       "sourceId": "founder-level-civic-classical",
       "title": "Open Education Founder-Level Civic Classical",
       "sourceRepo": "open-education-founder-level-civic-classical",
-      "objectCount": 1104,
+      "objectCount": 1105,
       "courses": [
         {
           "id": "founder-level-civic-classical:study-plans/courses/FCC-CHAR-HONORABLE-ADULTHOOD-K12.md",
