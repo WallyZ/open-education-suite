@@ -1,0 +1,14 @@
+{
+  "workflow_id": "founder-selected-sequence-ui",
+  "repo_root": ".",
+  "base_url": "http://127.0.0.1:8787",
+  "health_path": "/ui/learner/index.html",
+  "isolation": "host",
+  "host_execution_opt_out_reason": "Local-only learner bridge, isolated browser context, synthetic responses and rehearsal clock; no external services or real learner records.",
+  "startup_command": ["{python}", "scripts/teaching/learner_ui_bridge_server.py", "--repo-root", ".", "--host", "127.0.0.1", "--port", "8787"],
+  "browser_specs": ["feature_spec.founder_ui.json"],
+  "http_captures": [],
+  "timeout_seconds": 120,
+  "poll_interval_seconds": 0.25,
+  "teardown_policy": "always"
+}

@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('changed', 'full', 'founder-loop')]
+    [ValidateSet('changed', 'full', 'founder-loop', 'founder-ui')]
     [string]$Mode = 'changed',
     [switch]$KeepArtifacts
 )
@@ -342,7 +342,7 @@ try {
 
     Write-VerifyLog "codex-verify start mode=$Mode repo=$repo"
 
-    if ($Mode -eq 'founder-loop') {
+    if ($Mode -in @('founder-loop', 'founder-ui')) {
         & .\scripts\lint\run_changed_scope.ps1 -RepoRoot $repo -ContextProfile cloud -IncludeUntracked 2>&1 |
             Tee-Object -FilePath $logPath -Append
         if ($LASTEXITCODE -ne 0) { throw "Changed-scope checks failed with exit code $LASTEXITCODE." }
@@ -352,7 +352,32 @@ try {
             '--founder-root', $founderRoot, '--temp-root', $tmpRoot,
             '--expected-path', (Join-Path $founderRoot 'fixtures\founder-course-end-to-end.current.expected.json')
         )
-        Write-VerifyLog "codex-verify passed mode=$Mode evidence=synthetic-export-consumer-only log=$logPath"
+        if ($Mode -eq 'founder-ui') {
+            $qaPython = Join-Path $repo '..\qa-live-test-system\.venv\Scripts\python.exe'
+            Assert-FileExists $qaPython
+            $workflowPath = Join-Path $repo 'qa-live\workflow.founder_ui.json'
+            $qaArtifacts = Join-Path $tmpRoot 'founder-ui-qa'
+            $qaSummary = Join-Path $qaArtifacts 'summary.json'
+            & $qaPython -m qa_live_test_system.cli browser-doctor --launch-check --out (Join-Path $tmpRoot 'browser-doctor.json') 2>&1 | Tee-Object -FilePath $logPath -Append
+            if ($LASTEXITCODE -ne 0) { throw 'QA Live browser capability check failed.' }
+            & $qaPython -m qa_live_test_system.cli capability-manifest --validate-workflow $workflowPath --out (Join-Path $tmpRoot 'capability-check.json') 2>&1 | Tee-Object -FilePath $logPath -Append
+            if ($LASTEXITCODE -ne 0) { throw 'QA Live workflow capability check failed.' }
+            try {
+                & $qaPython -m qa_live_test_system.cli workflow-run $workflowPath --repo-root $repo --artifacts-root $qaArtifacts --out $qaSummary --allow-host-execution 2>&1 | Tee-Object -FilePath $logPath -Append
+                if ($LASTEXITCODE -ne 0) { throw 'Founder UI QA Live workflow failed.' }
+                $summary = Get-Content -LiteralPath $qaSummary -Raw | ConvertFrom-Json
+                if ($summary.status -ne 'pass') { throw "Founder UI QA Live status: $($summary.status)" }
+            }
+            finally {
+                if (Test-Path -LiteralPath $qaArtifacts) {
+                    $retainedEvidence = Join-Path $logRoot "founder-ui-qa_$runId"
+                    Copy-Item -LiteralPath $qaArtifacts -Destination $retainedEvidence -Recurse
+                    Write-VerifyLog "QA Live retained evidence: $retainedEvidence"
+                }
+            }
+        }
+        $evidenceScope = if ($Mode -eq 'founder-ui') { 'live-browser-self-check-with-synthetic-evidence' } else { 'synthetic-export-consumer-only' }
+        Write-VerifyLog "codex-verify passed mode=$Mode evidence=$evidenceScope log=$logPath"
         exit 0
     }
 

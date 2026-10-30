@@ -34,6 +34,16 @@ The CLI proves the teaching engine works, but learners need a real workspace: ne
 
 ## Acceptance Notes
 
+- [x] Integrate the selected Founder sequence in the learner UI and verify its full self-check loop with QA Live. [PH2] <!-- ms:id OES_FOUNDER_LOOP_UI_001 --> <!-- ms:meta priority=p1 owner=@suite depends-on=OES_FOUNDER_LOOP_001 stale-days=30 automation-level=auto human-checkpoint=none rollout-scope=repo validation-profile=cloud safe-autofix=review updated=2026-10-29 -->
+  - Deliverables: public source projection, accessible plan/study/feedback/retry/delayed controls, existing learner-state export/import, and QA Live evidence.
+  - Files: learner bridge, `ui/learner/index.html`, `ui/learner/app.js`, `ui/learner/founder-loop.js`, the two Founder QA Live contracts, canonical verifier, this TODO, and task pack.
+  - Verification: `pwsh -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\scripts\codex-verify.ps1 -Mode founder-ui`.
+  - QA Live automation: `qa-live/workflow.founder_ui.json` and `qa-live/feature_spec.founder_ui.json`; browser capability checks, actual local browser actions, screenshot/trace/console/network evidence, and mandatory teardown. Retain synthetic evidence under `.codex-cache/logs/`.
+  - Drift guard: reject early/duplicate/withdrawn attempts, malformed or wrong-bound imports, protected HTTP paths, and cross-profile evidence leaks; preserve existing state controls and source ownership.
+  - Downstream rollout: consume the same schema-selected Grade 1 Week 10 Day 1 export read-only; do not duplicate Founder lessons or completed Suite tasks.
+  - Acceptance: live plan, study, first attempt, correction, changed retry, due delayed attempt, save/reload, export/recovery, and profile isolation pass. Scores remain self-reported, independent mastery unearned. Rehearsal clock is explicit and synthetic state cannot enter ordinary practice.
+  - Evidence (2026-10-29): canonical `founder-ui` passed source-loop regression, browser capability checks, and 61 live browser/API actions; no page/console/network failures; teardown passed. Screenshots and trace retained under `.codex-cache/logs/founder-ui-qa_20261029_221119_b53ae5bb/`; log `.codex-cache/logs/codex-verify_20261029_221119_b53ae5bb.log`. Visual review corrected metadata-only reading into a checksum-verified actual passage, and verified preserved responses. No real learner, independent assessment, configured-model, elapsed-retention, or formal-pilot claim.
+
 - The learner should always know what to do next, why the system chose it, and what source it is using.
 - The UI must remain a view over learner state and content packages, not a second source of truth.
 - The first static slice should be useful as a design target and smoke-test surface even before a server is introduced.

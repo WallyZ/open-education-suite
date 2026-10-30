@@ -191,6 +191,39 @@
           </form>
         </section>
 
+        <section class="lesson-surface view-panel is-visible" data-panel="lesson" aria-labelledby="founder-title" style="grid-column:1/-1">
+          <h2 id="founder-title">Founder sequence</h2>
+          <p>Ordinary local self-check practice. Scores are self-reported; independent mastery remains unearned.</p>
+          <p id="founderMode"></p>
+          <button type="button" id="founderOpen">Open Grade 1 Week 10 Day 1</button>
+          <div id="founderContent" hidden>
+            <h3 id="founderLessonTitle"></h3>
+            <p id="founderObjective"></p>
+            <p id="founderSource"></p>
+            <p id="founderReading" style="white-space:pre-wrap;overflow-wrap:anywhere"></p>
+            <p id="founderRubric"></p>
+            <label for="founderRoute">Plan an accessible route</label>
+            <select id="founderRoute"><option value="text">Text and paper safe equivalent</option><option value="oral">Oral or adult-scribed safe equivalent</option></select>
+            <button type="button" id="founderPlan">Save plan</button>
+            <button type="button" id="founderStudy">Record study</button>
+            <p id="founderPrompt"></p>
+            <label for="founderResponse">Founder response (keep private information out)</label>
+            <textarea id="founderResponse" rows="4"></textarea>
+            <label for="founderScore">Self-check against public criteria</label>
+            <select id="founderScore"><option value="">Choose a level</option><option value="1">1 - Not yet</option><option value="2">2 - Emerging</option><option value="3">3 - Independent self-report</option><option value="4">4 - Transfer self-report</option></select>
+            <button type="button" id="founderAttempt">Save Founder attempt</button>
+            <p id="founderFeedback"></p>
+            <button type="button" id="founderCorrect">Apply correction and open changed retry</button>
+            <label id="founderClockLabel" for="founderClock" hidden>Synthetic rehearsal date (no retention claim)</label>
+            <input id="founderClock" type="date" value="2026-08-01" hidden>
+            <button type="button" id="founderWithdraw">Withdraw from this sequence</button>
+            <button type="button" id="founderClear">Clear Founder practice locally</button>
+            <p id="founderStatus" role="status"></p>
+            <h3>Preserved attempts</h3>
+            <ol id="founderHistory"></ol>
+          </div>
+        </section>
+
         <section class="lecture-surface view-panel" data-panel="lecture" aria-labelledby="lecture-title">
           <div class="panel-heading">
             <div>
@@ -378,6 +411,7 @@
 
   <script src="locales/en.js"></script>
   <script src="session-data.js"></script>
+  <script src="founder-loop.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

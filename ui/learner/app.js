@@ -2056,6 +2056,7 @@ function buildLearnerStateSnapshot() {
   return {
     schemaVersion: 1,
     learnerId: currentSessionOutput.learnerId || session.learnerId,
+    ...(saved?.founderLoop ? { founderLoop: saved.founderLoop } : {}),
     profile: {
       learnerId: profile.learnerId || currentSessionOutput.learnerId || session.learnerId,
       goals: profile.goals || [session.objectiveId],
@@ -2115,6 +2116,9 @@ function parseLearnerStateText(text) {
     throw new Error("Learner state import must use schemaVersion 1 and include learnerId/profile.");
   }
   const learnerId = sanitizeLearnerId(candidate.learnerId);
+  if (candidate.founderLoop) {
+    window.openEducationFounderLoop.validate(candidate.founderLoop, learnerId);
+  }
   return {
     ...candidate,
     learnerId,
@@ -2155,6 +2159,7 @@ function importLearnerState() {
     upsertLearnerProfile(importedProfile, true);
     applyLearnerProfile(importedProfile);
     localStorage.setItem(scopedStorageKey(LEARNER_STATE_STORAGE_KEY, snapshot.learnerId), JSON.stringify(snapshot, null, 2));
+    window.openEducationFounderLoop?.render();
     renderLearnerProfileControls();
     elements.stateSyncLog.textContent = feedbackText("stateImported", "Learner state imported locally.");
     try {

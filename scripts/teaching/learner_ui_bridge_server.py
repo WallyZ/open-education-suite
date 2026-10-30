@@ -1,7 +1,9 @@
 import argparse
+import hashlib
 import json
 import mimetypes
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -173,11 +175,71 @@ def run_live_teacher(repo_root: Path) -> dict:
         shutil.rmtree(run_root, ignore_errors=True)
 
 
+def founder_lesson_payload(repo_root: Path) -> dict:
+    """Project only public records for the already selected integration sequence."""
+    root = repo_root.parent / "open-education-founder-level-civic-classical"
+    contract = json.loads((repo_root / "schemas/founder-course-export.schema.json").read_text(
+        encoding="utf-8-sig"))["x-exportContract"]["selectedFlow"]
+
+    def public(kind: str, record_id: str) -> dict:
+        with (root / f"exports/suite-v1/public/{kind}.jsonl").open(encoding="utf-8-sig") as handle:
+            for line in handle:
+                record = json.loads(line)
+                if record["id"] == record_id:
+                    if record["visibility"] != "learner-safe-public":
+                        raise ValueError("Founder record is not public")
+                    return record
+        raise ValueError("Selected Founder record is missing")
+
+    lesson = public("lesson", contract["lessonId"])
+    reading = public("reading", lesson["data"]["readingId"])
+    primary_id = reading["data"]["sourceRightsIds"][0]
+    primary = public("source-rights", primary_id)["data"]
+    source_path = (root / primary["localPath"]).resolve()
+    source_path.relative_to(root.resolve())
+    source_bytes = source_path.read_bytes()
+    normalized_bytes = source_bytes.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    if primary["sha256"] not in {hashlib.sha256(source_bytes).hexdigest(), hashlib.sha256(normalized_bytes).hexdigest()}:
+        raise ValueError("Assigned passage checksum mismatch")
+    passage_id = reading["data"]["sourceRoute"].split()[0]
+    passage = re.search(rf"^### {re.escape(passage_id)}:.*?\n(.*?)(?=^#{{1,3}} |\Z)",
+                        normalized_bytes.decode("utf-8-sig"), re.MULTILINE | re.DOTALL)
+    if not passage or not passage.group(1).strip():
+        raise ValueError("Assigned passage is unavailable")
+    rubric = public("rubric", contract["rubricId"])
+    correction = public("correction-reteach", lesson["data"]["correctionReteachId"])
+    forms = []
+    for stage, key in (("initial", "initialAssessmentId"), ("retry", "retestAssessmentId"),
+                       ("delayed", "delayedAssessmentId")):
+        form = public("assessment", contract[key])
+        if lesson["id"] not in form["references"]:
+            raise ValueError("Founder form is bound to a different lesson")
+        forms.append({"stage": stage, "id": form["id"], "prompt": form["data"]["prompt"]})
+    payload = {
+        "schemaVersion": 1, "sourceId": "founder-level-civic-classical",
+        "lessonId": lesson["id"], "title": lesson["data"]["title"],
+        "objective": lesson["data"]["objective"],
+        "reading": {"title": reading["data"]["title"], "sourceRoute": reading["data"]["sourceRoute"],
+                    "text": passage.group(1).strip(), "license": primary["rightsBasis"]},
+        "sourceRights": [ref for ref in reading["references"] if ref.startswith("source-rights:")],
+        "forms": forms, "rubric": rubric["data"]["masteryRule"],
+        "feedback": rubric["data"]["revisionRule"], "correction": correction["data"]["steps"],
+    }
+    payload["contentRevision"] = hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
+    return payload
+
+
 class LearnerBridgeHandler(BaseHTTPRequestHandler):
     server_version = "OpenEducationLearnerBridge/1.0"
 
     def do_GET(self) -> None:
         parsed = urlparse(self.path)
+        if parsed.path == "/api/founder/lesson":
+            try:
+                self.write_json(founder_lesson_payload(self.server.repo_root))
+            except (ValueError, KeyError, OSError):
+                self.write_json({"error": "founder-content-unavailable"}, HTTPStatus.SERVICE_UNAVAILABLE)
+            return
         if parsed.path == "/api/teacher/live/status":
             self.write_json(
                 {
@@ -244,7 +306,12 @@ class LearnerBridgeHandler(BaseHTTPRequestHandler):
         relative = unquote(request_path).lstrip("/")
         target = (self.server.repo_root / relative).resolve()
         repo_root = self.server.repo_root.resolve()
-        if not str(target).startswith(str(repo_root)) or not target.is_file():
+        try:
+            safe_relative = target.relative_to(repo_root)
+        except ValueError:
+            self.send_error(HTTPStatus.NOT_FOUND)
+            return
+        if not safe_relative.parts or safe_relative.parts[0] != "ui" or not target.is_file():
             self.send_error(HTTPStatus.NOT_FOUND)
             return
 
@@ -287,8 +354,14 @@ class LearnerBridgeHandler(BaseHTTPRequestHandler):
         ).resolve()
         target = (content_root / relative).resolve()
         try:
-            target.relative_to(content_root)
+            safe_relative = target.relative_to(content_root)
         except ValueError:
+            self.send_error(HTTPStatus.NOT_FOUND)
+            return
+        folded_parts = tuple(part.casefold() for part in safe_relative.parts)
+        if (any(part.startswith(".") for part in folded_parts)
+                or "restricted" in folded_parts
+                or (folded_parts and folded_parts[0] == "assessments")):
             self.send_error(HTTPStatus.NOT_FOUND)
             return
         if not target.is_file():
