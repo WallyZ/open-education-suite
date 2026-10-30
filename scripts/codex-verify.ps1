@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('changed', 'full', 'founder-loop', 'founder-ui')]
+    [ValidateSet('changed', 'full', 'founder-loop', 'founder-ui', 'founder-assessment')]
     [string]$Mode = 'changed',
     [switch]$KeepArtifacts
 )
@@ -342,7 +342,7 @@ try {
 
     Write-VerifyLog "codex-verify start mode=$Mode repo=$repo"
 
-    if ($Mode -in @('founder-loop', 'founder-ui')) {
+    if ($Mode -in @('founder-loop', 'founder-ui', 'founder-assessment')) {
         & .\scripts\lint\run_changed_scope.ps1 -RepoRoot $repo -ContextProfile cloud -IncludeUntracked 2>&1 |
             Tee-Object -FilePath $logPath -Append
         if ($LASTEXITCODE -ne 0) { throw "Changed-scope checks failed with exit code $LASTEXITCODE." }
@@ -352,15 +352,23 @@ try {
             '--founder-root', $founderRoot, '--temp-root', $tmpRoot,
             '--expected-path', (Join-Path $founderRoot 'fixtures\founder-course-end-to-end.current.expected.json')
         )
-        if ($Mode -eq 'founder-ui') {
+        if ($Mode -eq 'founder-assessment') {
+            Invoke-PythonCheck -Label 'Founder independent assessment' -Arguments @(
+                '.\scripts\testing\check_founder_independent.py', '--suite-root', $repo, '--temp-root', $tmpRoot
+            )
+        }
+        if ($Mode -in @('founder-ui', 'founder-assessment')) {
             $qaPython = Join-Path $repo '..\qa-live-test-system\.venv\Scripts\python.exe'
             Assert-FileExists $qaPython
-            $workflowPath = Join-Path $repo 'qa-live\workflow.founder_ui.json'
-            $qaArtifacts = Join-Path $tmpRoot 'founder-ui-qa'
-            $qaSummary = Join-Path $qaArtifacts 'summary.json'
+            $workflows = @((Join-Path $repo 'qa-live\workflow.founder_ui.json'))
+            if ($Mode -eq 'founder-assessment') { $workflows += (Join-Path $tmpRoot 'assessment-workflow.json') }
             & $qaPython -m qa_live_test_system.cli browser-doctor --launch-check --out (Join-Path $tmpRoot 'browser-doctor.json') 2>&1 | Tee-Object -FilePath $logPath -Append
             if ($LASTEXITCODE -ne 0) { throw 'QA Live browser capability check failed.' }
-            & $qaPython -m qa_live_test_system.cli capability-manifest --validate-workflow $workflowPath --out (Join-Path $tmpRoot 'capability-check.json') 2>&1 | Tee-Object -FilePath $logPath -Append
+            $qaIndex = 0
+            foreach ($workflowPath in $workflows) {
+            $qaArtifacts = Join-Path $tmpRoot "founder-ui-qa-$qaIndex"
+            $qaSummary = Join-Path $qaArtifacts 'summary.json'
+            & $qaPython -m qa_live_test_system.cli capability-manifest --validate-workflow $workflowPath --out (Join-Path $tmpRoot "capability-check-$qaIndex.json") 2>&1 | Tee-Object -FilePath $logPath -Append
             if ($LASTEXITCODE -ne 0) { throw 'QA Live workflow capability check failed.' }
             try {
                 & $qaPython -m qa_live_test_system.cli workflow-run $workflowPath --repo-root $repo --artifacts-root $qaArtifacts --out $qaSummary --allow-host-execution 2>&1 | Tee-Object -FilePath $logPath -Append
@@ -370,13 +378,15 @@ try {
             }
             finally {
                 if (Test-Path -LiteralPath $qaArtifacts) {
-                    $retainedEvidence = Join-Path $logRoot "founder-ui-qa_$runId"
+                    $retainedEvidence = Join-Path $logRoot "founder-ui-qa_${runId}_$qaIndex"
                     Copy-Item -LiteralPath $qaArtifacts -Destination $retainedEvidence -Recurse
                     Write-VerifyLog "QA Live retained evidence: $retainedEvidence"
                 }
             }
+            $qaIndex += 1
+            }
         }
-        $evidenceScope = if ($Mode -eq 'founder-ui') { 'live-browser-self-check-with-synthetic-evidence' } else { 'synthetic-export-consumer-only' }
+        $evidenceScope = if ($Mode -eq 'founder-assessment') { 'live-browser-server-scored-structured-evidence' } elseif ($Mode -eq 'founder-ui') { 'live-browser-self-check-with-synthetic-evidence' } else { 'synthetic-export-consumer-only' }
         Write-VerifyLog "codex-verify passed mode=$Mode evidence=$evidenceScope log=$logPath"
         exit 0
     }

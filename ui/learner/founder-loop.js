@@ -5,6 +5,10 @@
   const synthetic = new URLSearchParams(location.search).get("founderRehearsal") === "1";
   let content;
   let renderedOwner;
+  let challenge;
+  let closedSources = false;
+  let lastSubmission;
+  let assessmentControls = [];
   const el = (id) => document.getElementById(id);
   const owner = () => el("learnerProfileSelect").value;
   const key = () => `openEducationLearnerState:${owner()}`;
@@ -57,6 +61,11 @@
       el("founderResponse").value = "";
       el("founderScore").value = "";
       renderedOwner = owner();
+      challenge = null;
+      lastSubmission = null;
+      closedSources = false;
+      el("founderGradeFields").replaceChildren();
+      el("founderGradeStatus").textContent = stored()?.founderAssessment ? "Saved assessment requires server verification." : "Server-scored evidence: none.";
     }
     el("founderHistory").replaceChildren();
     el("founderPrompt").textContent = "";
@@ -83,7 +92,77 @@
       save(record);
     } catch (error) { el("founderStatus").textContent = `Founder action rejected: ${error.message}`; }
   }
-  window.openEducationFounderLoop = { validate, render };
+  const gradedObjective = "founder-level-civic-classical:objective/lesson-g1-cw10-d01";
+  async function assessmentRequest(operation, body) {
+    const response = await fetch(`/api/founder/assessment/${operation}`, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body)
+    });
+    const result = await response.json();
+    if (!response.ok || result.accepted === false) throw Error(result.error || "Assessment unavailable");
+    return result;
+  }
+  function mergeReceipt(snapshot, receipt) {
+    const body = receipt.body;
+    if (body.learnerId !== snapshot.learnerId || body.lessonId !== lessonId || body.objectiveId !== gradedObjective || body.synthetic !== synthetic) throw Error("Assessment receipt binding rejected");
+    const merged = structuredClone(snapshot);
+    for (const [field, target] of [["mastery", "objectiveId"], ["reviewQueue", "objectiveId"], ["learningEvents", "objectId"], ["auditLog", "objectiveId"], ["misconceptions", "objectiveId"]]) {
+      merged[field] = [...(merged[field] || []).filter((item) => item[target] !== gradedObjective), ...body.state[field]];
+    }
+    merged.founderAssessment = receipt;
+    return merged;
+  }
+  function unverifiedSnapshot(snapshot) {
+    const safe = structuredClone(snapshot);
+    for (const [field, target] of [["mastery", "objectiveId"], ["reviewQueue", "objectiveId"], ["learningEvents", "objectId"], ["auditLog", "objectiveId"], ["misconceptions", "objectiveId"]]) {
+      safe[field] = (safe[field] || []).filter((item) => item[target] !== gradedObjective);
+    }
+    return safe;
+  }
+  async function verifySnapshot(snapshot) {
+    if (!snapshot.founderAssessment) {
+      for (const [field, target] of [["mastery", "objectiveId"], ["reviewQueue", "objectiveId"], ["learningEvents", "objectId"], ["auditLog", "objectiveId"], ["misconceptions", "objectiveId"]]) {
+        if ((snapshot[field] || []).some((item) => item[target] === gradedObjective)) throw Error("Scored evidence requires a server receipt");
+      }
+      return snapshot;
+    }
+    const verified = await assessmentRequest("verify", { receipt: snapshot.founderAssessment, learnerId: snapshot.learnerId });
+    return mergeReceipt(snapshot, verified);
+  }
+  function showReceipt(receipt) {
+    const result = receipt.body.results.at(-1);
+    const mastery = receipt.body.state.mastery[0];
+    el("founderGradeStatus").textContent = `${receipt.body.withdrawn ? "Scored assessment withdrawn. " : ""}Server score: ${result.status} (${result.score}). Objective confidence: ${mastery.confidence}. Audit entries: ${receipt.body.state.auditLog.length}. ${receipt.body.synthetic ? "Synthetic rehearsal; no learner outcomes." : "Bounded structured evidence; not whole-course mastery."}`;
+  }
+  async function acceptReceipt(receipt, learner) {
+    if (owner() !== learner) throw Error("Active learner changed during assessment");
+    const snapshot = mergeReceipt(stored() || buildLearnerStateSnapshot(), receipt);
+    localStorage.setItem(key(), JSON.stringify(snapshot));
+    applyLearnerStateSnapshot(snapshot, { assessmentVerified: true });
+    showReceipt(receipt);
+  }
+  async function verifyStored() {
+    const learner = owner();
+    const snapshot = stored();
+    if (snapshot?.founderAssessment) {
+      const verified = await verifySnapshot(snapshot);
+      await acceptReceipt(verified.founderAssessment, learner);
+    }
+  }
+  function gradeAction(operation) {
+    return async () => {
+      const controls = [el("founderGradeBegin"), el("founderGradeSubmit"), el("learnerProfileSelect"), el("createProfileButton")];
+      const disabled = controls.map((control) => control.disabled);
+      controls.forEach((control) => { control.disabled = true; });
+      try { await operation(); }
+      catch (error) { el("founderGradeStatus").textContent = `Assessment action rejected: ${error.message}`; }
+      finally { controls.forEach((control, index) => { control.disabled = disabled[index]; }); }
+    };
+  }
+  function releaseAssessmentControls() {
+    for (const [control, property, prior] of assessmentControls) control[property] = prior;
+    assessmentControls = [];
+  }
+  window.openEducationFounderLoop = { validate, render, verifySnapshot, unverifiedSnapshot };
   document.addEventListener("DOMContentLoaded", () => {
     el("founderMode").textContent = synthetic ? "Synthetic rehearsal: dates are simulated; this is not learner-outcome evidence." : "Local practice: use a guardian or facilitator for the original age-gated activity, or choose the safe equivalent.";
     el("founderOpen").classList.add("primary-button");
@@ -106,6 +185,8 @@
         el("founderReading").textContent = content.reading.text;
         el("founderRubric").textContent = content.rubric;
         render();
+        try { await verifyStored(); }
+        catch { el("founderGradeStatus").textContent = "Saved assessment is unverified. This bridge session cannot restore its authority; no mastery was awarded."; }
       } catch { el("founderContent").hidden = false; el("founderStatus").textContent = "Founder source unavailable; no progress was changed."; }
     });
     el("founderPlan").addEventListener("click", () => act((record) => { if (phase(record) !== "plan") throw Error("Plan already recorded"); record.plan = el("founderRoute").value; }));
@@ -126,5 +207,80 @@
     });
     el("learnerProfileSelect").addEventListener("change", render);
     el("createProfileButton").addEventListener("click", () => setTimeout(render, 0));
+    el("founderGradeBegin").addEventListener("click", gradeAction(async () => {
+      releaseAssessmentControls();
+      challenge = null;
+      closedSources = false;
+      el("founderGradeClose").disabled = true;
+      el("founderGradeFields").hidden = true;
+      el("founderGradeStatus").textContent = "Preparing assessment...";
+      const learner = owner();
+      const request = { learnerId: learner, correctionReviewed: el("founderGradeCorrection").checked };
+      if (stored()?.founderAssessment) request.receipt = stored().founderAssessment;
+      if (synthetic) request.now = today();
+      const prepared = await assessmentRequest("begin", request);
+      if (owner() !== learner) throw Error("Active learner changed");
+      challenge = { ...prepared, learnerId: learner };
+      closedSources = false;
+      lastSubmission = null;
+      el("founderReading").hidden = false;
+      el("founderGradeStudy").hidden = false;
+      el("founderGradeStudy").textContent = prepared.studyText;
+      el("founderGradeFields").replaceChildren();
+      for (const field of prepared.fields) {
+        const label = document.createElement("label");
+        label.htmlFor = `founderGrade-${field.id}`;
+        label.textContent = field.label;
+        const input = document.createElement(field.kind === "boolean" || Array.isArray(field.kind) ? "select" : "input");
+        input.id = label.htmlFor;
+        if (input.tagName === "SELECT") {
+          const options = field.kind === "boolean" ? [["", "Choose"], ["true", "Yes"], ["false", "No"]] : [["", "Choose"], ...field.kind.map((value) => [value, value.replaceAll("-", " ")])];
+          for (const [value, text] of options) input.add(new Option(text, value));
+        } else { input.type = field.kind; input.maxLength = 100; }
+        el("founderGradeFields").append(label, input);
+      }
+      el("founderGradeFields").hidden = true;
+      el("founderGradeClose").disabled = false;
+      el("founderGradeStatus").textContent = `Prepared ${prepared.stage} assessment. Study, then close the sources. No score has been awarded.`;
+    }));
+    el("founderGradeClose").addEventListener("click", () => {
+      if (!challenge) { el("founderGradeStatus").textContent = "Prepare an assessment first."; return; }
+      closedSources = true;
+      for (const id of ["founderReading", "founderGradeStudy", "founderFeedback", "founderPrompt", "founderHistory", "teacherThread"]) {
+        assessmentControls.push([el(id), "hidden", el(id).hidden]);
+        el(id).hidden = true;
+      }
+      for (const id of ["hintButton", "liveTeacherButton", "runSessionButton", "founderOpen", "founderCorrect"]) {
+        assessmentControls.push([el(id), "disabled", el(id).disabled]);
+        el(id).disabled = true;
+      }
+      el("founderGradeClose").disabled = true;
+      el("founderGradeFields").hidden = false;
+      el("founderGradeStatus").textContent = challenge.prompt;
+    });
+    el("founderGradeSubmit").addEventListener("click", gradeAction(async () => {
+      if (!challenge || challenge.learnerId !== owner() || !closedSources) throw Error("Close sources before submitting");
+      let request = lastSubmission;
+      if (!request) {
+        const answers = {};
+        for (const field of challenge.fields) {
+          const value = el(`founderGrade-${field.id}`).value;
+          answers[field.id] = field.kind === "boolean" ? value === "true" ? true : value === "false" ? false : value : field.kind === "number" && /^\d+$/.test(value) ? Number(value) : value;
+        }
+        request = { learnerId: owner(), token: challenge.token, answers, support: el("founderGradeSupport").value };
+      }
+      const receipt = await assessmentRequest("grade", request);
+      lastSubmission = request;
+      await acceptReceipt(receipt, request.learnerId);
+      releaseAssessmentControls();
+    }));
+    el("founderGradeVerify").addEventListener("click", gradeAction(verifyStored));
+    el("founderGradeWithdraw").addEventListener("click", gradeAction(async () => {
+      const receipt = stored()?.founderAssessment;
+      if (!receipt) throw Error("No scored assessment exists");
+      const learner = owner();
+      await acceptReceipt(await assessmentRequest("withdraw", { learnerId: learner, receipt }), learner);
+      releaseAssessmentControls();
+    }));
   });
 })();

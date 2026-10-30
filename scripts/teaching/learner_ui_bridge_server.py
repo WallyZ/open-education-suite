@@ -7,6 +7,7 @@ import re
 import shutil
 import subprocess
 import sys
+import threading
 import uuid
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -14,6 +15,9 @@ from pathlib import Path
 from urllib.parse import unquote, urlparse
 
 from content_catalog_adapter import build_content_catalog
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "assessment"))
+from founder_independent import FounderAssessment
 
 
 FIXED_NOW = "2026-05-25T12:00:00Z"
@@ -37,6 +41,10 @@ def new_run_root(repo_root: Path, prefix: str) -> Path:
         base_path = Path(temp_base)
         if not base_path.is_absolute():
             base_path = repo_root / base_path
+        try:
+            base_path.resolve().relative_to((repo_root / ".codex-cache/tmp").resolve())
+        except ValueError:
+            base_path = repo_root / ".codex-cache/tmp"
     else:
         base_path = repo_root / ".codex-cache" / "tmp"
     return base_path / f"{prefix}_{uuid.uuid4().hex}"
@@ -226,6 +234,11 @@ def founder_lesson_payload(repo_root: Path) -> dict:
         "feedback": rubric["data"]["revisionRule"], "correction": correction["data"]["steps"],
     }
     payload["contentRevision"] = hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
+    retry_passage = re.search(r"^### G1-T1-R08:.*?\n(.*?)(?=^#{1,3} |\Z)",
+                              normalized_bytes.decode("utf-8-sig"), re.MULTILINE | re.DOTALL)
+    if not retry_passage:
+        raise ValueError("Changed-task source is unavailable")
+    payload["retryReading"] = retry_passage.group(1).strip()
     return payload
 
 
@@ -273,6 +286,48 @@ class LearnerBridgeHandler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         parsed = urlparse(self.path)
+        if parsed.path.startswith("/api/founder/assessment/"):
+            origin = self.headers.get("Origin")
+            if (self.server.server_address[0] not in ("127.0.0.1", "::1")
+                    or origin and urlparse(origin).netloc != self.headers.get("Host")
+                    or self.headers.get("Content-Type", "").split(";")[0] != "application/json"):
+                self.write_json({"error": "assessment-request-rejected"}, HTTPStatus.FORBIDDEN)
+                return
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                if not 0 < length <= 20000:
+                    raise ValueError("Invalid request length")
+                request = json.loads(self.rfile.read(length))
+                if not isinstance(request, dict):
+                    raise ValueError("Invalid request")
+                with self.server.assessment_lock:
+                    if self.server.assessment_provider is None:
+                        self.server.assessment_provider = FounderAssessment(
+                            self.server.repo_root, self.server.assessment_runtime,
+                            rehearsal=self.server.assessment_rehearsal)
+                provider = self.server.assessment_provider
+                operation = parsed.path.rsplit("/", 1)[-1]
+                if operation == "begin":
+                    # Source projection is public only; restricted records never enter it.
+                    public = founder_lesson_payload(self.server.repo_root)
+                    result = provider.begin(request)
+                    result["studyText"] = public["reading"]["text"] if result["stage"] == "initial" else "The Book Return Team\n" + public["retryReading"] if result["stage"] == "retry" else "Delayed assessment: do not reopen sources."
+                elif operation == "grade":
+                    result = provider.grade(request)
+                elif operation == "verify" and set(request) == {"receipt", "learnerId"}:
+                    with provider.lock:
+                        result = provider.verify(request["receipt"], request["learnerId"])
+                elif operation == "withdraw" and set(request) == {"receipt", "learnerId"}:
+                    result = provider.withdraw(request["receipt"], request["learnerId"])
+                else:
+                    raise ValueError("Unsupported assessment operation")
+                self.write_json(result)
+            except (ValueError, KeyError, TypeError):
+                # A denied RPC is an application result, never a successful grade.
+                self.write_json({"accepted": False, "error": "assessment-request-rejected"})
+            except Exception:
+                self.write_json({"error": "assessment-unavailable"}, HTTPStatus.SERVICE_UNAVAILABLE)
+            return
         if parsed.path == "/api/teacher/live":
             if not self.server.live_ai_enabled:
                 self.write_json(
@@ -406,12 +461,17 @@ def main() -> int:
     parser.add_argument("--host", default="127.0.0.1", help="Host to bind")
     parser.add_argument("--port", type=int, default=8786, help="Port to bind")
     parser.add_argument("--enable-live-ai", action="store_true", help="Allow /api/teacher/live to call the live AI teacher script")
+    parser.add_argument("--assessment-rehearsal", action="store_true", help="Allow simulated assessment dates; receipts are marked synthetic")
     args = parser.parse_args()
 
     repo_root = Path(args.repo_root).resolve()
     server = ThreadingHTTPServer((args.host, args.port), LearnerBridgeHandler)
     server.repo_root = repo_root
     server.live_ai_enabled = bool(args.enable_live_ai)
+    server.assessment_rehearsal = bool(args.assessment_rehearsal)
+    server.assessment_provider = None
+    server.assessment_lock = threading.Lock()
+    server.assessment_runtime = new_run_root(repo_root, "founder-assessment")
     server.session_payload = run_session_turn(repo_root)
     live_status = "enabled" if server.live_ai_enabled else "disabled"
     print(f"learner-ui-bridge listening http://{args.host}:{args.port} repo={repo_root} live-ai={live_status}", flush=True)
@@ -419,6 +479,8 @@ def main() -> int:
         server.serve_forever()
     except KeyboardInterrupt:
         return 0
+    finally:
+        shutil.rmtree(server.assessment_runtime, ignore_errors=True)
     return 0
 
 

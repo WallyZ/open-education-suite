@@ -2057,6 +2057,7 @@ function buildLearnerStateSnapshot() {
     schemaVersion: 1,
     learnerId: currentSessionOutput.learnerId || session.learnerId,
     ...(saved?.founderLoop ? { founderLoop: saved.founderLoop } : {}),
+    ...(saved?.founderAssessment ? { founderAssessment: saved.founderAssessment } : {}),
     profile: {
       learnerId: profile.learnerId || currentSessionOutput.learnerId || session.learnerId,
       goals: profile.goals || [session.objectiveId],
@@ -2126,7 +2127,10 @@ function parseLearnerStateText(text) {
   };
 }
 
-function applyLearnerStateSnapshot(snapshot) {
+function applyLearnerStateSnapshot(snapshot, options = {}) {
+  if (!options.assessmentVerified) {
+    snapshot = window.openEducationFounderLoop.unverifiedSnapshot(snapshot);
+  }
   currentSessionOutput.learnerId = snapshot.learnerId;
   currentSessionOutput.learnerProfile = snapshot.profile;
   currentSessionOutput.mastery = snapshot.mastery || [];
@@ -2152,9 +2156,10 @@ function exportLearnerState() {
   elements.stateSyncLog.textContent = feedbackText("stateExportReady", "Learner state export ready.");
 }
 
-function importLearnerState() {
+async function importLearnerState() {
   try {
-    const snapshot = parseLearnerStateText(elements.stateExchange.value.trim());
+    let snapshot = parseLearnerStateText(elements.stateExchange.value.trim());
+    snapshot = await window.openEducationFounderLoop.verifySnapshot(snapshot);
     const importedProfile = normalizeLearnerProfileRecord(snapshot.profile, snapshot.learnerId);
     upsertLearnerProfile(importedProfile, true);
     applyLearnerProfile(importedProfile);
@@ -2163,7 +2168,7 @@ function importLearnerState() {
     renderLearnerProfileControls();
     elements.stateSyncLog.textContent = feedbackText("stateImported", "Learner state imported locally.");
     try {
-      applyLearnerStateSnapshot(snapshot);
+      applyLearnerStateSnapshot(snapshot, { assessmentVerified: Boolean(snapshot.founderAssessment) });
     }
     catch (error) {
       elements.stateSyncLog.textContent = feedbackText("stateImported", "Learner state imported locally.");

@@ -216,11 +216,24 @@
             <button type="button" id="founderCorrect">Apply correction and open changed retry</button>
             <label id="founderClockLabel" for="founderClock" hidden>Synthetic rehearsal date (no retention claim)</label>
             <input id="founderClock" type="date" value="2026-08-01" hidden>
-            <button type="button" id="founderWithdraw">Withdraw from this sequence</button>
+            <button type="button" id="founderWithdraw">Withdraw from self-check practice</button>
             <button type="button" id="founderClear">Clear Founder practice locally</button>
             <p id="founderStatus" role="status"></p>
             <h3>Preserved attempts</h3>
             <ol id="founderHistory"></ol>
+            <h3>Server-scored assessment</h3>
+            <p>Structured evidence is scored separately from self-checks. This does not certify unrestricted writing or a whole course.</p>
+            <label><input id="founderGradeCorrection" type="checkbox"> I reviewed the correction before a changed retry.</label>
+            <button type="button" id="founderGradeBegin">Prepare server-scored task</button>
+            <p id="founderGradeStudy"></p>
+            <button type="button" id="founderGradeClose" disabled>Close sources and begin assessment</button>
+            <div id="founderGradeFields" hidden></div>
+            <label for="founderGradeSupport">Support used on this attempt</label>
+            <select id="founderGradeSupport"><option value="unassisted">No hints or tutor used</option><option value="assisted">Hints or assistance used</option></select>
+            <button type="button" id="founderGradeSubmit">Submit to server scorer</button>
+            <button type="button" id="founderGradeVerify">Verify saved assessment</button>
+            <button type="button" id="founderGradeWithdraw">Withdraw from scored assessment</button>
+            <p id="founderGradeStatus" role="status">Server-scored evidence: none.</p>
           </div>
         </section>
 

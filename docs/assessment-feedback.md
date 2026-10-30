@@ -116,6 +116,47 @@ remain distinct. No real learner data, restricted answers, or state files are
 emitted into the tracked source corpus; temporary state is removed on exit.
 Founder is read-only, including its unrelated uncommitted work.
 
+## Server-Scored Founder Assessment
+
+`OES_FOUNDER_INDEPENDENT_001` extends the existing selected forms, not the
+curriculum or learning runtime. Run the canonical verifier with
+`-Mode founder-assessment` for scorer checks, the prior self-check UI regression,
+and the actual independent-scoring QA Live workflow.
+
+The grader alone reads the checksum-bound restricted bank. It interprets the
+current forms as a bounded structured-response contract: quantities, decision,
+privacy, named roles, exact recalled source facts, and source-scope judgments.
+It rejects unsupported rubric drift rather than guessing. This is not a general
+essay evaluator. Public task fields and source passages are available for study;
+the UI closes sources for an attempt, and grading keys never enter the lesson
+projection, catalog, tutor context, static server, or grading response.
+
+Only a server-scored, fully correct, declared-unassisted attempt adds 0.1
+confidence to the existing daily objective
+`founder-level-civic-classical:objective/lesson-g1-cw10-d01`. This conservative
+adapter weight is not an empirically calibrated probability or whole-course
+mastery threshold. Incorrect, partial, or assisted evidence adds no confidence.
+The existing canonical state updater owns evidence counts, review scheduling,
+misconceptions and audit entries. Replay cannot add another event. Self-awarded
+scores and imported unsigned claims cannot create this scored mastery.
+
+Signed receipts bind the learner, form history, source/rubric revision,
+submission hash and canonical state. Verification precedes import or restored
+authority. A denied assessment RPC returns `accepted: false`, never a grade;
+the UI must handle that result before changing state. Receipts are
+local-bridge-session evidence: the signing key and
+authoritative session state are temporary and discarded on shutdown. After a
+restart, old exports remain learner records but cannot restore verified scoring
+authority; a durable private evidence store is a separate integration gate.
+This does not establish identity, prevent off-screen help, or replace an
+independent human/credential review. Support is explicitly declared.
+
+Only `--assessment-rehearsal` permits synthetic dates, and those receipts are
+marked synthetic. The ordinary bridge rejects that clock. QA answers are
+materialized from the protected bank into the ignored run directory; tracked QA
+templates contain placeholders. Synthetic traces stay in ignored local logs,
+outside tutor retrieval. No real participants or learning outcomes are claimed.
+
 ## Reusable Interactive Exercises
 
 Content repos may contribute interactive exercises by declaring:
