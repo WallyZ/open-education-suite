@@ -53,6 +53,7 @@ debug.log
 !.codex-cache/task-pack.md
 .codex-cache/logs/
 .codex-cache/tmp/
+.repo-kit-local/grading/
 
 # -----------------------------
 # Local media archives

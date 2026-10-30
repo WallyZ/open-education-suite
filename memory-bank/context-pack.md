@@ -2,43 +2,43 @@
 
 Use this compact context for a single focused wave.
 
-Generated: 2026-08-23
+Generated: 2026-10-30
 
 ## Context profile
 
-- Profile: cloud (requested: cloud)
-- Profile note: Cloud profile: keep richer context for speed/quality, but remain bounded to control token cost.
-- Line budgets: activeContext<=200, progress<=280, context-pack<=140
-- Text caps: max_items=8, max_line_length=200
+- Profile: cloud; bounded to the current Founder integration.
+- Line budgets: activeContext<=200, progress<=280, context-pack<=140.
 
 ## Objective
 
-- Complete root-owned Markdown lint fleet Wave 47 while preserving Suite contracts and privacy.
+- Persist private grading authority for lesson-g1-cw10-d01 and verify receipts/mastery across actual bridge restarts.
 
 ## TODO source files scanned
 
-- docs/todo/00_repo_bootstrap.md
+- docs/todo/TODO_07_learner_state_persistence_and_privacy.md
 
 ## Must-read files
 
+- AGENTS.md
+- .codex-cache/task-pack.md
 - memory-bank/activeContext.md
-- memory-bank/progress.md
-- docs/TODO.md
+- docs/assessment-feedback.md
 
 ## Constraints
 
-- Keep scope limited to shared lint assets, safe Markdown repair, verifier composition, and current memory.
-- Preserve content-agnostic ingestion, local-first learner privacy, and existing assessment/teaching checks.
-- Keep notes compact; avoid raw logs and long transcripts.
-- Prefer links over pasted dumps for large context.
+- Preserve 54 pre-existing Founder files. Reuse the approved sequence and canonical mastery updater.
+- Keep encrypted DPAPI authority outside Git/HTTP/tutor retrieval. No plaintext fallback or tracked private recovery fixtures.
+- Ordinary and synthetic ledgers remain separate; source/mode changes and corrupt stores fail closed.
+- No human outcomes, identity, credentials, portable migration or whole-store rollback protection claims.
 
 ## Acceptance criteria
 
-- Active context and progress reflect current objective and TODO deltas.
-- Context remains concise and action-oriented within profile budgets.
+- Founder-persistence passed: three scoring processes, two restarts, 168 browser actions; no console/page/network errors.
+- Confidence 0.2 and four audit entries recover exactly; replay adds none; withdrawal and stale-receipt rejection persist.
+- Memory/catalog refreshed. Broader changed mode stops on two pre-existing Founder safeguarding links; preserve source work and disclose the limitation.
+- Recheck founder-persistence after final edits; commit/push intended Suite files only.
 
 ## Verification commands
 
-- `git status --short`
-- `pwsh -File .\scripts\memory\refresh_memory_bank.ps1 -DryRun`
-- python scripts/lifecycle/check_memory_bank.py --repo-root . --profile cloud
+- `pwsh -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\scripts\codex-verify.ps1 -Mode founder-persistence`
+- `pwsh -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\scripts\codex-verify.ps1 -Mode changed`

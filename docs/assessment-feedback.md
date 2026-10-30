@@ -143,11 +143,13 @@ scores and imported unsigned claims cannot create this scored mastery.
 Signed receipts bind the learner, form history, source/rubric revision,
 submission hash and canonical state. Verification precedes import or restored
 authority. A denied assessment RPC returns `accepted: false`, never a grade;
-the UI must handle that result before changing state. Receipts are
-local-bridge-session evidence: the signing key and
-authoritative session state are temporary and discarded on shutdown. After a
-restart, old exports remain learner records but cannot restore verified scoring
-authority; a durable private evidence store is a separate integration gate.
+the UI must handle that result before changing state. Signing authority,
+canonical state, history and replay records persist together in an encrypted
+SQLite snapshot. A fresh bridge can validate an existing receipt against the
+same current ledger without awarding evidence again. Superseded receipts,
+wrong learners, incompatible source revisions and withdrawn participation
+remain rejected after restart. Prior session-only receipts cannot be silently
+upgraded into this new authority.
 This does not establish identity, prevent off-screen help, or replace an
 independent human/credential review. Support is explicitly declared.
 
@@ -156,6 +158,41 @@ marked synthetic. The ordinary bridge rejects that clock. QA answers are
 materialized from the protected bank into the ignored run directory; tracked QA
 templates contain placeholders. Synthetic traces stay in ignored local logs,
 outside tutor retrieval. No real participants or learning outcomes are claimed.
+
+## Private Authority Storage And Restart Recovery
+
+The ordinary bridge defaults to ignored
+`.repo-kit-local/grading/ordinary-v1.sqlite`. This is private runtime data, not
+a disposable cache. `--assessment-store` accepts only the approved ignored
+grading root or the repo's run-temp root. Rehearsals use a separate temporary
+store and cannot open an ordinary ledger, or vice versa.
+
+Windows user-scoped DPAPI encrypts the entire authority payload, including the
+signing key, pseudonymous learner records and pending/committed challenges.
+There is no plaintext fallback or HTTP store/key endpoint. SQLite commits the
+updated canonical state, signing authority and idempotency result together;
+failed transactions roll back. Pending-token expiry uses a restart-stable wall
+clock. Corrupt ciphertext, missing authority rows and incompatible metadata
+fail closed rather than generating a replacement key or empty history.
+
+Back up the complete private SQLite store with the bridge stopped. Recovery
+requires the same usable Windows DPAPI account/profile; this slice does not
+provide portable key export, account migration or protection against an owner
+rolling the entire store back to an older backup. Source/rules changes require
+a reviewed migration rather than implicit acceptance of old scoring policy.
+This remains a local-account authority, not a credential issuer or proof of
+learner identity or off-screen independence.
+
+`-Mode founder-persistence` runs storage/scoring checks and QA Live across
+three distinct bridge processes with two actual shutdown/restart boundaries.
+The first browser creates scored evidence; fresh browsers then import private
+recovery fixtures from the retained canonical ledger, validate the original
+receipts, replay the committed submission, and retain mastery/audit counts.
+A second restart must retain withdrawal and reject the older signed receipt.
+The test checks encryption, rollback, pending-token recovery, corrupted data,
+source/mode mismatch and HTTP denial. Test stores and private recovery fixtures
+stay under the run-temp directory and are removed after verification; synthetic
+screenshots/traces/reports are retained only in ignored logs.
 
 ## Reusable Interactive Exercises
 

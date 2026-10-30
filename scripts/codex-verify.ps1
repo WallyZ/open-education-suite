@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('changed', 'full', 'founder-loop', 'founder-ui', 'founder-assessment')]
+    [ValidateSet('changed', 'full', 'founder-loop', 'founder-ui', 'founder-assessment', 'founder-persistence')]
     [string]$Mode = 'changed',
     [switch]$KeepArtifacts
 )
@@ -342,7 +342,7 @@ try {
 
     Write-VerifyLog "codex-verify start mode=$Mode repo=$repo"
 
-    if ($Mode -in @('founder-loop', 'founder-ui', 'founder-assessment')) {
+    if ($Mode -in @('founder-loop', 'founder-ui', 'founder-assessment', 'founder-persistence')) {
         & .\scripts\lint\run_changed_scope.ps1 -RepoRoot $repo -ContextProfile cloud -IncludeUntracked 2>&1 |
             Tee-Object -FilePath $logPath -Append
         if ($LASTEXITCODE -ne 0) { throw "Changed-scope checks failed with exit code $LASTEXITCODE." }
@@ -352,20 +352,31 @@ try {
             '--founder-root', $founderRoot, '--temp-root', $tmpRoot,
             '--expected-path', (Join-Path $founderRoot 'fixtures\founder-course-end-to-end.current.expected.json')
         )
-        if ($Mode -eq 'founder-assessment') {
-            Invoke-PythonCheck -Label 'Founder independent assessment' -Arguments @(
+        if ($Mode -in @('founder-assessment', 'founder-persistence')) {
+            $assessmentChecks = @(
                 '.\scripts\testing\check_founder_independent.py', '--suite-root', $repo, '--temp-root', $tmpRoot
             )
+            if ($Mode -eq 'founder-persistence') { $assessmentChecks += '--persistence' }
+            Invoke-PythonCheck -Label 'Founder independent assessment' -Arguments $assessmentChecks
         }
-        if ($Mode -in @('founder-ui', 'founder-assessment')) {
+        if ($Mode -in @('founder-ui', 'founder-assessment', 'founder-persistence')) {
             $qaPython = Join-Path $repo '..\qa-live-test-system\.venv\Scripts\python.exe'
             Assert-FileExists $qaPython
             $workflows = @((Join-Path $repo 'qa-live\workflow.founder_ui.json'))
-            if ($Mode -eq 'founder-assessment') { $workflows += (Join-Path $tmpRoot 'assessment-workflow.json') }
+            if ($Mode -in @('founder-assessment', 'founder-persistence')) { $workflows += (Join-Path $tmpRoot 'assessment-workflow.json') }
+            if ($Mode -eq 'founder-persistence') {
+                $workflows += @((Join-Path $tmpRoot 'assessment-workflow.json'), (Join-Path $tmpRoot 'assessment-workflow.json'))
+            }
             & $qaPython -m qa_live_test_system.cli browser-doctor --launch-check --out (Join-Path $tmpRoot 'browser-doctor.json') 2>&1 | Tee-Object -FilePath $logPath -Append
             if ($LASTEXITCODE -ne 0) { throw 'QA Live browser capability check failed.' }
             $qaIndex = 0
+            $bridgeInstances = @()
             foreach ($workflowPath in $workflows) {
+            if ($Mode -eq 'founder-persistence' -and $qaIndex -gt 0) {
+                Invoke-PythonCheck -Label 'Prepare restart phase' -Arguments @(
+                    '.\scripts\testing\check_founder_independent.py', '--suite-root', $repo, '--temp-root', $tmpRoot, '--restart-phase', "$qaIndex"
+                )
+            }
             $qaArtifacts = Join-Path $tmpRoot "founder-ui-qa-$qaIndex"
             $qaSummary = Join-Path $qaArtifacts 'summary.json'
             & $qaPython -m qa_live_test_system.cli capability-manifest --validate-workflow $workflowPath --out (Join-Path $tmpRoot "capability-check-$qaIndex.json") 2>&1 | Tee-Object -FilePath $logPath -Append
@@ -375,6 +386,14 @@ try {
                 if ($LASTEXITCODE -ne 0) { throw 'Founder UI QA Live workflow failed.' }
                 $summary = Get-Content -LiteralPath $qaSummary -Raw | ConvertFrom-Json
                 if ($summary.status -ne 'pass') { throw "Founder UI QA Live status: $($summary.status)" }
+                if ($Mode -eq 'founder-persistence' -and $qaIndex -gt 0) {
+                    $startupText = Get-Content -LiteralPath (Join-Path $qaArtifacts 'process_stdout.log') -Raw
+                    if ($startupText -notmatch 'instance=([a-f0-9]{32})') { throw 'Missing bridge process instance evidence.' }
+                    $instance = $Matches[1]
+                    if ($bridgeInstances -contains $instance) { throw 'Restart phase reused a bridge instance.' }
+                    $bridgeInstances += $instance
+                    if ($summary.phases.teardown.process_running_after_stop) { throw 'Bridge teardown did not complete before restart.' }
+                }
             }
             finally {
                 if (Test-Path -LiteralPath $qaArtifacts) {
@@ -385,8 +404,12 @@ try {
             }
             $qaIndex += 1
             }
+            if ($Mode -eq 'founder-persistence') {
+                if ($bridgeInstances.Count -ne 3) { throw 'Expected three distinct bridge process lifetimes.' }
+                Write-VerifyLog 'Verified three distinct bridge instances, two restarts, persisted authority, canonical mastery recovery and withdrawal.'
+            }
         }
-        $evidenceScope = if ($Mode -eq 'founder-assessment') { 'live-browser-server-scored-structured-evidence' } elseif ($Mode -eq 'founder-ui') { 'live-browser-self-check-with-synthetic-evidence' } else { 'synthetic-export-consumer-only' }
+        $evidenceScope = if ($Mode -eq 'founder-persistence') { 'private-authority-real-process-restarts' } elseif ($Mode -eq 'founder-assessment') { 'live-browser-server-scored-structured-evidence' } elseif ($Mode -eq 'founder-ui') { 'live-browser-self-check-with-synthetic-evidence' } else { 'synthetic-export-consumer-only' }
         Write-VerifyLog "codex-verify passed mode=$Mode evidence=$evidenceScope log=$logPath"
         exit 0
     }

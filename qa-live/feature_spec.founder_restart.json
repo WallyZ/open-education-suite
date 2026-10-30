@@ -1,0 +1,56 @@
+{
+  "feature_id": "founder-private-authority-restart",
+  "name": "Private grading authority recovery after bridge restart",
+  "objective": "Recover verified mastery in a fresh browser and bridge process from the same encrypted authority, without duplicating committed evidence; retain receipt and withdrawal validation across another restart.",
+  "target": {"base_url":"http://127.0.0.1:8788","health_path":"/ui/learner/index.html"},
+  "safety": {"credentials":false,"destructive":false,"network":"local-only"},
+  "browser_diagnostics": {"fail_on_console_errors":true,"fail_on_network_failures":true},
+  "scenarios": [
+    {
+      "id":"restart-recovery",
+      "name":"Verify recovery and committed replay in a fresh bridge process",
+      "route":"/ui/learner/index.html?founderRehearsal=1",
+      "evidence":["screenshot","trace","console_log","network_summary"],
+      "actions":[
+        {"kind":"navigate","target":"/ui/learner/index.html?founderRehearsal=1","description":"Open a fresh browser after the prior bridge stopped"},
+        {"kind":"click","target":"#founderOpen","description":"Load the same Founder sequence"},
+        {"kind":"api_call","target":"__storeHttpPath__","value":"{\"expect_status\":404}","description":"Deny HTTP access to the actual private grading store"},
+        {"kind":"click","target":"[data-view=evidence]","description":"Use existing learner-state recovery controls"},
+        {"kind":"fill","target":"#stateExchange","value":"__export__","description":"Load the private recovery fixture derived from the prior durable authority"},
+        {"kind":"click","target":"#importStateButton","description":"Validate the old-process receipt against the reopened authority"},
+        {"kind":"assert_visible_text","target":"Learner state imported locally.","description":"Accept the original signed authority after restart"},
+        {"kind":"click","target":"[data-view=lesson]","description":"Inspect recovered mastery"},
+        {"kind":"click","target":"#founderGradeVerify","description":"Verify the recovered receipt with the new bridge"},
+        {"kind":"assert_visible_text","target":"Objective confidence: 0.2. Audit entries: 4.","description":"Recover exact mastery and evidence counts"},
+        {"kind":"api_call","target":"POST /api/founder/assessment/grade","value":"__replayOptions__","description":"Replay the committed pre-restart submission without adding evidence"},
+        {"kind":"click","target":"#founderGradeVerify","description":"Recheck the canonical state after replay"},
+        {"kind":"assert_visible_text","target":"Objective confidence: 0.2. Audit entries: 4.","description":"Keep replay idempotent across process boundaries"},
+        {"kind":"click","target":"#founderGradeWithdraw","description":"Persist withdrawal in the reopened authority"},
+        {"kind":"assert_visible_text","target":"Scored assessment withdrawn.","description":"Confirm withdrawal was acknowledged"}
+      ]
+    },
+    {
+      "id":"restart-withdrawal",
+      "name":"Retain withdrawal and reject an older receipt after another restart",
+      "route":"/ui/learner/index.html?founderRehearsal=1",
+      "evidence":["screenshot","trace","console_log","network_summary"],
+      "actions":[
+        {"kind":"navigate","target":"/ui/learner/index.html?founderRehearsal=1","description":"Open another fresh bridge/browser pair"},
+        {"kind":"click","target":"#founderOpen","description":"Load the existing sequence"},
+        {"kind":"click","target":"[data-view=evidence]","description":"Inspect the receipt import boundary"},
+        {"kind":"fill","target":"#stateExchange","value":"__oldExport__","description":"Try the authentic but superseded pre-withdrawal receipt"},
+        {"kind":"click","target":"#importStateButton","description":"Reject stale authority after restart"},
+        {"kind":"assert_visible_text","target":"Learner state import rejected.","description":"Do not undo persisted withdrawal"},
+        {"kind":"fill","target":"#stateExchange","value":"__export__","description":"Load the current withdrawn record"},
+        {"kind":"click","target":"#importStateButton","description":"Validate the latest signed record"},
+        {"kind":"assert_visible_text","target":"Learner state imported locally.","description":"Restore legitimate evidence without reopening participation"},
+        {"kind":"click","target":"[data-view=lesson]","description":"Inspect retained evidence"},
+        {"kind":"click","target":"#founderGradeVerify","description":"Reverify withdrawal and mastery"},
+        {"kind":"assert_visible_text","target":"Scored assessment withdrawn.","description":"Retain withdrawal across the second restart"},
+        {"kind":"assert_visible_text","target":"Objective confidence: 0.2. Audit entries: 4.","description":"Do not add or lose evidence during recovery"},
+        {"kind":"click","target":"#founderGradeBegin","description":"Try to reopen the withdrawn assessment"},
+        {"kind":"assert_visible_text","target":"Assessment action rejected","description":"Keep withdrawal authoritative after restart"}
+      ]
+    }
+  ]
+}

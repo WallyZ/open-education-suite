@@ -25,6 +25,16 @@ Great teachers remember what a student knows, where they struggle, and what supp
 
 ## Acceptance Notes
 
+- [x] Persist private Founder grading authority and verify recovery across bridge restarts. [PH2] <!-- ms:id OES_FOUNDER_PRIVATE_AUTHORITY_001 --> <!-- ms:meta priority=p1 owner=@suite depends-on=OES_FOUNDER_INDEPENDENT_001 stale-days=30 automation-level=auto human-checkpoint=none rollout-scope=repo validation-profile=cloud safe-autofix=review updated=2026-10-30 -->
+  - Deliverables: Windows-user-encrypted transactional authority, stable receipts and replay cache, private-root exclusions, restart QA and documented recovery limits.
+  - Files: private grading store, existing grader/bridge, scoring tests and QA preparer, restart feature spec, canonical verifier, Founder UI verification message, ignore rules, assessment documentation, this TODO and task pack.
+  - Verification: `pwsh -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\scripts\codex-verify.ps1 -Mode founder-persistence`.
+  - QA Live automation: retain the prior UI regression; create scored evidence, stop the bridge, recover through a fresh bridge/browser, replay without another update, then restart again and verify withdrawal/stale-receipt rejection.
+  - Drift guard: source/mode/format bindings, current-receipt validation, transactional rollback, encrypted storage and corruption rejection, distinct bridge-instance markers and exact mastery/audit counts.
+  - Downstream rollout: same Founder sequence and canonical updater; Founder stays read-only. No external service, identity/credential claim or unreviewed data migration. Broader changed-mode verification stops on two pre-existing Founder safeguarding-document links (`.codex-cache/logs/codex-verify_20261030_120718_ab0dc690.log`); those protected files are preserved.
+  - Acceptance: signed authority and canonical state survive two bridge restarts; pending/committed submissions remain idempotent; wrong/forged/stale receipts fail; the private store is absent from Git, HTTP and tutor retrieval.
+  - Evidence (2026-10-30): canonical `-Mode founder-persistence` passed, exit 0; log `.codex-cache/logs/codex-verify_20261030_120117_20e4db77.log`. QA Live evidence under `.codex-cache/logs/founder-ui-qa_20261030_120117_20e4db77_{0,1,2,3}`: 61 regression, 77 scoring, 15 recovery/replay and 15 withdrawal actions passed; zero console/page/network errors. Three distinct scoring bridge instances stopped between phases; recovered confidence 0.2 and four audit entries without duplicate evidence. Storage checks passed for pending-token recovery, rollback, encryption, corruption and source/mode mismatch. Windows DPAPI profile portability and whole-store backup rollback protection are separate boundaries.
+
 - Learner state must be human-inspectable during early development.
 - State updates must be deterministic and explainable.
 - Privacy and audit rules should exist before adding hosted storage.

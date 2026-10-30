@@ -1,45 +1,40 @@
 # HANDOFF
 
-- Last updated: 2026-08-23
+- Last updated: 2026-10-30
 
 ## Current Objective
 
-Verify that Open Education Suite remains content-agnostic while sibling subject packs adopt source-grounded advanced evaluation and optional third-party credential pathways.
-
-Complete root-owned Markdown lint fleet Wave 47 without weakening those boundaries or the existing canonical verification suite.
+Complete restart-safe private grading authority for the same Founder sequence. Verify with QA Live, preserve unrelated work, commit and push.
 
 ## Current State
 
-- American History remains registered through `content-sources.json`; its curriculum and evaluation policy stay in the sibling subject repository.
-- American History version 1.1.0 uses named benchmarks, source and citation checks, learner artifacts, separate evaluation passes, adversarial defense, revision, retention, transfer, and reproducibility for advanced performance.
-- Qualified historians and human committees are optional for the default noncredentialing path. An authorized third-party provider controls any opt-in degree or certification requirements and award.
-- The Suite must not infer, award, or guarantee a credential from completion or an automated score.
-- The clean Wave 47 baseline reached memory validation and stopped only because six memory surfaces were 15 days old.
-- The tracked memory bank and repo-kit catalog were refreshed on 2026-08-23.
-- The Wave 47 candidate passes exact changed and full canonical verification while preserving cross-repository ingestion, browser, lecture-production, and QA Live checks; independent review and commit/push remain.
+- Prior commits 3683f59, 17bf674 and 675affd establish consumer recovery, live UI and independent structured assessment.
+- OES_FOUNDER_PRIVATE_AUTHORITY_001 adds Windows-user DPAPI encryption for signing authority, canonical state and replay records in one SQLite transaction.
+- Ordinary authority defaults to ignored .repo-kit-local/grading/ordinary-v1.sqlite; synthetic QA uses isolated run-temp stores.
+- Founder-persistence passed, exit 0; log .codex-cache/logs/codex-verify_20261030_120117_20e4db77.log.
+- QA Live passed 168 actions, including three distinct scoring bridge processes and two actual restarts, with no console/page/network errors.
+- Exact mastery/audit recovery, committed replay, withdrawal and stale-receipt rejection passed.
+- Final changed-mode gate found six stale memory surfaces; this refresh replaces obsolete Wave 47 handoff status.
+- Memory/catalog refresh is complete. Broader changed mode stops on two pre-existing Founder links to missing safeguarding-and-mandatory-reporting-operations.md; source files are preserved.
+- Founder has 54 protected pre-existing files; hashes remain unchanged. QA Live harness remains clean.
 
 ## Next Commands (Max 5)
 
-1. `git diff --check`
-2. `git status --short`
-3. After independent approval, commit the exact staged candidate.
-4. Push the approved commit to `origin/main`.
+1. Recheck canonical founder-persistence after final edits; report the broader changed-mode source-link limitation.
+2. Inspect exact staged Suite files and preservation hashes.
+3. Commit/push verified Suite candidate to origin/main.
 
 ## Must Read
 
-- `AGENTS.md`
-- `.codex-cache/task-pack.md`
-- `memory-bank/context-pack.md`
-- `content-sources.json`
-- `docs/content-ingestion.md`
-- `docs/program-pack-template.md`
-- `..\open-education-american-history\program.yaml`
+- AGENTS.md
+- .codex-cache/task-pack.md
+- docs/assessment-feedback.md
+- docs/todo/TODO_07_learner_state_persistence_and_privacy.md
 
 ## Boundaries
 
-- Do not copy subject course bodies into the suite.
-- Do not vendor QA Live harness code.
-- Do not treat source quality, completion, or one opaque automated score as proof of advanced learner performance.
-- Do not claim a degree or certification without an authorized third-party provider's award record.
-- Do not make qualified historians a default subject-pack completion dependency when reproducible source-grounded evidence can establish the performance claim.
-- Do not commit `.codex-cache/`, generated media, learner private data, traces, logs, or local reports.
+- Curriculum and protected keys stay in Founder; Suite owns runtime integration. Reuse existing tasks and sequence.
+- Keep private authority, answers, learner records and recovery fixtures outside Git/HTTP/tutor context.
+- Store recovery requires the same Windows DPAPI account/profile. Portable migration and whole-store rollback defenses are separate work.
+- Synthetic QA does not establish real learning outcomes, identity, outside-help prevention or credentials.
+- Preserve canonical verification composition; do not vendor QA Live or install dependencies.

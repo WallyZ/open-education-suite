@@ -186,7 +186,7 @@
         el("founderRubric").textContent = content.rubric;
         render();
         try { await verifyStored(); }
-        catch { el("founderGradeStatus").textContent = "Saved assessment is unverified. This bridge session cannot restore its authority; no mastery was awarded."; }
+        catch { el("founderGradeStatus").textContent = "Saved assessment could not be verified. No mastery was restored; check the private authority store."; }
       } catch { el("founderContent").hidden = false; el("founderStatus").textContent = "Founder source unavailable; no progress was changed."; }
     });
     el("founderPlan").addEventListener("click", () => act((record) => { if (phase(record) !== "plan") throw Error("Plan already recorded"); record.plan = el("founderRoute").value; }));

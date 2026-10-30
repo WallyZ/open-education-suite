@@ -304,7 +304,7 @@ class LearnerBridgeHandler(BaseHTTPRequestHandler):
                     if self.server.assessment_provider is None:
                         self.server.assessment_provider = FounderAssessment(
                             self.server.repo_root, self.server.assessment_runtime,
-                            rehearsal=self.server.assessment_rehearsal)
+                            rehearsal=self.server.assessment_rehearsal, store_path=self.server.assessment_store)
                 provider = self.server.assessment_provider
                 operation = parsed.path.rsplit("/", 1)[-1]
                 if operation == "begin":
@@ -315,8 +315,7 @@ class LearnerBridgeHandler(BaseHTTPRequestHandler):
                 elif operation == "grade":
                     result = provider.grade(request)
                 elif operation == "verify" and set(request) == {"receipt", "learnerId"}:
-                    with provider.lock:
-                        result = provider.verify(request["receipt"], request["learnerId"])
+                    result = provider.verify(request["receipt"], request["learnerId"])
                 elif operation == "withdraw" and set(request) == {"receipt", "learnerId"}:
                     result = provider.withdraw(request["receipt"], request["learnerId"])
                 else:
@@ -462,6 +461,7 @@ def main() -> int:
     parser.add_argument("--port", type=int, default=8786, help="Port to bind")
     parser.add_argument("--enable-live-ai", action="store_true", help="Allow /api/teacher/live to call the live AI teacher script")
     parser.add_argument("--assessment-rehearsal", action="store_true", help="Allow simulated assessment dates; receipts are marked synthetic")
+    parser.add_argument("--assessment-store", help="Private grading SQLite file under an approved ignored root")
     args = parser.parse_args()
 
     repo_root = Path(args.repo_root).resolve()
@@ -472,9 +472,14 @@ def main() -> int:
     server.assessment_provider = None
     server.assessment_lock = threading.Lock()
     server.assessment_runtime = new_run_root(repo_root, "founder-assessment")
+    if args.assessment_rehearsal and not args.assessment_store:
+        server.assessment_store = server.assessment_runtime / "rehearsal.sqlite"
+    else:
+        server.assessment_store = Path(args.assessment_store).resolve() if args.assessment_store else repo_root / ".repo-kit-local/grading/ordinary-v1.sqlite"
+    server.boot_id = uuid.uuid4().hex
     server.session_payload = run_session_turn(repo_root)
     live_status = "enabled" if server.live_ai_enabled else "disabled"
-    print(f"learner-ui-bridge listening http://{args.host}:{args.port} repo={repo_root} live-ai={live_status}", flush=True)
+    print(f"learner-ui-bridge listening http://{args.host}:{args.port} repo={repo_root} live-ai={live_status} instance={server.boot_id}", flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:

@@ -668,7 +668,7 @@ window.openEducationContentCatalog =
   "schemaVersion": 1,
   "generatedFrom": "scripts/teaching/content_catalog_adapter.py",
   "sourceCount": 11,
-  "courseCount": 32,
+  "courseCount": 51,
   "audienceEnforcement": "fail-closed-shared-policy",
   "audienceOperation": "export",
   "adultContentOptIn": false,
@@ -823,7 +823,7 @@ window.openEducationContentCatalog =
       "sourceId": "clear-reasoning",
       "title": "Open Education Clear Reasoning",
       "sourceRepo": "open-education-clear-reasoning",
-      "objectCount": 8,
+      "objectCount": 9,
       "courses": [
         {
           "id": "clear-reasoning:study-plans/courses/CR-101-clear-reasoning-foundations.md",
@@ -2144,8 +2144,1490 @@ window.openEducationContentCatalog =
       "sourceId": "economics",
       "title": "Open Education Economics",
       "sourceRepo": "open-education-economics",
-      "objectCount": 6,
+      "objectCount": 25,
       "courses": [
+        {
+          "id": "economics:study-plans/courses/ECON-000.md",
+          "title": "ECON-000 - Diagnostic, Placement, And Learning Contract",
+          "sourceRepo": "open-education-economics",
+          "sourcePath": "study-plans/courses/ECON-000.md",
+          "objectives": [
+            {
+              "objectiveId": "economics:objectives/course/econ-000/self-assessment",
+              "label": "Self Assessment"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-000/gap-map",
+              "label": "Gap Map"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-000/learning-contract",
+              "label": "Learning Contract"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-000/claim-discipline",
+              "label": "Claim Discipline"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-000/pathway-choice",
+              "label": "Pathway Choice"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-000/portfolio-setup",
+              "label": "Portfolio Setup"
+            }
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:economics:study-plans/courses/ECON-000.md",
+            "contentKind": "course",
+            "contentId": "economics:study-plans/courses/ECON-000.md",
+            "sourcePath": "study-plans/courses/ECON-000.md",
+            "title": "ECON-000 - Diagnostic, Placement, And Learning Contract",
+            "gradeBand": {
+              "label": "grades-9-adult",
+              "minGrade": "9",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-14-adult",
+              "minAge": 14,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#economics",
+            "status": "source-default-reviewed"
+          }
+        },
+        {
+          "id": "economics:study-plans/courses/ECON-010.md",
+          "title": "ECON-010 - Mathematics For Economics I: Algebra, Functions, And Graphs",
+          "sourceRepo": "open-education-economics",
+          "sourcePath": "study-plans/courses/ECON-010.md",
+          "objectives": [
+            {
+              "objectiveId": "economics:objectives/course/econ-010/algebra-fluency",
+              "label": "Algebra Fluency"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-010/functions-graphs",
+              "label": "Functions Graphs"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-010/percent-growth",
+              "label": "Percent Growth"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-010/budget-geometry",
+              "label": "Budget Geometry"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-010/elasticity-prep",
+              "label": "Elasticity Prep"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-010/error-discipline",
+              "label": "Error Discipline"
+            }
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:economics:study-plans/courses/ECON-010.md",
+            "contentKind": "course",
+            "contentId": "economics:study-plans/courses/ECON-010.md",
+            "sourcePath": "study-plans/courses/ECON-010.md",
+            "title": "ECON-010 - Mathematics For Economics I: Algebra, Functions, And Graphs",
+            "gradeBand": {
+              "label": "grades-9-adult",
+              "minGrade": "9",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-14-adult",
+              "minAge": 14,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#economics",
+            "status": "source-default-reviewed"
+          }
+        },
+        {
+          "id": "economics:study-plans/courses/ECON-011.md",
+          "title": "ECON-011 - Mathematics For Economics II: Calculus And Optimization",
+          "sourceRepo": "open-education-economics",
+          "sourcePath": "study-plans/courses/ECON-011.md",
+          "objectives": [
+            {
+              "objectiveId": "economics:objectives/course/econ-011/derivatives",
+              "label": "Derivatives"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-011/partials",
+              "label": "Partials"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-011/optimization",
+              "label": "Optimization"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-011/marginal-stories",
+              "label": "Marginal Stories"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-011/growth-rates",
+              "label": "Growth Rates"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-011/notebook-check",
+              "label": "Notebook Check"
+            }
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:economics:study-plans/courses/ECON-011.md",
+            "contentKind": "course",
+            "contentId": "economics:study-plans/courses/ECON-011.md",
+            "sourcePath": "study-plans/courses/ECON-011.md",
+            "title": "ECON-011 - Mathematics For Economics II: Calculus And Optimization",
+            "gradeBand": {
+              "label": "grades-9-adult",
+              "minGrade": "9",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-14-adult",
+              "minAge": 14,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#economics",
+            "status": "source-default-reviewed"
+          }
+        },
+        {
+          "id": "economics:study-plans/courses/ECON-012.md",
+          "title": "ECON-012 - Linear Algebra, Probability, And Statistics Bridge",
+          "sourceRepo": "open-education-economics",
+          "sourcePath": "study-plans/courses/ECON-012.md",
+          "objectives": [
+            {
+              "objectiveId": "economics:objectives/course/econ-012/vectors-matrices",
+              "label": "Vectors Matrices"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-012/probability",
+              "label": "Probability"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-012/distributions",
+              "label": "Distributions"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-012/sampling",
+              "label": "Sampling"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-012/regression-geometry",
+              "label": "Regression Geometry"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-012/claim-check",
+              "label": "Claim Check"
+            }
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:economics:study-plans/courses/ECON-012.md",
+            "contentKind": "course",
+            "contentId": "economics:study-plans/courses/ECON-012.md",
+            "sourcePath": "study-plans/courses/ECON-012.md",
+            "title": "ECON-012 - Linear Algebra, Probability, And Statistics Bridge",
+            "gradeBand": {
+              "label": "grades-9-adult",
+              "minGrade": "9",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-14-adult",
+              "minAge": 14,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#economics",
+            "status": "source-default-reviewed"
+          }
+        },
+        {
+          "id": "economics:study-plans/courses/ECON-013.md",
+          "title": "ECON-013 - Writing, Argument, And Source Literacy For Economics",
+          "sourceRepo": "open-education-economics",
+          "sourcePath": "study-plans/courses/ECON-013.md",
+          "objectives": [
+            {
+              "objectiveId": "economics:objectives/course/econ-013/claim-types",
+              "label": "Claim Types"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-013/source-grading",
+              "label": "Source Grading"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-013/steelman-critique",
+              "label": "Steelman Critique"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-013/citation-hygiene",
+              "label": "Citation Hygiene"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-013/anti-scapegoating",
+              "label": "Anti Scapegoating"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-013/source-graded-essay",
+              "label": "Source Graded Essay"
+            }
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:economics:study-plans/courses/ECON-013.md",
+            "contentKind": "course",
+            "contentId": "economics:study-plans/courses/ECON-013.md",
+            "sourcePath": "study-plans/courses/ECON-013.md",
+            "title": "ECON-013 - Writing, Argument, And Source Literacy For Economics",
+            "gradeBand": {
+              "label": "grades-9-adult",
+              "minGrade": "9",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-14-adult",
+              "minAge": 14,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#economics",
+            "status": "source-default-reviewed"
+          }
+        },
+        {
+          "id": "economics:study-plans/courses/ECON-014.md",
+          "title": "ECON-014 - Data Tools: Spreadsheet, Python Or R, Git, And Reproducibility",
+          "sourceRepo": "open-education-economics",
+          "sourcePath": "study-plans/courses/ECON-014.md",
+          "objectives": [
+            {
+              "objectiveId": "economics:objectives/course/econ-014/spreadsheet",
+              "label": "Spreadsheet"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-014/scripting",
+              "label": "Scripting"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-014/git-basics",
+              "label": "Git Basics"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-014/reproducibility",
+              "label": "Reproducibility"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-014/data-citation",
+              "label": "Data Citation"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-014/privacy-boundary",
+              "label": "Privacy Boundary"
+            }
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:economics:study-plans/courses/ECON-014.md",
+            "contentKind": "course",
+            "contentId": "economics:study-plans/courses/ECON-014.md",
+            "sourcePath": "study-plans/courses/ECON-014.md",
+            "title": "ECON-014 - Data Tools: Spreadsheet, Python Or R, Git, And Reproducibility",
+            "gradeBand": {
+              "label": "grades-9-adult",
+              "minGrade": "9",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-14-adult",
+              "minAge": 14,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#economics",
+            "status": "source-default-reviewed"
+          }
+        },
+        {
+          "id": "economics:study-plans/courses/ECON-100.md",
+          "title": "ECON-100 - Economic Reasoning And Human Flourishing",
+          "sourceRepo": "open-education-economics",
+          "sourcePath": "study-plans/courses/ECON-100.md",
+          "objectives": [
+            {
+              "objectiveId": "economics:objectives/course/econ-100/scarcity-tradeoffs",
+              "label": "Scarcity Tradeoffs"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-100/incentives-institutions",
+              "label": "Incentives Institutions"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-100/welfare-language",
+              "label": "Welfare Language"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-100/externalities-publicgoods",
+              "label": "Externalities Publicgoods"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-100/positive-normative",
+              "label": "Positive Normative"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-100/concept-map",
+              "label": "Concept Map"
+            }
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:economics:study-plans/courses/ECON-100.md",
+            "contentKind": "course",
+            "contentId": "economics:study-plans/courses/ECON-100.md",
+            "sourcePath": "study-plans/courses/ECON-100.md",
+            "title": "ECON-100 - Economic Reasoning And Human Flourishing",
+            "gradeBand": {
+              "label": "grades-9-adult",
+              "minGrade": "9",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-14-adult",
+              "minAge": 14,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#economics",
+            "status": "source-default-reviewed"
+          }
+        },
+        {
+          "id": "economics:study-plans/courses/ECON-101.md",
+          "title": "ECON-101 - Principles Of Microeconomics",
+          "sourceRepo": "open-education-economics",
+          "sourcePath": "study-plans/courses/ECON-101.md",
+          "objectives": [
+            {
+              "objectiveId": "economics:objectives/course/econ-101/demand-supply",
+              "label": "Demand Supply"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-101/elasticity",
+              "label": "Elasticity"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-101/consumer-firm",
+              "label": "Consumer Firm"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-101/market-structure",
+              "label": "Market Structure"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-101/market-failure",
+              "label": "Market Failure"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-101/application-set",
+              "label": "Application Set"
+            }
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:economics:study-plans/courses/ECON-101.md",
+            "contentKind": "course",
+            "contentId": "economics:study-plans/courses/ECON-101.md",
+            "sourcePath": "study-plans/courses/ECON-101.md",
+            "title": "ECON-101 - Principles Of Microeconomics",
+            "gradeBand": {
+              "label": "grades-9-adult",
+              "minGrade": "9",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-14-adult",
+              "minAge": 14,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#economics",
+            "status": "source-default-reviewed"
+          }
+        },
+        {
+          "id": "economics:study-plans/courses/ECON-102.md",
+          "title": "ECON-102 - Principles Of Macroeconomics",
+          "sourceRepo": "open-education-economics",
+          "sourcePath": "study-plans/courses/ECON-102.md",
+          "objectives": [
+            {
+              "objectiveId": "economics:objectives/course/econ-102/measurement",
+              "label": "Measurement"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-102/short-run",
+              "label": "Short Run"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-102/policy-tools",
+              "label": "Policy Tools"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-102/inflation-unemployment",
+              "label": "Inflation Unemployment"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-102/open-economy",
+              "label": "Open Economy"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-102/policy-memo",
+              "label": "Policy Memo"
+            }
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:economics:study-plans/courses/ECON-102.md",
+            "contentKind": "course",
+            "contentId": "economics:study-plans/courses/ECON-102.md",
+            "sourcePath": "study-plans/courses/ECON-102.md",
+            "title": "ECON-102 - Principles Of Macroeconomics",
+            "gradeBand": {
+              "label": "grades-9-adult",
+              "minGrade": "9",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-14-adult",
+              "minAge": 14,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#economics",
+            "status": "source-default-reviewed"
+          }
+        },
+        {
+          "id": "economics:study-plans/courses/ECON-103.md",
+          "title": "ECON-103 - Money Creation For Citizens",
+          "sourceRepo": "open-education-economics",
+          "sourcePath": "study-plans/courses/ECON-103.md",
+          "objectives": [
+            {
+              "objectiveId": "economics:objectives/course/econ-103/instrument-map",
+              "label": "Instrument Map"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-103/bank-lending",
+              "label": "Bank Lending"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-103/central-bank",
+              "label": "Central Bank"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-103/constraints",
+              "label": "Constraints"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-103/multi-channel",
+              "label": "Multi Channel"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-103/balance-sheet-explain",
+              "label": "Balance Sheet Explain"
+            }
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:economics:study-plans/courses/ECON-103.md",
+            "contentKind": "course",
+            "contentId": "economics:study-plans/courses/ECON-103.md",
+            "sourcePath": "study-plans/courses/ECON-103.md",
+            "title": "ECON-103 - Money Creation For Citizens",
+            "gradeBand": {
+              "label": "grades-9-adult",
+              "minGrade": "9",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-14-adult",
+              "minAge": 14,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#economics",
+            "status": "source-default-reviewed"
+          }
+        },
+        {
+          "id": "economics:study-plans/courses/ECON-104.md",
+          "title": "ECON-104 - Personal Finance, Household Balance Sheets, And Debt",
+          "sourceRepo": "open-education-economics",
+          "sourcePath": "study-plans/courses/ECON-104.md",
+          "objectives": [
+            {
+              "objectiveId": "economics:objectives/course/econ-104/household-bs",
+              "label": "Household Bs"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-104/debt-contracts",
+              "label": "Debt Contracts"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-104/debt-types",
+              "label": "Debt Types"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-104/risk-buffers",
+              "label": "Risk Buffers"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-104/system-links",
+              "label": "System Links"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-104/system-map",
+              "label": "System Map"
+            }
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:economics:study-plans/courses/ECON-104.md",
+            "contentKind": "course",
+            "contentId": "economics:study-plans/courses/ECON-104.md",
+            "sourcePath": "study-plans/courses/ECON-104.md",
+            "title": "ECON-104 - Personal Finance, Household Balance Sheets, And Debt",
+            "gradeBand": {
+              "label": "grades-9-adult",
+              "minGrade": "9",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-14-adult",
+              "minAge": 14,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#economics",
+            "status": "source-default-reviewed"
+          }
+        },
+        {
+          "id": "economics:study-plans/courses/ECON-105.md",
+          "title": "ECON-105 - Economic History Of Money, Debt, Trade, And States",
+          "sourceRepo": "open-education-economics",
+          "sourcePath": "study-plans/courses/ECON-105.md",
+          "objectives": [
+            {
+              "objectiveId": "economics:objectives/course/econ-105/chronology",
+              "label": "Chronology"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-105/state-finance",
+              "label": "State Finance"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-105/trade-money",
+              "label": "Trade Money"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-105/debt-power",
+              "label": "Debt Power"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-105/actor-discipline",
+              "label": "Actor Discipline"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-105/chronology-essay",
+              "label": "Chronology Essay"
+            }
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:economics:study-plans/courses/ECON-105.md",
+            "contentKind": "course",
+            "contentId": "economics:study-plans/courses/ECON-105.md",
+            "sourcePath": "study-plans/courses/ECON-105.md",
+            "title": "ECON-105 - Economic History Of Money, Debt, Trade, And States",
+            "gradeBand": {
+              "label": "grades-9-adult",
+              "minGrade": "9",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-14-adult",
+              "minAge": 14,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#economics",
+            "status": "source-default-reviewed"
+          }
+        },
+        {
+          "id": "economics:study-plans/courses/ECON-106.md",
+          "title": "ECON-106 - Financial Statements And Accounting For Economists",
+          "sourceRepo": "open-education-economics",
+          "sourcePath": "study-plans/courses/ECON-106.md",
+          "objectives": [
+            {
+              "objectiveId": "economics:objectives/course/econ-106/statements",
+              "label": "Statements"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-106/double-entry",
+              "label": "Double Entry"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-106/bank-accounts",
+              "label": "Bank Accounts"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-106/ratios",
+              "label": "Ratios"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-106/limits",
+              "label": "Limits"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-106/accounting-analysis",
+              "label": "Accounting Analysis"
+            }
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:economics:study-plans/courses/ECON-106.md",
+            "contentKind": "course",
+            "contentId": "economics:study-plans/courses/ECON-106.md",
+            "sourcePath": "study-plans/courses/ECON-106.md",
+            "title": "ECON-106 - Financial Statements And Accounting For Economists",
+            "gradeBand": {
+              "label": "grades-9-adult",
+              "minGrade": "9",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-14-adult",
+              "minAge": 14,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#economics",
+            "status": "source-default-reviewed"
+          }
+        },
+        {
+          "id": "economics:study-plans/courses/ECON-107.md",
+          "title": "ECON-107 - Statistics For Economic Claims",
+          "sourceRepo": "open-education-economics",
+          "sourcePath": "study-plans/courses/ECON-107.md",
+          "objectives": [
+            {
+              "objectiveId": "economics:objectives/course/econ-107/describe",
+              "label": "Describe"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-107/uncertainty",
+              "label": "Uncertainty"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-107/compare",
+              "label": "Compare"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-107/regression-literacy",
+              "label": "Regression Literacy"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-107/visualization-ethics",
+              "label": "Visualization Ethics"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-107/statistical-critique",
+              "label": "Statistical Critique"
+            }
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:economics:study-plans/courses/ECON-107.md",
+            "contentKind": "course",
+            "contentId": "economics:study-plans/courses/ECON-107.md",
+            "sourcePath": "study-plans/courses/ECON-107.md",
+            "title": "ECON-107 - Statistics For Economic Claims",
+            "gradeBand": {
+              "label": "grades-9-adult",
+              "minGrade": "9",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-14-adult",
+              "minAge": 14,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#economics",
+            "status": "source-default-reviewed"
+          }
+        },
+        {
+          "id": "economics:study-plans/courses/ECON-108.md",
+          "title": "ECON-108 - Public Teaching Lab: Explain Inflation, Debt, And Banking",
+          "sourceRepo": "open-education-economics",
+          "sourcePath": "study-plans/courses/ECON-108.md",
+          "objectives": [
+            {
+              "objectiveId": "economics:objectives/course/econ-108/audience-design",
+              "label": "Audience Design"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-108/inflation-teach",
+              "label": "Inflation Teach"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-108/debt-teach",
+              "label": "Debt Teach"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-108/banking-teach",
+              "label": "Banking Teach"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-108/misconception-control",
+              "label": "Misconception Control"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-108/teaching-artifact",
+              "label": "Teaching Artifact"
+            }
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:economics:study-plans/courses/ECON-108.md",
+            "contentKind": "course",
+            "contentId": "economics:study-plans/courses/ECON-108.md",
+            "sourcePath": "study-plans/courses/ECON-108.md",
+            "title": "ECON-108 - Public Teaching Lab: Explain Inflation, Debt, And Banking",
+            "gradeBand": {
+              "label": "grades-9-adult",
+              "minGrade": "9",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-14-adult",
+              "minAge": 14,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#economics",
+            "status": "source-default-reviewed"
+          }
+        },
+        {
+          "id": "economics:study-plans/courses/ECON-900.md",
+          "title": "ECON-900 - Frontier Synthesis Seminar",
+          "sourceRepo": "open-education-economics",
+          "sourcePath": "study-plans/courses/ECON-900.md",
+          "objectives": [
+            {
+              "objectiveId": "economics:objectives/course/econ-900/synthesis-map",
+              "label": "Synthesis Map"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-900/model-fact-norm",
+              "label": "Model Fact Norm"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-900/mechanics-integration",
+              "label": "Mechanics Integration"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-900/power-limits",
+              "label": "Power Limits"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-900/steelman-objections",
+              "label": "Steelman Objections"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-900/synthesis-defense",
+              "label": "Synthesis Defense"
+            }
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:economics:study-plans/courses/ECON-900.md",
+            "contentKind": "course",
+            "contentId": "economics:study-plans/courses/ECON-900.md",
+            "sourcePath": "study-plans/courses/ECON-900.md",
+            "title": "ECON-900 - Frontier Synthesis Seminar",
+            "gradeBand": {
+              "label": "grades-9-adult",
+              "minGrade": "9",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-14-adult",
+              "minAge": 14,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#economics",
+            "status": "source-default-reviewed"
+          }
+        },
+        {
+          "id": "economics:study-plans/courses/ECON-901.md",
+          "title": "ECON-901 - Institutional Design Studio For Monetary Democracy",
+          "sourceRepo": "open-education-economics",
+          "sourcePath": "study-plans/courses/ECON-901.md",
+          "objectives": [
+            {
+              "objectiveId": "economics:objectives/course/econ-901/design-space",
+              "label": "Design Space"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-901/balance-sheet-mechanics",
+              "label": "Balance Sheet Mechanics"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-901/governance-law",
+              "label": "Governance Law"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-901/reform-checklist",
+              "label": "Reform Checklist"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-901/transition-distribution",
+              "label": "Transition Distribution"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-901/institutional-blueprint",
+              "label": "Institutional Blueprint"
+            }
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:economics:study-plans/courses/ECON-901.md",
+            "contentKind": "course",
+            "contentId": "economics:study-plans/courses/ECON-901.md",
+            "sourcePath": "study-plans/courses/ECON-901.md",
+            "title": "ECON-901 - Institutional Design Studio For Monetary Democracy",
+            "gradeBand": {
+              "label": "grades-9-adult",
+              "minGrade": "9",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-14-adult",
+              "minAge": 14,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#economics",
+            "status": "source-default-reviewed"
+          }
+        },
+        {
+          "id": "economics:study-plans/courses/ECON-902.md",
+          "title": "ECON-902 - Citizen Education Lab For Money, Debt, And Banking",
+          "sourceRepo": "open-education-economics",
+          "sourcePath": "study-plans/courses/ECON-902.md",
+          "objectives": [
+            {
+              "objectiveId": "economics:objectives/course/econ-902/audience-curriculum",
+              "label": "Audience Curriculum"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-902/money-debt-banking-teach",
+              "label": "Money Debt Banking Teach"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-902/misconception-control",
+              "label": "Misconception Control"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-902/non-propaganda",
+              "label": "Non Propaganda"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-902/accessibility-handoff",
+              "label": "Accessibility Handoff"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-902/public-curriculum",
+              "label": "Public Curriculum"
+            }
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:economics:study-plans/courses/ECON-902.md",
+            "contentKind": "course",
+            "contentId": "economics:study-plans/courses/ECON-902.md",
+            "sourcePath": "study-plans/courses/ECON-902.md",
+            "title": "ECON-902 - Citizen Education Lab For Money, Debt, And Banking",
+            "gradeBand": {
+              "label": "grades-9-adult",
+              "minGrade": "9",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-14-adult",
+              "minAge": 14,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#economics",
+            "status": "source-default-reviewed"
+          }
+        },
+        {
+          "id": "economics:study-plans/courses/ECON-903.md",
+          "title": "ECON-903 - Grand Defense: Economics, Finance, Power, And Human Flourishing",
+          "sourceRepo": "open-education-economics",
+          "sourcePath": "study-plans/courses/ECON-903.md",
+          "objectives": [
+            {
+              "objectiveId": "economics:objectives/course/econ-903/integrative-oral",
+              "label": "Integrative Oral"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-903/evidence-bound-power",
+              "label": "Evidence Bound Power"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-903/steelman-objections",
+              "label": "Steelman Objections"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-903/anti-scapegoating",
+              "label": "Anti Scapegoating"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-903/uncertainty-boundaries",
+              "label": "Uncertainty Boundaries"
+            },
+            {
+              "objectiveId": "economics:objectives/course/econ-903/public-oral-defense",
+              "label": "Public Oral Defense"
+            }
+          ],
+          "audienceMetadata": {
+            "schemaVersion": 1,
+            "policyVersion": "2026-07-23-v1",
+            "metadataId": "suite:course:economics:study-plans/courses/ECON-903.md",
+            "contentKind": "course",
+            "contentId": "economics:study-plans/courses/ECON-903.md",
+            "sourcePath": "study-plans/courses/ECON-903.md",
+            "title": "ECON-903 - Grand Defense: Economics, Finance, Power, And Human Flourishing",
+            "gradeBand": {
+              "label": "grades-9-adult",
+              "minGrade": "9",
+              "maxGrade": null
+            },
+            "ageBand": {
+              "label": "ages-14-adult",
+              "minAge": 14,
+              "maxAge": null
+            },
+            "audienceClassification": "minor-safe",
+            "minorSafe": true,
+            "adultOnly": false,
+            "guardianOrFacilitatorRequirement": "guardian-or-facilitator-recommended",
+            "sensitiveTopicCategories": [
+              "money-commerce-and-financial-risk",
+              "civic-political-and-ideological-conflict"
+            ],
+            "prerequisiteIds": [],
+            "permittedTutorContexts": [
+              "orientation",
+              "retrieval-grounded-explanation",
+              "guided-practice",
+              "post-attempt-feedback",
+              "source-context"
+            ],
+            "allowedOperations": [
+              "catalog",
+              "search",
+              "recommendation",
+              "export",
+              "import",
+              "tutor-context"
+            ],
+            "masteryAndSafetyPolicyId": "suite-equivalent-safety-and-mastery-v1",
+            "inheritedFrom": "audience-sources.json#economics",
+            "status": "source-default-reviewed"
+          }
+        },
         {
           "id": "economics:study-plans/courses/ECON-REFERENCE-PROGRAM.md",
           "title": "ECON-REFERENCE-PROGRAM - Economics World Systems Reference Program",
@@ -2242,6 +3724,462 @@ window.openEducationContentCatalog =
         }
       ],
       "objectives": [
+        {
+          "objectiveId": "economics:objectives/course/econ-000/claim-discipline",
+          "label": "Claim Discipline"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-000/gap-map",
+          "label": "Gap Map"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-000/learning-contract",
+          "label": "Learning Contract"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-000/pathway-choice",
+          "label": "Pathway Choice"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-000/portfolio-setup",
+          "label": "Portfolio Setup"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-000/self-assessment",
+          "label": "Self Assessment"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-010/algebra-fluency",
+          "label": "Algebra Fluency"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-010/budget-geometry",
+          "label": "Budget Geometry"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-010/elasticity-prep",
+          "label": "Elasticity Prep"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-010/error-discipline",
+          "label": "Error Discipline"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-010/functions-graphs",
+          "label": "Functions Graphs"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-010/percent-growth",
+          "label": "Percent Growth"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-011/derivatives",
+          "label": "Derivatives"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-011/growth-rates",
+          "label": "Growth Rates"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-011/marginal-stories",
+          "label": "Marginal Stories"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-011/notebook-check",
+          "label": "Notebook Check"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-011/optimization",
+          "label": "Optimization"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-011/partials",
+          "label": "Partials"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-012/claim-check",
+          "label": "Claim Check"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-012/distributions",
+          "label": "Distributions"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-012/probability",
+          "label": "Probability"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-012/regression-geometry",
+          "label": "Regression Geometry"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-012/sampling",
+          "label": "Sampling"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-012/vectors-matrices",
+          "label": "Vectors Matrices"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-013/anti-scapegoating",
+          "label": "Anti Scapegoating"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-013/citation-hygiene",
+          "label": "Citation Hygiene"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-013/claim-types",
+          "label": "Claim Types"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-013/source-graded-essay",
+          "label": "Source Graded Essay"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-013/source-grading",
+          "label": "Source Grading"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-013/steelman-critique",
+          "label": "Steelman Critique"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-014/data-citation",
+          "label": "Data Citation"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-014/git-basics",
+          "label": "Git Basics"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-014/privacy-boundary",
+          "label": "Privacy Boundary"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-014/reproducibility",
+          "label": "Reproducibility"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-014/scripting",
+          "label": "Scripting"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-014/spreadsheet",
+          "label": "Spreadsheet"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-100/concept-map",
+          "label": "Concept Map"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-100/externalities-publicgoods",
+          "label": "Externalities Publicgoods"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-100/incentives-institutions",
+          "label": "Incentives Institutions"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-100/positive-normative",
+          "label": "Positive Normative"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-100/scarcity-tradeoffs",
+          "label": "Scarcity Tradeoffs"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-100/welfare-language",
+          "label": "Welfare Language"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-101/application-set",
+          "label": "Application Set"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-101/consumer-firm",
+          "label": "Consumer Firm"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-101/demand-supply",
+          "label": "Demand Supply"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-101/elasticity",
+          "label": "Elasticity"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-101/market-failure",
+          "label": "Market Failure"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-101/market-structure",
+          "label": "Market Structure"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-102/inflation-unemployment",
+          "label": "Inflation Unemployment"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-102/measurement",
+          "label": "Measurement"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-102/open-economy",
+          "label": "Open Economy"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-102/policy-memo",
+          "label": "Policy Memo"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-102/policy-tools",
+          "label": "Policy Tools"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-102/short-run",
+          "label": "Short Run"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-103/balance-sheet-explain",
+          "label": "Balance Sheet Explain"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-103/bank-lending",
+          "label": "Bank Lending"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-103/central-bank",
+          "label": "Central Bank"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-103/constraints",
+          "label": "Constraints"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-103/instrument-map",
+          "label": "Instrument Map"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-103/multi-channel",
+          "label": "Multi Channel"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-104/debt-contracts",
+          "label": "Debt Contracts"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-104/debt-types",
+          "label": "Debt Types"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-104/household-bs",
+          "label": "Household Bs"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-104/risk-buffers",
+          "label": "Risk Buffers"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-104/system-links",
+          "label": "System Links"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-104/system-map",
+          "label": "System Map"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-105/actor-discipline",
+          "label": "Actor Discipline"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-105/chronology",
+          "label": "Chronology"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-105/chronology-essay",
+          "label": "Chronology Essay"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-105/debt-power",
+          "label": "Debt Power"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-105/state-finance",
+          "label": "State Finance"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-105/trade-money",
+          "label": "Trade Money"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-106/accounting-analysis",
+          "label": "Accounting Analysis"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-106/bank-accounts",
+          "label": "Bank Accounts"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-106/double-entry",
+          "label": "Double Entry"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-106/limits",
+          "label": "Limits"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-106/ratios",
+          "label": "Ratios"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-106/statements",
+          "label": "Statements"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-107/compare",
+          "label": "Compare"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-107/describe",
+          "label": "Describe"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-107/regression-literacy",
+          "label": "Regression Literacy"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-107/statistical-critique",
+          "label": "Statistical Critique"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-107/uncertainty",
+          "label": "Uncertainty"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-107/visualization-ethics",
+          "label": "Visualization Ethics"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-108/audience-design",
+          "label": "Audience Design"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-108/banking-teach",
+          "label": "Banking Teach"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-108/debt-teach",
+          "label": "Debt Teach"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-108/inflation-teach",
+          "label": "Inflation Teach"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-108/misconception-control",
+          "label": "Misconception Control"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-108/teaching-artifact",
+          "label": "Teaching Artifact"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-900/mechanics-integration",
+          "label": "Mechanics Integration"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-900/model-fact-norm",
+          "label": "Model Fact Norm"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-900/power-limits",
+          "label": "Power Limits"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-900/steelman-objections",
+          "label": "Steelman Objections"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-900/synthesis-defense",
+          "label": "Synthesis Defense"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-900/synthesis-map",
+          "label": "Synthesis Map"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-901/balance-sheet-mechanics",
+          "label": "Balance Sheet Mechanics"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-901/design-space",
+          "label": "Design Space"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-901/governance-law",
+          "label": "Governance Law"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-901/institutional-blueprint",
+          "label": "Institutional Blueprint"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-901/reform-checklist",
+          "label": "Reform Checklist"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-901/transition-distribution",
+          "label": "Transition Distribution"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-902/accessibility-handoff",
+          "label": "Accessibility Handoff"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-902/audience-curriculum",
+          "label": "Audience Curriculum"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-902/misconception-control",
+          "label": "Misconception Control"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-902/money-debt-banking-teach",
+          "label": "Money Debt Banking Teach"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-902/non-propaganda",
+          "label": "Non Propaganda"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-902/public-curriculum",
+          "label": "Public Curriculum"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-903/anti-scapegoating",
+          "label": "Anti Scapegoating"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-903/evidence-bound-power",
+          "label": "Evidence Bound Power"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-903/integrative-oral",
+          "label": "Integrative Oral"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-903/public-oral-defense",
+          "label": "Public Oral Defense"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-903/steelman-objections",
+          "label": "Steelman Objections"
+        },
+        {
+          "objectiveId": "economics:objectives/course/econ-903/uncertainty-boundaries",
+          "label": "Uncertainty Boundaries"
+        },
         {
           "objectiveId": "economics:objectives/course/econ-reference/debt-power-and-coercion",
           "label": "Debt Power And Coercion"
@@ -2881,7 +4819,7 @@ window.openEducationContentCatalog =
       "sourceId": "founder-level-civic-classical",
       "title": "Open Education Founder-Level Civic Classical",
       "sourceRepo": "open-education-founder-level-civic-classical",
-      "objectCount": 1089,
+      "objectCount": 1104,
       "courses": [
         {
           "id": "founder-level-civic-classical:study-plans/courses/FCC-CHAR-HONORABLE-ADULTHOOD-K12.md",

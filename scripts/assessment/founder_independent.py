@@ -16,6 +16,8 @@ import uuid
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
+from private_grading_store import PrivateGradingStore
+
 
 def canonical(value: object) -> bytes:
     # Browser JSON round-trips do not retain the distinction between 1 and 1.0.
@@ -48,17 +50,14 @@ def normalized(value: object) -> str:
 
 
 class FounderAssessment:
-    """Authoritative only for this local bridge session and selected objective."""
+    """Local, restart-safe authority for one selected objective and Windows account."""
 
-    def __init__(self, suite: Path, runtime: Path, rehearsal: bool = False):
+    def __init__(self, suite: Path, runtime: Path, rehearsal: bool = False, store_path: Path | None = None):
         self.suite = suite.resolve()
         self.root = self.suite.parent / "open-education-founder-level-civic-classical"
         self.runtime = runtime
         self.runtime.mkdir(parents=True, exist_ok=True)
         self.rehearsal = rehearsal
-        self.secret = secrets.token_bytes(32)
-        self.sessions: dict[str, dict] = {}
-        self.challenges: dict[str, dict] = {}
         self.lock = threading.Lock()
         schema = read_json(suite / "schemas/founder-course-export.schema.json")
         self.flow = schema["x-exportContract"]["selectedFlow"]
@@ -99,10 +98,24 @@ class FounderAssessment:
         if primary["sha256"] not in {hashlib.sha256(source_bytes).hexdigest(), hashlib.sha256(source_bytes.replace(b"\r\n", b"\n")).hexdigest()}:
             raise ValueError("Assessment source checksum mismatch")
         self.source_text = source_bytes.decode("utf-8-sig")
-        for path in (crosswalk, source_path, reading_path, rights_path, self.root / "exports/suite-v1/public/assessment.jsonl"):
+        for path in (crosswalk, source_path, reading_path, rights_path, self.root / "exports/suite-v1/public/assessment.jsonl", Path(__file__).with_name("private_grading_store.py"), self.suite / "scripts/state/update-learner-state.ps1"):
             self.bindings[path] = hashlib.sha256(path.read_bytes()).hexdigest()
         self.revision = hashlib.sha256(canonical(list(self.bindings.values()))).hexdigest()
         self.fields, self.expected, self.groups = self._structured_contract()
+        self.store = PrivateGradingStore(self.suite, store_path or runtime / "authority.sqlite", self.revision, rehearsal)
+
+    def _adopt(self, vault: dict) -> None:
+        self.secret = bytes.fromhex(vault["secret"])
+        self.authority_id = vault["authorityId"]
+        self.sessions = vault["sessions"]
+        self.challenges = vault["challenges"]
+
+    def local_receipts(self, learner: str) -> list[dict]:
+        """Offline recovery for the OS account with store access; never an HTTP lookup."""
+        with self.lock, self.store.transaction() as vault:
+            self._adopt(vault)
+            self._fresh()
+            return [self._receipt(key) for key, value in self.sessions.items() if value["state"]["learnerId"] == learner]
 
     def _structured_contract(self) -> tuple[dict, dict, dict]:
         """Interpret only the current authored rubric; fail closed on unsupported drift."""
@@ -171,12 +184,18 @@ class FounderAssessment:
     def _receipt(self, session_id: str) -> dict:
         item = self.sessions[session_id]
         body = {"schemaVersion": 1, "sessionId": session_id, "learnerId": item["state"]["learnerId"],
+                "authorityId": self.authority_id,
                 "lessonId": self.flow["lessonId"], "objectiveId": self.objective, "revision": self.revision,
                 "synthetic": self.rehearsal, "version": len(item["history"]), "state": item["state"],
                 "results": item["history"], "withdrawn": item["withdrawn"]}
         return {"body": copy.deepcopy(body), "signature": hmac.new(self.secret, canonical(body), "sha256").hexdigest()}
 
     def verify(self, receipt: dict, learner: str) -> dict:
+        with self.lock, self.store.transaction() as vault:
+            self._adopt(vault)
+            return self._verify(receipt, learner)
+
+    def _verify(self, receipt: dict, learner: str) -> dict:
         self._fresh()
         body = receipt.get("body", {})
         signature = receipt.get("signature", "")
@@ -190,7 +209,8 @@ class FounderAssessment:
         return current
 
     def begin(self, request: dict) -> dict:
-        with self.lock:
+        with self.lock, self.store.transaction() as vault:
+            self._adopt(vault)
             self._fresh()
             if set(request) - {"learnerId", "receipt", "now", "correctionReviewed"}:
                 raise ValueError("Unexpected assessment field")
@@ -203,7 +223,7 @@ class FounderAssessment:
                     raise ValueError("Rehearsal clock is disabled")
                 now = date.fromisoformat(request["now"]).isoformat()
             if request.get("receipt"):
-                prior = self.verify(request["receipt"], learner)
+                prior = self._verify(request["receipt"], learner)
                 session_id = prior["body"]["sessionId"]
             else:
                 session_id = uuid.uuid4().hex
@@ -231,7 +251,7 @@ class FounderAssessment:
                     raise ValueError("Assessment dates must remain ordered")
             token = secrets.token_urlsafe(32)
             self.challenges[token] = {"session": session_id, "version": len(item["history"]), "stage": stage,
-                                      "date": now, "expires": time.monotonic() + 600, "result": None, "requestHash": None}
+                                      "date": now, "expires": time.time() + 600, "result": None, "requestHash": None}
             prompts = {"initial": "Recall the fictional market case. Supply the quantities, decision and scope without the source or hints.",
                        "retry": "Reread The Book Return Team, then close it. Identify roles, purpose and limits without hints.",
                        "delayed": "Without passages or hints, distinguish the scope of the weather, map and fictional market sources."}
@@ -240,12 +260,13 @@ class FounderAssessment:
                     "synthetic": self.rehearsal}
 
     def grade(self, request: dict) -> dict:
-        with self.lock:
+        with self.lock, self.store.transaction() as vault:
+            self._adopt(vault)
             self._fresh()
             if set(request) != {"token", "learnerId", "answers", "support"} or request["support"] not in ("unassisted", "assisted"):
                 raise ValueError("Invalid assessment submission")
             challenge = self.challenges.get(request["token"])
-            if not challenge or challenge["expires"] < time.monotonic():
+            if not challenge or challenge["expires"] < time.time():
                 raise ValueError("Unknown or expired assessment challenge")
             item = self.sessions[challenge["session"]]
             if request["learnerId"] != item["state"]["learnerId"] or item["withdrawn"]:
@@ -307,8 +328,9 @@ class FounderAssessment:
             return copy.deepcopy(receipt)
 
     def withdraw(self, receipt: dict, learner: str) -> dict:
-        with self.lock:
-            current = self.verify(receipt, learner)
+        with self.lock, self.store.transaction() as vault:
+            self._adopt(vault)
+            current = self._verify(receipt, learner)
             session_id = current["body"]["sessionId"]
             self.sessions[session_id]["withdrawn"] = True
             return self._receipt(session_id)

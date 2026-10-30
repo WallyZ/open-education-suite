@@ -2,11 +2,19 @@
 
 ## Metadata
 
-- Last updated: 2026-08-23
+- Last updated: 2026-10-30
 - Repo: open-education-suite
 - Privacy default: internal
 
 ## Candidate Reusable Solutions
+
+### Restart-safe private grading authority
+
+- Local path: `scripts/assessment/private_grading_store.py`
+- Reuse value: Windows-user-encrypted SQLite snapshots commit signing authority, canonical mastery and replay records together; incompatible/corrupt stores fail closed.
+- Verification: canonical founder-persistence mode passed three distinct scoring bridge processes and two restarts on 2026-10-30.
+- Boundaries: same-account DPAPI recovery only; no portable migration or whole-store rollback protection. Synthetic QA is not learner-outcome evidence.
+- No repo-kit adoption was needed; reuse the existing verifier and adjacent QA Live harness without vendoring or installation.
 
 ### Content-source registry contract
 

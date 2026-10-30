@@ -2,29 +2,26 @@
 
 ## Completed
 
-- 2026-08-12: [7398fa2] Register AI audience policy
-- 2026-08-12: [9713c0d] Register artificial intelligence content pack
-- 2026-08-08: [634ebbf] Refresh credential integration memory context
-- 2026-08-07: [1829d2b] Plan Community Commons learning integration
-- 2026-08-05: [cd83292] Refresh learner session content count
-- 2026-07-27: [3d5acbf] Register economics content source
-- 2026-07-26: [c955746] Refresh learner UI session data after main sync
-- 2026-07-25: [3348400] Use portable content routes and checksums
+- 2026-10-30: 3683f59 verified Founder delayed learning/recovery integration.
+- 2026-10-30: 17bf674 integrated the live self-check UI; 675affd added independent structured scoring and canonical mastery.
+- 2026-10-30: Restart-safe authority passed canonical founder-persistence verification, exit 0.
+- QA Live passed 61 UI regression, 77 scoring, 15 recovery/replay and 15 withdrawal actions with zero console/page/network errors.
+- Three distinct scoring bridge lifetimes and two restarts retained confidence 0.2 and four audit entries without duplication.
+- Storage checks passed pending-token recovery, rollback, encryption, corruption and source/mode mismatch rejection.
 
 ## In progress
 
-- Root-owned Markdown lint fleet Wave 47; baseline debt was 265 findings in 28 of 80 policy-scanned Markdown files. The current candidate scans 80 of 81 tracked Markdown files with zero findings or scan/coverage errors; the tracked `.codex-cache/task-pack.md` remains excluded by policy.
+- Memory freshness/formatting and stale learner session data are refreshed; commit/push the bounded Suite candidate after final targeted verification.
+- Broader changed-mode verification stops on two pre-existing Founder links to missing safeguarding-and-mandatory-reporting-operations.md. Preserve that unrelated source work.
 
 ## Next
 
-- Obtain independent review, then commit/push and update root tracking.
+- Preserve same-account private backup requirements. Portable key recovery, reviewed source migration and whole-store rollback defenses remain separate work.
 
 ## Verification notes
 
-- Refresh script: `scripts/memory/refresh_memory_bank.ps1`
-- Inputs: todo=docs/TODO.md, todo_root=docs/todo, commits=8, profile=cloud
-- Profile resolution: explicit -ContextProfile parameter
-- TODO source: split
-- Generated on: 2026-08-23
-- Clean baseline reached TODO lifecycle checks and stopped only on six stale memory surfaces: `.codex-cache/logs/codex-verify_20260823_152315_835c9c9e.log`.
-- The corrected Wave 47 candidate passes exact changed and full canonical verification; replacement runs are required after any later tracked edit.
+- Entrypoint: scripts/codex-verify.ps1; modes founder-persistence and changed.
+- Passing log: .codex-cache/logs/codex-verify_20261030_120117_20e4db77.log.
+- Synthetic browser evidence: .codex-cache/logs/founder-ui-qa_20261030_120117_20e4db77_0 through _3.
+- Initial fixture handle leak fixed. The subsequent changed gate found six stale August 23 memory surfaces; this refresh replaces obsolete Wave 47 status.
+- Founder baseline: 54 protected files, hashes unchanged. QA Live harness remains read-only and clean.

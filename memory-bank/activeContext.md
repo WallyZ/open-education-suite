@@ -1,26 +1,29 @@
 # Active Context
 
-Last updated: 2026-08-23
+Last updated: 2026-10-30
 
 ## Current objective
 
-- Complete root-owned Markdown lint fleet Wave 47 while preserving the Suite's content-agnostic and local-first learner boundaries.
+- Complete restart-safe private grading authority for the existing Founder sequence while preserving content ownership and unrelated work.
 
 ## Active wave/task
 
-- Root item `RK_MARKDOWN_LINT_FLEET_ROLLOUT_001`; Suite-owned feature and owner-review TODOs remain separate.
+- OES_FOUNDER_PRIVATE_AUTHORITY_001 follows consumer recovery, live learner UI and independent structured scoring.
+- Same lesson: lesson-g1-cw10-d01. Founder owns curriculum/keys; Suite owns runtime integration.
 
 ## Allowed scope
 
-- Shared lint assets, conservative Markdown repair, verifier composition, and current memory.
-- Do not copy subject content or expose learner, media, model, credential, or private local state.
+- Encrypted authority, existing scorer/bridge/recovery UI, restart QA and documentation.
+- Refresh six stale memory surfaces for the changed-mode gate; no new curriculum or duplicate tasks.
 
 ## Risks/blockers
 
-- No implementation blocker remains; promotion still requires an independent critic verdict and a stable exact candidate.
+- DPAPI recovery requires the same usable Windows account/profile. Portable migration and whole-store rollback protection remain separate work.
+- Synthetic software QA does not establish human learning outcomes, identity or independent performance.
+- Broader changed-mode verification stops on two pre-existing Founder safeguarding-document links; preserve source work and report this limitation.
 
 ## Next 3 actions
 
-- Obtain independent critic approval for the exact changed/full-verified candidate.
-- Commit and push the approved candidate to `main`.
-- Return to root fleet tracking and the next ranked repository.
+- Recheck canonical founder-persistence mode after final documentation/catalog refresh; broader changed mode remains limited by the unrelated source links.
+- Commit/push only reviewed Suite files.
+- Preserve all 54 pre-existing Founder files and keep private authority/answers outside Git and tutor retrieval.
